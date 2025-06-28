@@ -311,9 +311,9 @@ function getAgentKeys(){
     $stmt->close();
     
     return json_encode(['inline_keyboard'=>[
-        [['text'=>$boughtAccounts,'callback_data'=>"wizwizch"],['text'=>$buttonValues['agent_bought_accounts'],'callback_data'=>"wizwizch"]],
-        [['text'=>$joinedDate,'callback_data'=>"wizwizch"],['text'=>$buttonValues['agent_joined_date'],'callback_data'=>"wizwizch"]],
-        [['text'=>$agencyDate,'callback_data'=>"wizwizch"],['text'=>$buttonValues['agent_agency_date'],'callback_data'=>"wizwizch"]],
+        [['text'=>$boughtAccounts,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_bought_accounts'],'callback_data'=>"alphabot"]],
+        [['text'=>$joinedDate,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_joined_date'],'callback_data'=>"alphabot"]],
+        [['text'=>$agencyDate,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_agency_date'],'callback_data'=>"alphabot"]],
         [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]],
     ]]);
 }
@@ -372,14 +372,14 @@ function getRejectedAgentList(){
     
     if($list->num_rows>0){
         $keys = array();
-        $keys[] = [['text'=>"آزاد ساختن",'callback_data'=>"wizwizch"],['text'=>"اسم کاربر",'callback_data'=>'wizwizch'],['text'=>"آیدی عددی",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"آزاد ساختن",'callback_data'=>"alphabot"],['text'=>"اسم کاربر",'callback_data'=>'alphabot'],['text'=>"آیدی عددی",'callback_data'=>"alphabot"]];
         while($row = $list->fetch_assoc()){
             $userId = $row['userid'];
             
             $userDetail = bot('getChat',['chat_id'=>$userId])->result;
             $fullName = $userDetail->first_name . " " . $userDetail->last_name;
             
-            $keys[] = [['text'=>"✅",'callback_data'=>"releaseRejectedAgent" . $userId],['text'=>$fullName,'callback_data'=>"wizwizch"],['text'=>$userId,'callback_data'=>"wizwizch"]];
+            $keys[] = [['text'=>"✅",'callback_data'=>"releaseRejectedAgent" . $userId],['text'=>$fullName,'callback_data'=>"alphabot"],['text'=>$userId,'callback_data'=>"alphabot"]];
         }
         $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]];
         return json_encode(['inline_keyboard'=>$keys]);
@@ -423,20 +423,20 @@ function getAgentDetails($userId){
     
     return json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"(" . $todayIncome['count'] . ") " . number_format($todayIncome['total']),'callback_data'=>'wizwizch'],
-            ['text'=>"درآمد امروز",'callback_data'=>'wizwizch']
+            ['text'=>"(" . $todayIncome['count'] . ") " . number_format($todayIncome['total']),'callback_data'=>'alphabot'],
+            ['text'=>"درآمد امروز",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>"(" . $yesterdayIncome['count'] . ") " . number_format($yesterdayIncome['total']),'callback_data'=>"wizwizch"],
-            ['text'=>"درآمد دیروز",'callback_data'=>"wizwizch"]
+            ['text'=>"(" . $yesterdayIncome['count'] . ") " . number_format($yesterdayIncome['total']),'callback_data'=>"alphabot"],
+            ['text'=>"درآمد دیروز",'callback_data'=>"alphabot"]
             ],
         [
-            ['text'=>"(" . $lastWeekIncome['count'] . ") " . number_format($lastWeekIncome['total']),'callback_data'=>"wizwizch"],
-            ['text'=>"درآمد یک هفته",'callback_data'=>"wizwizch"]
+            ['text'=>"(" . $lastWeekIncome['count'] . ") " . number_format($lastWeekIncome['total']),'callback_data'=>"alphabot"],
+            ['text'=>"درآمد یک هفته",'callback_data'=>"alphabot"]
             ],
         [
-            ['text'=>"(" . $lastMonthIncome['count'] . ") " . number_format($lastMonthIncome['total']),'callback_data'=>"wizwizch"],
-            ['text'=>"درآمد یک ماه",'callback_data'=>"wizwizch"]
+            ['text'=>"(" . $lastMonthIncome['count'] . ") " . number_format($lastMonthIncome['total']),'callback_data'=>"alphabot"],
+            ['text'=>"درآمد یک ماه",'callback_data'=>"alphabot"]
             ],
         [['text' => $buttonValues['back_button'], 'callback_data' => "agentsList"]]
         ]]);
@@ -480,7 +480,7 @@ function getAgentsList($offset = 0){
     $keys = array();
     if($agentList->num_rows == 0 && $offset == 0) return null;
     
-    $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"درصد تخفیف",'callback_data'=>"wizwizch"],['text'=>"تاریخ نمایندگی",'callback_data'=>"wizwizch"],['text'=>"اسم نماینده",'callback_data'=>"wizwizch"],['text'=>"آیدی عددی",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"درصد تخفیف",'callback_data'=>"alphabot"],['text'=>"تاریخ نمایندگی",'callback_data'=>"alphabot"],['text'=>"اسم نماینده",'callback_data'=>"alphabot"],['text'=>"آیدی عددی",'callback_data'=>"alphabot"]];
     if($agentList->num_rows > 0){
         while($row = $agentList->fetch_assoc()){
             $userId = $row['userid'];
@@ -490,7 +490,7 @@ function getAgentsList($offset = 0){
             $fullName = $userDetail->first_name . " " . $userDetail->last_name;
             $joinedDate = jdate("Y-m-d H:i",$row['agent_date']);
 
-            $keys[] = [['text'=>"❌",'callback_data'=>"removeAgent" . $userId],['text'=>"⚙️",'callback_data'=>"agentPercentDetails" . $userId],['text'=>$joinedDate,'callback_data'=>"wizwizch"],['text'=>$fullName,'callback_data'=>"agentDetails" . $userId],['text'=>$userId,'callback_data'=>"agentDetails" . $userId]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"removeAgent" . $userId],['text'=>"⚙️",'callback_data'=>"agentPercentDetails" . $userId],['text'=>$joinedDate,'callback_data'=>"alphabot"],['text'=>$fullName,'callback_data'=>"agentDetails" . $userId],['text'=>$userId,'callback_data'=>"agentDetails" . $userId]];
         }
     }
     if($offset == 0 && $limit <= $agentList->num_rows)
@@ -523,9 +523,9 @@ function getAgentDiscounts($agentId){
     $discounts = json_decode($agentInfo['discount_percent'],true);
 
     $normal = $discounts['normal'];
-    $keys[] = [['text'=>" ",'callback_data'=>"wizwizch"],
+    $keys[] = [['text'=>" ",'callback_data'=>"alphabot"],
     ['text'=>$normal . "%",'callback_data'=>"editAgentDiscountNormal" . $agentId . "_0"],
-    ['text'=>"عمومی",'callback_data'=>"wizwizch"]];            
+    ['text'=>"عمومی",'callback_data'=>"alphabot"]];            
     
     if($botState['agencyPlanDiscount']=="on"){
         foreach($discounts['plans'] as $planId=>$discount){
@@ -543,7 +543,7 @@ function getAgentDiscounts($agentId){
             
             $keys[] = [['text'=>"❌",'callback_data'=>"removePercentOfAgentPlan" . $agentId . "_" . $planId],
             ['text'=>$discount . "%",'callback_data'=>"editAgentDiscountPlan" . $agentId . "_" . $planId],
-            ['text'=>$info['title'] . " " . $catInfo['title'],'callback_data'=>"wizwizch"]];            
+            ['text'=>$info['title'] . " " . $catInfo['title'],'callback_data'=>"alphabot"]];            
         }
     }else{
         foreach($discounts['servers'] as $serverId=>$discount){
@@ -555,7 +555,7 @@ function getAgentDiscounts($agentId){
             
             $keys[] = [['text'=>"❌",'callback_data'=>"removePercentOfAgentServer" . $agentId . "_" . $serverId],
             ['text'=>$discount . "%",'callback_data'=>"editAgentDiscountServer" . $agentId . "_" . $serverId],
-            ['text'=>$info['title'],'callback_data'=>"wizwizch"]];            
+            ['text'=>$info['title'],'callback_data'=>"alphabot"]];            
         }                
     }
     if($botState['agencyPlanDiscount']=="on")$keys[] = [['text' => "افزودن تخفیف پلن", 'callback_data' => "addDiscountPlanAgent" . $agentId]];
@@ -649,58 +649,58 @@ function getServerConfigKeys($serverId,$offset = 0){
     }
     return json_encode(['inline_keyboard'=>array_merge([
         [
-            ['text'=>$panelUrl,'callback_data'=>"wizwizch"],
+            ['text'=>$panelUrl,'callback_data'=>"alphabot"],
             ],
         [
             ['text'=>$cname,'callback_data'=>"editServerName$id"],
-            ['text'=>"❕نام سرور",'callback_data'=>"wizwizch"]
+            ['text'=>"❕نام سرور",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$flagwizwiz,'callback_data'=>"editServerFlag$id"],
-            ['text'=>"🚩 پرچم سرور",'callback_data'=>"wizwizch"]
+            ['text'=>"🚩 پرچم سرور",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$remarkwizwiz,'callback_data'=>"editServerRemark$id"],
-            ['text'=>"📣 ریمارک سرور",'callback_data'=>"wizwizch"]
+            ['text'=>"📣 ریمارک سرور",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$serverType??" ",'callback_data'=>"changeServerType$id"],
-            ['text'=>"نوعیت سرور",'callback_data'=>"wizwizch"]
+            ['text'=>"نوعیت سرور",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$ucount,'callback_data'=>"editServerMax$id"],
-            ['text'=>"ظرفیت سرور",'callback_data'=>"wizwizch"]
+            ['text'=>"ظرفیت سرور",'callback_data'=>"alphabot"]
             ]
             ],
             ($serverConfig['type'] != "marzban"?[
         [
             ['text'=>$portType,'callback_data'=>"changePortType$id"],
-            ['text'=>"نوعیت پورت",'callback_data'=>"wizwizch"]
+            ['text'=>"نوعیت پورت",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$sni,'callback_data'=>"editsServersni$id"],
-            ['text'=>"sni",'callback_data'=>"wizwizch"],
+            ['text'=>"sni",'callback_data'=>"alphabot"],
             ],
         [
             ['text'=>$headerType,'callback_data'=>"editsServerheader_type$id"],
-            ['text'=>"header type",'callback_data'=>"wizwizch"],
+            ['text'=>"header type",'callback_data'=>"alphabot"],
             ],
         [
             ['text'=>$requestHeader,'callback_data'=>"editsServerrequest_header$id"],
-            ['text'=>"request header",'callback_data'=>"wizwizch"],
+            ['text'=>"request header",'callback_data'=>"alphabot"],
             ],
         [
             ['text'=>$responseHeader,'callback_data'=>"editsServerresponse_header$id"],
-            ['text'=>"response header",'callback_data'=>"wizwizch"],
+            ['text'=>"response header",'callback_data'=>"alphabot"],
             ],
         [
             ['text'=>$security,'callback_data'=>"editsServersecurity$id"],
-            ['text'=>"security",'callback_data'=>"wizwizch"],
+            ['text'=>"security",'callback_data'=>"alphabot"],
             ],
         (($serverConfig['type'] == "sanaei" || $serverConfig['type'] == "alireza")?
         [
             ['text'=>$reality,'callback_data'=>"changeRealityState$id"],
-            ['text'=>"reality",'callback_data'=>"wizwizch"],
+            ['text'=>"reality",'callback_data'=>"alphabot"],
             ]:[]),
         [
             ['text'=>"♻️ تغییر آیپی های سرور",'callback_data'=>"changesServerIp$id"],
@@ -731,9 +731,9 @@ function getServerListKeys($offset = 0){
 
 
     $keys = array();
-    $keys[] = [['text'=>"وضعیت",'callback_data'=>"wizwizch"],['text'=>"تنظیمات",'callback_data'=>"wizwizch"],['text'=>"نوعیت",'callback_data'=>"wizwizch"],['text'=>"سرور",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"وضعیت",'callback_data'=>"alphabot"],['text'=>"تنظیمات",'callback_data'=>"alphabot"],['text'=>"نوعیت",'callback_data'=>"alphabot"],['text'=>"سرور",'callback_data'=>"alphabot"]];
     if($cats->num_rows == 0){
-        $keys[] = [['text'=>"سروری یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"سروری یافت نشد",'callback_data'=>"alphabot"]];
     }else {
         while($cty = $cats->fetch_assoc()){
             $id = $cty['id'];
@@ -763,7 +763,7 @@ function getServerListKeys($offset = 0){
                     $serverType = "مرزبان";
                     break;
             }
-            $keys[] = [['text'=>$state,'callback_data'=>'toggleServerState' . $id . "_" . $offset],['text'=>"⚙️",'callback_data'=>"showServerSettings" . $id . "_" . $offset],['text'=>$serverType??" ",'callback_data'=>"wizwizch"],['text'=>$cname,'callback_data'=>"wizwizch"]];
+            $keys[] = [['text'=>$state,'callback_data'=>'toggleServerState' . $id . "_" . $offset],['text'=>"⚙️",'callback_data'=>"showServerSettings" . $id . "_" . $offset],['text'=>$serverType??" ",'callback_data'=>"alphabot"],['text'=>$cname,'callback_data'=>"alphabot"]];
         } 
     }
     if($offset == 0 && $cats->num_rows >= $limit){
@@ -797,9 +797,9 @@ function getCategoriesKeys($offset = 0){
 
 
     $keys = array();
-    $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"اسم دسته",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"اسم دسته",'callback_data'=>"alphabot"]];
     if($cats->num_rows == 0){
-        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"alphabot"]];
     }else {
         while($cty = $cats->fetch_assoc()){
             $id = $cty['id'];
@@ -857,67 +857,67 @@ function getGateWaysKeys(){
     return json_encode(['inline_keyboard'=>[
         [
             ['text'=>(!empty($paymentKeys['bankAccount'])?$paymentKeys['bankAccount']:" "),'callback_data'=>"changePaymentKeysbankAccount"],
-            ['text'=>"شماره حساب",'callback_data'=>"wizwizch"]
+            ['text'=>"شماره حساب",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>(!empty($paymentKeys['holderName'])?$paymentKeys['holderName']:" "),'callback_data'=>"changePaymentKeysholderName"],
-            ['text'=>"دارنده حساب",'callback_data'=>"wizwizch"]
+            ['text'=>"دارنده حساب",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>(!empty($paymentKeys['nowpayment'])?$paymentKeys['nowpayment']:" "),'callback_data'=>"changePaymentKeysnowpayment"],
-            ['text'=>"کد درگاه nowPayment",'callback_data'=>"wizwizch"]
+            ['text'=>"کد درگاه nowPayment",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>(!empty($paymentKeys['zarinpal'])?$paymentKeys['zarinpal']:" "),'callback_data'=>"changePaymentKeyszarinpal"],
-            ['text'=>"کد درگاه زرین پال",'callback_data'=>"wizwizch"]
+            ['text'=>"کد درگاه زرین پال",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>(!empty($paymentKeys['nextpay'])?$paymentKeys['nextpay']:" "),'callback_data'=>"changePaymentKeysnextpay"],
-            ['text'=>"کد درگاه نکست پی",'callback_data'=>"wizwizch"]
+            ['text'=>"کد درگاه نکست پی",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>(!empty($paymentKeys['tronwallet'])?$paymentKeys['tronwallet']:" "),'callback_data'=>"changePaymentKeystronwallet"],
-            ['text'=>"آدرس والت ترون",'callback_data'=>"wizwizch"]
+            ['text'=>"آدرس والت ترون",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$weSwapState,'callback_data'=>"changeGateWaysweSwapState"],
-            ['text'=>"درگاه وی سواپ",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه وی سواپ",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$cartToCartState,'callback_data'=>"changeGateWayscartToCartState"],
-            ['text'=>"کارت به کارت",'callback_data'=>"wizwizch"]
+            ['text'=>"کارت به کارت",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$nextpay,'callback_data'=>"changeGateWaysnextpay"],
-            ['text'=>"درگاه نکست پی",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه نکست پی",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$zarinpal,'callback_data'=>"changeGateWayszarinpal"],
-            ['text'=>"درگاه زرین پال",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه زرین پال",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$nowPaymentWallet,'callback_data'=>"changeGateWaysnowPaymentWallet"],
-            ['text'=>"درگاه NowPayment کیف پول",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه NowPayment کیف پول",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$nowPaymentOther,'callback_data'=>"changeGateWaysnowPaymentOther"],
-            ['text'=>"درگاه NowPayment سایر",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه NowPayment سایر",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$tronWallet,'callback_data'=>"changeGateWaystronWallet"],
-            ['text'=>"درگاه ترون",'callback_data'=>"wizwizch"]
+            ['text'=>"درگاه ترون",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$walletState,'callback_data'=>"changeGateWayswalletState"],
-            ['text'=>"کیف پول",'callback_data'=>"wizwizch"]
+            ['text'=>"کیف پول",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$rewaredChannel,'callback_data'=>'editRewardChannel'],
-            ['text'=>"کانال گزارش درآمد",'callback_data'=>'wizwizch']
+            ['text'=>"کانال گزارش درآمد",'callback_data'=>'alphabot']
             ],
         [
             ['text'=>$lockChannel,'callback_data'=>'editLockChannel'],
-            ['text'=>"کانال قفل",'callback_data'=>'wizwizch']
+            ['text'=>"کانال قفل",'callback_data'=>'alphabot']
             ],
         [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]]
         ]]);
@@ -982,115 +982,115 @@ function getBotSettingKeys(){
             ],
         [
             ['text'=> $updateConnectionState,'callback_data'=>"changeUpdateConfigLinkState"],
-            ['text'=>"آپدیت کانفیگ",'callback_data'=>"wizwizch"]
+            ['text'=>"آپدیت کانفیگ",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=> $agency,'callback_data'=>"changeBotagencyState"],
-            ['text'=>"نمایندگی",'callback_data'=>"wizwizch"]
+            ['text'=>"نمایندگی",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=> $agencyPlanDiscount,'callback_data'=>"changeBotagencyPlanDiscount"],
-            ['text'=>"نوع تخفیف نمایندگی",'callback_data'=>"wizwizch"]
+            ['text'=>"نوع تخفیف نمایندگی",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$individualExistence,'callback_data'=>"changeBotindividualExistence"],
-            ['text'=>"موجودی اختصاصی",'callback_data'=>"wizwizch"]
+            ['text'=>"موجودی اختصاصی",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$sharedExistence,'callback_data'=>"changeBotsharedExistence"],
-            ['text'=>"موجودی اشتراکی",'callback_data'=>"wizwizch"]
+            ['text'=>"موجودی اشتراکی",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$testAccount,'callback_data'=>"changeBottestAccount"],
-            ['text'=>"اکانت تست",'callback_data'=>"wizwizch"]
+            ['text'=>"اکانت تست",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$changeProtocole,'callback_data'=>"changeBotchangeProtocolState"],
-            ['text'=>"تغییر پروتکل",'callback_data'=>"wizwizch"]
+            ['text'=>"تغییر پروتکل",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$renewAccount,'callback_data'=>"changeBotrenewAccountState"],
-            ['text'=>"تمدید سرویس",'callback_data'=>"wizwizch"]
+            ['text'=>"تمدید سرویس",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$plandelkhahwiz,'callback_data'=>"changeBotplandelkhahState"],
-            ['text'=>"پلن دلخواه",'callback_data'=>"wizwizch"]
+            ['text'=>"پلن دلخواه",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$switchLocation,'callback_data'=>"changeBotswitchLocationState"],
-            ['text'=>"تغییر لوکیشن",'callback_data'=>"wizwizch"]
+            ['text'=>"تغییر لوکیشن",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$increaseTime,'callback_data'=>"changeBotincreaseTimeState"],
-            ['text'=>"افزایش زمان",'callback_data'=>"wizwizch"]
+            ['text'=>"افزایش زمان",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$increaseVolume,'callback_data'=>"changeBotincreaseVolumeState"],
-            ['text'=>"افزایش حجم",'callback_data'=>"wizwizch"]
+            ['text'=>"افزایش حجم",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$requirePhone,'callback_data'=>"changeBotrequirePhone"],
-            ['text'=>"تأیید شماره",'callback_data'=>"wizwizch"]
+            ['text'=>"تأیید شماره",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$requireIranPhone,'callback_data'=>"changeBotrequireIranPhone"],
-            ['text'=>"تأیید شماره ایرانی",'callback_data'=>"wizwizch"]
+            ['text'=>"تأیید شماره ایرانی",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$sellState,'callback_data'=>"changeBotsellState"],
-            ['text'=>"فروش",'callback_data'=>"wizwizch"]
+            ['text'=>"فروش",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$robotState,'callback_data'=>"changeBotbotState"],
-            ['text'=>"وضعیت ربات",'callback_data'=>"wizwizch"]
+            ['text'=>"وضعیت ربات",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$subLink,'callback_data'=>"changeBotsubLinkState"],
-            ['text'=>"لینک ساب و مشخصات وب",'callback_data'=>"wizwizch"]
+            ['text'=>"لینک ساب و مشخصات وب",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$configLink,'callback_data'=>"changeBotconfigLinkState"],
-            ['text'=>"لینک کانفیگ",'callback_data'=>"wizwizch"]
+            ['text'=>"لینک کانفیگ",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$searchState,'callback_data'=>"changeBotsearchState"],
-            ['text'=>"مشخصات کانفیگ",'callback_data'=>"wizwizch"]
+            ['text'=>"مشخصات کانفیگ",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$renewConfigLink,'callback_data'=>"changeBotrenewConfigLinkState"],
-            ['text'=>"دریافت لینک جدید",'callback_data'=>"wizwizch"]
+            ['text'=>"دریافت لینک جدید",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$updateConfigLink,'callback_data'=>"changeBotupdateConfigLinkState"],
-            ['text'=>"بروز رسانی لینک",'callback_data'=>"wizwizch"]
+            ['text'=>"بروز رسانی لینک",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$qrConfig,'callback_data'=>"changeBotqrConfigState"],
-            ['text'=>"کیو آر کد کانفیگ",'callback_data'=>"wizwizch"]
+            ['text'=>"کیو آر کد کانفیگ",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$qrSub,'callback_data'=>"changeBotqrSubState"],
-            ['text'=>"کیو آر کد ساب",'callback_data'=>"wizwizch"]
+            ['text'=>"کیو آر کد ساب",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$remarkType,'callback_data'=>"changeConfigRemarkType"],
-            ['text'=>"نوع ریمارک",'callback_data'=>"wizwizch"]
+            ['text'=>"نوع ریمارک",'callback_data'=>"alphabot"]
         ],
         [
             ['text'=>$rewaredTime,'callback_data'=>'editRewaredTime'],
-            ['text'=>"ارسال گزارش درآمد", 'callback_data'=>'wizwizch']
+            ['text'=>"ارسال گزارش درآمد", 'callback_data'=>'alphabot']
             ],
         [
             ['text'=>$botState['cartToCartAutoAcceptState']=="on"?$buttonValues['on']:$buttonValues['off'],'callback_data'=>"changeBotcartToCartAutoAcceptState"],
-            ['text'=>"تأیید خودکار کارت به کارت",'callback_data'=>"wizwizch"]
+            ['text'=>"تأیید خودکار کارت به کارت",'callback_data'=>"alphabot"]
         ],
         ($botState['cartToCartAutoAcceptState']=="on"?[
             ['text'=>($botState['cartToCartAutoAcceptType'] == "0"?"نماینده":($botState['cartToCartAutoAcceptType'] == "1"?"کاربر":"همه")),'callback_data'=>"changeBotcartToCartAutoAcceptType"],
-            ['text'=>"نوع تأیید",'callback_data'=>"wizwizch"]
+            ['text'=>"نوع تأیید",'callback_data'=>"alphabot"]
         ]:[]),
         ($botState['cartToCartAutoAcceptState']=="on"?[
             ['text'=>($botState['cartToCartAutoAcceptTime']??"10") . " دقیقه",'callback_data'=>"editcartToCartAutoAcceptTime"],
-            ['text'=>"زمان تأیید خودکار ",'callback_data'=>"wizwizch"]
+            ['text'=>"زمان تأیید خودکار ",'callback_data'=>"alphabot"]
         ]:[]),
         [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]]
         ]]);
@@ -1155,40 +1155,40 @@ function getBotReportKeys(){
     
     return json_encode(['inline_keyboard'=>[
         [
-            ['text'=>$allUsers,'callback_data'=>'wizwizch'],
-            ['text'=>"تعداد کل کاربران",'callback_data'=>'wizwizch']
+            ['text'=>$allUsers,'callback_data'=>'alphabot'],
+            ['text'=>"تعداد کل کاربران",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$allOrders,'callback_data'=>'wizwizch'],
-            ['text'=>"کل محصولات خریداری شده",'callback_data'=>'wizwizch']
+            ['text'=>$allOrders,'callback_data'=>'alphabot'],
+            ['text'=>"کل محصولات خریداری شده",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$allServers,'callback_data'=>'wizwizch'],
-            ['text'=>"تعداد سرورها",'callback_data'=>'wizwizch']
+            ['text'=>$allServers,'callback_data'=>'alphabot'],
+            ['text'=>"تعداد سرورها",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$allCategories,'callback_data'=>'wizwizch'],
-            ['text'=>"تعداد دسته ها",'callback_data'=>'wizwizch']
+            ['text'=>$allCategories,'callback_data'=>'alphabot'],
+            ['text'=>"تعداد دسته ها",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$allPlans,'callback_data'=>'wizwizch'],
-            ['text'=>"تعداد پلن ها",'callback_data'=>'wizwizch']
+            ['text'=>$allPlans,'callback_data'=>'alphabot'],
+            ['text'=>"تعداد پلن ها",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$totalRewards,'callback_data'=>'wizwizch'],
-            ['text'=>"درآمد کل",'callback_data'=>'wizwizch']
+            ['text'=>$totalRewards,'callback_data'=>'alphabot'],
+            ['text'=>"درآمد کل",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$dayReward,'callback_data'=>'wizwizch'],
-            ['text'=>"درآمد امروز",'callback_data'=>'wizwizch']
+            ['text'=>$dayReward,'callback_data'=>'alphabot'],
+            ['text'=>"درآمد امروز",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$weekReward,'callback_data'=>'wizwizch'],
-            ['text'=>"درآمد هفته",'callback_data'=>'wizwizch']
+            ['text'=>$weekReward,'callback_data'=>'alphabot'],
+            ['text'=>"درآمد هفته",'callback_data'=>'alphabot']
             ],
         [
-            ['text'=>$monthReward,'callback_data'=>'wizwizch'],
-            ['text'=>"درآمد ماه",'callback_data'=>'wizwizch']
+            ['text'=>$monthReward,'callback_data'=>'alphabot'],
+            ['text'=>"درآمد ماه",'callback_data'=>'alphabot']
             ],
         [
             ['text'=>"برگشت به مدیریت",'callback_data'=>'managePanel']
@@ -1205,10 +1205,10 @@ function getAdminsKeys(){
     $stmt->close();
     if($usersList->num_rows > 0){
         while($user = $usersList->fetch_assoc()){
-            $keys[] = [['text'=>"❌",'callback_data'=>"delAdmin" . $user['userid']],['text'=>$user['name'], "callback_data"=>"wizwizch"]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"delAdmin" . $user['userid']],['text'=>$user['name'], "callback_data"=>"alphabot"]];
         }
     }else{
-        $keys[] = [['text'=>"لیست ادمین ها خالی است ❕",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"لیست ادمین ها خالی است ❕",'callback_data'=>"alphabot"]];
     }
     $keys[] = [['text'=>"➕ افزودن ادمین",'callback_data'=>"addNewAdmin"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]];
@@ -1240,23 +1240,23 @@ function getUserInfoKeys($userId){
         return json_encode(['inline_keyboard'=>[
             [
                 ['text'=>$userUserName??" ",'url'=>"t.me/$userUserName"],
-                ['text'=>"یوزرنیم",'callback_data'=>"wizwizch"]
+                ['text'=>"یوزرنیم",'callback_data'=>"alphabot"]
                 ],
             [
-                ['text'=>$fullName??" ",'callback_data'=>"wizwizch"],
-                ['text'=>"نام",'callback_data'=>"wizwizch"]
+                ['text'=>$fullName??" ",'callback_data'=>"alphabot"],
+                ['text'=>"نام",'callback_data'=>"alphabot"]
                 ],
             [
-                ['text'=>$boughtService??" ",'callback_data'=>"wizwizch"],
-                ['text'=>"سرویس ها",'callback_data'=>"wizwizch"]
+                ['text'=>$boughtService??" ",'callback_data'=>"alphabot"],
+                ['text'=>"سرویس ها",'callback_data'=>"alphabot"]
                 ],
             [
-                ['text'=>$totalBoughtPrice??" ",'callback_data'=>"wizwizch"],
-                ['text'=>"مبلغ خرید",'callback_data'=>"wizwizch"]
+                ['text'=>$totalBoughtPrice??" ",'callback_data'=>"alphabot"],
+                ['text'=>"مبلغ خرید",'callback_data'=>"alphabot"]
                 ],
             [
-                ['text'=>$userWallet??" ",'callback_data'=>"wizwizch"],
-                ['text'=>"موجودی کیف پول",'callback_data'=>"wizwizch"]
+                ['text'=>$userWallet??" ",'callback_data'=>"alphabot"],
+                ['text'=>"موجودی کیف پول",'callback_data'=>"alphabot"]
                 ],
             [
                 ['text'=>$buttonValues['back_button'],'callback_data'=>"mainMenu"]
@@ -1273,7 +1273,7 @@ function getDiscountCodeKeys(){
     $stmt->close();
     $keys = array();
     if($list->num_rows > 0){
-        $keys[] = [['text'=>'حذف','callback_data'=>"wizwizch"],['text'=>"استفاده هر یوزر",'callback_data'=>"wizwizch"],['text'=>"تاریخ ختم",'callback_data'=>"wizwizch"],['text'=>"تعداد استفاده",'callback_data'=>"wizwizch"],['text'=>"مقدار تخفیف",'callback_data'=>"wizwizch"],['text'=>"کد تخفیف",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>'حذف','callback_data'=>"alphabot"],['text'=>"استفاده هر یوزر",'callback_data'=>"alphabot"],['text'=>"تاریخ ختم",'callback_data'=>"alphabot"],['text'=>"تعداد استفاده",'callback_data'=>"alphabot"],['text'=>"مقدار تخفیف",'callback_data'=>"alphabot"],['text'=>"کد تخفیف",'callback_data'=>"alphabot"]];
         while($row = $list->fetch_assoc()){
             $date = $row['expire_date']!=0?jdate("Y/n/j H:i", $row['expire_date']):"نامحدود";
             $count = $row['expire_count']!=-1?$row['expire_count']:"نامحدود";
@@ -1283,10 +1283,10 @@ function getDiscountCodeKeys(){
             $rowId = $row['id'];
             $canUse = $row['can_use'];
             
-            $keys[] = [['text'=>'❌','callback_data'=>"delDiscount" . $rowId],['text'=>$canUse, 'callback_data'=>"wizwizch"],['text'=>$date,'callback_data'=>"wizwizch"],['text'=>$count,'callback_data'=>"wizwizch"],['text'=>$amount,'callback_data'=>"wizwizch"],['text'=>$hashId,'callback_data'=>'copyHash' . $hashId]];
+            $keys[] = [['text'=>'❌','callback_data'=>"delDiscount" . $rowId],['text'=>$canUse, 'callback_data'=>"alphabot"],['text'=>$date,'callback_data'=>"alphabot"],['text'=>$count,'callback_data'=>"alphabot"],['text'=>$amount,'callback_data'=>"alphabot"],['text'=>$hashId,'callback_data'=>'copyHash' . $hashId]];
         }
     }else{
-        $keys[] = [['text'=>"کد تخفیفی یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"کد تخفیفی یافت نشد",'callback_data'=>"alphabot"]];
     }
     
     $keys[] = [['text'=>"افزودن کد تخفیف",'callback_data'=>"addDiscountCode"]];
@@ -1309,10 +1309,10 @@ function getMainMenuButtonsKeys(){
             $answer = $row['value'];
             $keys[] = [
                         ['text'=>"❌",'callback_data'=>"delMainButton" . $rowId],
-                        ['text'=>$title??" " ,'callback_data'=>"wizwizch"]];
+                        ['text'=>$title??" " ,'callback_data'=>"alphabot"]];
         }
     }else{
-        $keys[] = [['text'=>"دکمه ای یافت نشد ❕",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"دکمه ای یافت نشد ❕",'callback_data'=>"alphabot"]];
     }
     $keys[] = [['text'=>"افزودن دکمه جدید ➕",'callback_data'=>"addNewMainButton"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]];
@@ -1360,29 +1360,29 @@ function getPlanDetailsKeys($planId){
 
         $srvid= $pd['server_id'];
         $keyboard = [
-            ($rahgozar==true?[['text'=>"* نوع پلن: رهگذر *",'callback_data'=>'wizwizch']]:[]),
+            ($rahgozar==true?[['text'=>"* نوع پلن: رهگذر *",'callback_data'=>'alphabot']]:[]),
             ($rahgozar==true?[
                 ['text'=>$customPath,'callback_data'=>'changeCustomPath' . $id],
-                ['text'=>"Path Custom",'callback_data'=>'wizwizch'],
+                ['text'=>"Path Custom",'callback_data'=>'alphabot'],
                 ]:[]),
             ($rahgozar==true?[
                 ['text'=>$customPort,'callback_data'=>'changeCustomPort' . $id],
-                ['text'=>"پورت دلخواه",'callback_data'=>'wizwizch'],
+                ['text'=>"پورت دلخواه",'callback_data'=>'alphabot'],
                 ]:[]),
             ($rahgozar==true?[
                 ['text'=>$customSni,'callback_data'=>'changeCustomSni' . $id],
-                ['text'=>"sni دلخواه",'callback_data'=>'wizwizch'],
+                ['text'=>"sni دلخواه",'callback_data'=>'alphabot'],
                 ]:[]),
-            [['text'=>$name,'callback_data'=>"wizwizplanname$id"],['text'=>"🔮 نام پلن",'callback_data'=>"wizwizch"]],
-            ($reality == "true"?[['text'=>$dest,'callback_data'=>"editDestName$id"],['text'=>"dest",'callback_data'=>"wizwizch"]]:[]),
-            ($reality == "true"?[['text'=>$serverName,'callback_data'=>"editServerNames$id"],['text'=>"serverNames",'callback_data'=>"wizwizch"]]:[]),
-            ($reality == "true"?[['text'=>$spiderX,'callback_data'=>"editSpiderX$id"],['text'=>"spiderX",'callback_data'=>"wizwizch"]]:[]),
-            ($reality == "true"?[['text'=>$flow,'callback_data'=>"editFlow$id"],['text'=>"flow",'callback_data'=>"wizwizch"]]:[]),
-            [['text'=>$wizwizplanaccnumber,'callback_data'=>"wizwizch"],['text'=>"🎗 تعداد اکانت های فروخته شده",'callback_data'=>"wizwizch"]],
-            ($pd['inbound_id'] != 0?[['text'=>"$acount",'callback_data'=>"wizwizplanslimit$id"],['text'=>"🚪 تغییر ظرفیت کانفیگ",'callback_data'=>"wizwizch"]]:[]),
-            ($pd['inbound_id'] != 0?[['text'=>$pd['inbound_id'],'callback_data'=>"wizwizplansinobundid$id"],['text'=>"🚪 سطر کانفیگ",'callback_data'=>"wizwizch"]]:[]),
+            [['text'=>$name,'callback_data'=>"wizwizplanname$id"],['text'=>"🔮 نام پلن",'callback_data'=>"alphabot"]],
+            ($reality == "true"?[['text'=>$dest,'callback_data'=>"editDestName$id"],['text'=>"dest",'callback_data'=>"alphabot"]]:[]),
+            ($reality == "true"?[['text'=>$serverName,'callback_data'=>"editServerNames$id"],['text'=>"serverNames",'callback_data'=>"alphabot"]]:[]),
+            ($reality == "true"?[['text'=>$spiderX,'callback_data'=>"editSpiderX$id"],['text'=>"spiderX",'callback_data'=>"alphabot"]]:[]),
+            ($reality == "true"?[['text'=>$flow,'callback_data'=>"editFlow$id"],['text'=>"flow",'callback_data'=>"alphabot"]]:[]),
+            [['text'=>$wizwizplanaccnumber,'callback_data'=>"alphabot"],['text'=>"🎗 تعداد اکانت های فروخته شده",'callback_data'=>"alphabot"]],
+            ($pd['inbound_id'] != 0?[['text'=>"$acount",'callback_data'=>"wizwizplanslimit$id"],['text'=>"🚪 تغییر ظرفیت کانفیگ",'callback_data'=>"alphabot"]]:[]),
+            ($pd['inbound_id'] != 0?[['text'=>$pd['inbound_id'],'callback_data'=>"wizwizplansinobundid$id"],['text'=>"🚪 سطر کانفیگ",'callback_data'=>"alphabot"]]:[]),
             [['text'=>"✏️ ویرایش توضیحات",'callback_data'=>"wizwizplaneditdes$id"]],
-            [['text'=>number_format($price) . " تومان",'callback_data'=>"wizwizplanrial$id"],['text'=>"💰 قیمت پلن",'callback_data'=>"wizwizch"]],
+            [['text'=>number_format($price) . " تومان",'callback_data'=>"wizwizplanrial$id"],['text'=>"💰 قیمت پلن",'callback_data'=>"alphabot"]],
             [['text'=>"♻️ دریافت لیست اکانت ها",'callback_data'=>"wizwizplanacclist$id"]],
             ($server_info['type'] == "marzban"?[['text'=>"انتخاب Host",'callback_data'=>"marzbanHostSettings" . $id]]:[]),
             [['text'=>"✂️ حذف",'callback_data'=>"wizwizplandelete$id"]],
@@ -1538,35 +1538,35 @@ function getUserOrderDetailKeys($id, $offset = 0){
         }
     
         array_push($keyboard, $configKeys, [
-    			    ['text' => $userId, 'callback_data' => "wizwizch"],
-                    ['text' => "آیدی کاربر", 'callback_data' => "wizwizch"],
+    			    ['text' => $userId, 'callback_data' => "alphabot"],
+                    ['text' => "آیدی کاربر", 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => $firstName, 'callback_data' => "wizwizch"],
-                    ['text' => "اسم کاربر", 'callback_data' => "wizwizch"],
+    			    ['text' => $firstName, 'callback_data' => "alphabot"],
+                    ['text' => "اسم کاربر", 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => $isAgentBought, 'callback_data' => "wizwizch"],
-                    ['text' => "خرید نماینده", 'callback_data' => "wizwizch"],
+    			    ['text' => $isAgentBought, 'callback_data' => "alphabot"],
+                    ['text' => "خرید نماینده", 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => "$name", 'callback_data' => "wizwizch"],
-                    ['text' => $buttonValues['plan_name'], 'callback_data' => "wizwizch"],
+    			    ['text' => "$name", 'callback_data' => "alphabot"],
+                    ['text' => $buttonValues['plan_name'], 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => "$date ", 'callback_data' => "wizwizch"],
-                    ['text' => $buttonValues['buy_date'], 'callback_data' => "wizwizch"],
+    			    ['text' => "$date ", 'callback_data' => "alphabot"],
+                    ['text' => $buttonValues['buy_date'], 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => "$expire_date ", 'callback_data' => "wizwizch"],
-                    ['text' => $buttonValues['expire_date'], 'callback_data' => "wizwizch"],
+    			    ['text' => "$expire_date ", 'callback_data' => "alphabot"],
+                    ['text' => $buttonValues['expire_date'], 'callback_data' => "alphabot"],
                 ],
                 [
-    			    ['text' => " $leftgb", 'callback_data' => "wizwizch"],
-                    ['text' => $buttonValues['volume_left'], 'callback_data' => "wizwizch"],
+    			    ['text' => " $leftgb", 'callback_data' => "alphabot"],
+                    ['text' => $buttonValues['volume_left'], 'callback_data' => "alphabot"],
     			],
                 [
-                    ['text' => $buttonValues['selected_protocol'], 'callback_data' => "wizwizch"],
+                    ['text' => $buttonValues['selected_protocol'], 'callback_data' => "alphabot"],
                 ]);
                 
         if($inbound_id == 0){
@@ -1574,8 +1574,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
                 if($security == "xtls"){
                     array_push($keyboard, 
                         [
-                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ],
                         [
                             ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1586,9 +1586,9 @@ function getUserOrderDetailKeys($id, $offset = 0){
                 }else{
                     array_push($keyboard, 
                         [
-                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ],
                         [
                             ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1602,8 +1602,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
                 if($netType == "grpc"){
                     array_push($keyboard, 
                         [
-                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ],
                         [
                             ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1614,8 +1614,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
                 elseif($netType == "tcp" && $security == "xtls"){
                     array_push($keyboard, 
                         [
-                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ],
                         [
                             ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1628,13 +1628,13 @@ function getUserOrderDetailKeys($id, $offset = 0){
                     array_push($keyboard, 
                         ($rahgozar == true?
                         [
-                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ]:
                             [
-                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
-                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
+                            ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "alphabot"],
+                            ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "alphabot"],
                         ]),
                         [
                             ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1647,7 +1647,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
         }else{
             array_push($keyboard, 
                 [
-                    ['text' => " $protocol ☑️", 'callback_data' => "wizwizch"],
+                    ['text' => " $protocol ☑️", 'callback_data' => "alphabot"],
                 ],
                 [
                     ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
@@ -1851,24 +1851,24 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
         }
         
         array_push($keyboard,$configKeys, [
-			    ['text' => $name, 'callback_data' => "wizwizch"],
-                ['text' => $buttonValues['plan_name'], 'callback_data' => "wizwizch"],
+			    ['text' => $name, 'callback_data' => "alphabot"],
+                ['text' => $buttonValues['plan_name'], 'callback_data' => "alphabot"],
             ],
             [
-			    ['text' => $date, 'callback_data' => "wizwizch"],
-                ['text' => $buttonValues['buy_date'], 'callback_data' => "wizwizch"],
+			    ['text' => $date, 'callback_data' => "alphabot"],
+                ['text' => $buttonValues['buy_date'], 'callback_data' => "alphabot"],
             ],
             [
-			    ['text' => $expire_date, 'callback_data' => "wizwizch"],
-                ['text' => $buttonValues['expire_date'], 'callback_data' => "wizwizch"],
+			    ['text' => $expire_date, 'callback_data' => "alphabot"],
+                ['text' => $buttonValues['expire_date'], 'callback_data' => "alphabot"],
             ],
             [
-			    ['text' => $leftgb, 'callback_data' => "wizwizch"],
-                ['text' => $buttonValues['volume_left'], 'callback_data' => "wizwizch"],
+			    ['text' => $leftgb, 'callback_data' => "alphabot"],
+                ['text' => $buttonValues['volume_left'], 'callback_data' => "alphabot"],
 			],
             ($serverType != "marzban"?
 			[
-                ['text' => $buttonValues['selected_protocol'], 'callback_data' => "wizwizch"],
+                ['text' => $buttonValues['selected_protocol'], 'callback_data' => "alphabot"],
             ]:[]));
         if($found){
             if($inbound_id == 0){
@@ -1966,7 +1966,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
             }else{
                 if($serverType != "marzban"){
                     array_push($keyboard, [
-                            ['text' => " $protocol ☑️", 'callback_data' => "wizwizch"],
+                            ['text' => " $protocol ☑️", 'callback_data' => "alphabot"],
                         ]);
                 }
                 

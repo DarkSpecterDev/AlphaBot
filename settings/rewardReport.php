@@ -586,6 +586,6 @@ if($botState['cartToCartAutoAcceptState']=="on"){
         }
         
 
-        editKeys(json_encode(['inline_keyboard'=>[[['text'=>"خودکار تأیید شد",'callback_data'=>"wizwizch"]]]]), $payInfo['message_id'], $payInfo['chat_id']);
+        editKeys(json_encode(['inline_keyboard'=>[[['text'=>"خودکار تأیید شد",'callback_data'=>"alphabot"]]]]), $payInfo['message_id'], $payInfo['chat_id']);
     }
 }

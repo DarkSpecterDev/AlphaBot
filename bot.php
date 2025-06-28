@@ -491,7 +491,7 @@ if($data=="inviteSetting" && ($from_id == $admin || $userInfo['isAdmin'] == true
         [['text'=>"❗️بنر دعوت",'callback_data'=>"inviteBanner"]],
         [
             ['text'=>$inviteAmount,'callback_data'=>"editInviteAmount"],
-            ['text'=>"مقدار پورسانت",'callback_data'=>"wizwizch"]
+            ['text'=>"مقدار پورسانت",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$buttonValues['back_button'],'callback_data'=>"botSettings"]
@@ -606,7 +606,7 @@ if($userInfo['step'] == "editInviteAmount" && ($from_id == $admin || $userInfo['
             [['text'=>"❗️بنر دعوت",'callback_data'=>"inviteBanner"]],
             [
                 ['text'=>number_format($text) . " تومان",'callback_data'=>"editInviteAmount"],
-                ['text'=>"مقدار پورسانت",'callback_data'=>"wizwizch"]
+                ['text'=>"مقدار پورسانت",'callback_data'=>"alphabot"]
                 ], 
             [
                 ['text'=>$buttonValues['back_button'],'callback_data'=>"botSettings"]
@@ -1843,7 +1843,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     }
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"wizwizch"]
+            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"alphabot"]
         ],
         ]]);
         
@@ -1921,7 +1921,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     sendMessage("✅سرویس $remark با موفقیت تمدید شد",getMainKeys());
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"به به تمدید 😍",'callback_data'=>"wizwizch"]
+            ['text'=>"به به تمدید 😍",'callback_data'=>"alphabot"]
             ],
         ]]);
     
@@ -1988,7 +1988,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>"اخیش یکی زمان زد 😁",'callback_data'=>"wizwizch"]
+                ['text'=>"اخیش یکی زمان زد 😁",'callback_data'=>"alphabot"]
                 ],
             ]]);
     sendMessage("
@@ -2056,7 +2056,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         $stmt->close();
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>"اخیش یکی حجم زد 😁",'callback_data'=>"wizwizch"]
+                ['text'=>"اخیش یکی حجم زد 😁",'callback_data'=>"alphabot"]
                 ],
             ]]);
     sendMessage("
@@ -2135,7 +2135,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     }
         
     editKeys(json_encode(['inline_keyboard'=>[
-		    [['text'=>"پرداخت انجام شد",'callback_data'=>"wizwizch"]]
+		    [['text'=>"پرداخت انجام شد",'callback_data'=>"alphabot"]]
 		    ]]));
 }else{
     if($request_json->payment_status == 'partially_paid'){
@@ -2533,7 +2533,7 @@ if((preg_match('/^discountCustomPlanDay(\d+)/',$userInfo['step'], $match) || pre
                 sendMessage(str_replace("AMOUNT", $discount, $mainValues['valid_discount_code']));
                 $keys = json_encode(['inline_keyboard'=>[
                     [
-                        ['text'=>"❤️", "callback_data"=>"wizwizch"]
+                        ['text'=>"❤️", "callback_data"=>"alphabot"]
                         ],
                     ]]);
             sendMessage(
@@ -2728,7 +2728,7 @@ if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match
                 sendMessage(str_replace("AMOUNT", $discount, $mainValues['valid_discount_code']));
                 $keys = json_encode(['inline_keyboard'=>[
                     [
-                        ['text'=>"❤️", "callback_data"=>"wizwizch"]
+                        ['text'=>"❤️", "callback_data"=>"alphabot"]
                         ],
                     ]]);
                 sendMessage(
@@ -3106,7 +3106,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
 
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"wizwizch"]
+            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"alphabot"]
         ],
         ]]);
     $msg = str_replace(['TYPE', 'USER-ID', 'USERNAME', 'NAME', 'PRICE', 'REMARK', 'VOLUME', 'DAYS'],
@@ -3487,7 +3487,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
 
 
     unset($markup[count($markup)-1]);
-    $markup[] = [['text'=>"✅",'callback_data'=>"wizwizch"]];
+    $markup[] = [['text'=>"✅",'callback_data'=>"alphabot"]];
     $keys = json_encode(['inline_keyboard'=>array_values($markup)],488);
 
 
@@ -3535,7 +3535,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     if($admin != $from_id){ 
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>"به به 🛍",'callback_data'=>"wizwizch"]
+                ['text'=>"به به 🛍",'callback_data'=>"alphabot"]
             ],
             ]]);
         $msg = str_replace(['USER-ID', 'USERNAME', 'NAME', 'PRICE', 'REMARK', 'FILENAME'],
@@ -3843,7 +3843,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"wizwizch"]
+            ['text'=>"بنازم خرید جدید ❤️",'callback_data'=>"alphabot"]
         ],
         ]]);
     if($payInfo['type'] == "RENEW_SCONFIG"){$msg = str_replace(['TYPE', 'USER-ID', 'USERNAME', 'NAME', 'PRICE', 'REMARK', 'VOLUME', 'DAYS'],
@@ -3986,9 +3986,9 @@ if($data=="availableServers"){
 
     $keys = array();
     $keys[] = [
-        ['text'=>"تعداد باقیمانده",'callback_data'=>"wizwizch"],
-        ['text'=>"پلن",'callback_data'=>"wizwizch"],
-        ['text'=>'سرور','callback_data'=>"wizwizch"]
+        ['text'=>"تعداد باقیمانده",'callback_data'=>"alphabot"],
+        ['text'=>"پلن",'callback_data'=>"alphabot"],
+        ['text'=>'سرور','callback_data'=>"alphabot"]
         ];
     while($file_detail = $serversList->fetch_assoc()){
         $days = $file_detail['days'];
@@ -4006,9 +4006,9 @@ if($data=="availableServers"){
             $name = $name->fetch_assoc()['title'];
             
             $keys[] = [
-                ['text'=>$acount . " اکانت",'callback_data'=>"wizwizch"],
-                ['text'=>$title??" ",'callback_data'=>"wizwizch"],
-                ['text'=>$name??" ",'callback_data'=>"wizwizch"]
+                ['text'=>$acount . " اکانت",'callback_data'=>"alphabot"],
+                ['text'=>$title??" ",'callback_data'=>"alphabot"],
+                ['text'=>$name??" ",'callback_data'=>"alphabot"]
                 ];
         }
     }
@@ -4024,8 +4024,8 @@ if($data=="availableServers2"){
 
     $keys = array();
     $keys[] = [
-        ['text'=>"تعداد باقیمانده",'callback_data'=>"wizwizch"],
-        ['text'=>'سرور','callback_data'=>"wizwizch"]
+        ['text'=>"تعداد باقیمانده",'callback_data'=>"alphabot"],
+        ['text'=>'سرور','callback_data'=>"alphabot"]
         ];
     while($file_detail2 = $serversList->fetch_assoc()){
         $days2 = $file_detail2['days'];
@@ -4045,8 +4045,8 @@ if($data=="availableServers2"){
             $acount2 = $sInfo['ucount'];
             
             $keys[] = [
-                ['text'=>$acount2 . " اکانت",'callback_data'=>"wizwizch"],
-                ['text'=>$title2??" ",'callback_data'=>"wizwizch"],
+                ['text'=>$acount2 . " اکانت",'callback_data'=>"alphabot"],
+                ['text'=>$title2??" ",'callback_data'=>"alphabot"],
                 ];
         }
     }
@@ -4075,7 +4075,7 @@ if($data=="requestAgency"){
 }
 if(preg_match('/^agencyDecline(\d+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     editKeys(json_encode(['inline_keyboard'=>[
-        [['text'=>$buttonValues['declined'],'callback_data'=>"wizwizch"]]
+        [['text'=>$buttonValues['declined'],'callback_data'=>"alphabot"]]
         ]]));
     sendMessage($mainValues['agency_request_declined'], null,null,$match[1]);
     setUser(-1, 'is_agent', $match[1]);
@@ -4087,7 +4087,7 @@ if(preg_match('/^agencyApprove(\d+)/',$data,$match) && ($from_id == $admin || $u
 if(preg_match('/^agencyApprove(\d+)_(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         editKeys(json_encode(['inline_keyboard'=>[
-            [['text'=>$buttonValues['approved'],'callback_data'=>"wizwizch"]]
+            [['text'=>$buttonValues['approved'],'callback_data'=>"alphabot"]]
             ]]), $match[2]);
         sendMessage($mainValues['saved_successfuly']);
         setUser();
@@ -4357,7 +4357,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
     }
 
     unset($markup[count($markup)-1]);
-    $markup[] = [['text'=>"✅",'callback_data'=>"wizwizch"]];
+    $markup[] = [['text'=>"✅",'callback_data'=>"alphabot"]];
     $keys = json_encode(['inline_keyboard'=>array_values($markup)],488);
 
     editKeys($keys);
@@ -4392,7 +4392,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         if($admin != $from_id){
             $keys = json_encode(['inline_keyboard'=>[
                 [
-                    ['text'=>"به به 🛍",'callback_data'=>"wizwizch"]
+                    ['text'=>"به به 🛍",'callback_data'=>"alphabot"]
                 ],
                 ]]);
                 
@@ -4412,7 +4412,7 @@ if(preg_match('/decline(\d+)_(\d+)/',$userInfo['step'],$match) && ($from_id == $
     $uid = $match[1];
     editKeys(
         json_encode(['inline_keyboard'=>[
-	    [['text'=>"لغو شد ❌",'callback_data'=>"wizwizch"]]
+	    [['text'=>"لغو شد ❌",'callback_data'=>"alphabot"]]
 	    ]]) ,$match[2]);
 
     sendMessage('پیامت رو براش ارسال کردم ... 🤝',$removeKeyboard);
@@ -4475,7 +4475,7 @@ if($data == 'dayPlanSettings' and ($from_id == $admin || $userInfo['isAdmin'] ==
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"تعداد روز",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"تعداد روز",'callback_data'=>"alphabot"]];
     while($cat = $res->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -4540,7 +4540,7 @@ if(preg_match('/^deleteDayPlan(\d+)/',$data,$match) and ($from_id == $admin || $
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"تعداد روز",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"تعداد روز",'callback_data'=>"alphabot"]];
     while($cat = $res->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -4590,7 +4590,7 @@ if(preg_match('/^changeDayPlanPrice(\d+)/',$userInfo['step'],$match) and $text !
             exit;
         }
         $keyboard = [];
-        $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"تعداد روز",'callback_data'=>"wizwizch"]];
+        $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"تعداد روز",'callback_data'=>"alphabot"]];
         while($cat = $res->fetch_assoc()){
             $id = $cat['id'];
             $title = $cat['volume'];
@@ -4642,7 +4642,7 @@ if(preg_match('/^changeDayPlanDay(\d+)/',$userInfo['step'],$match) && ($from_id 
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"تعداد روز",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"تعداد روز",'callback_data'=>"alphabot"]];
     while($cat = $res->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -4676,7 +4676,7 @@ if($data == 'volumePlanSettings' and ($from_id == $admin || $userInfo['isAdmin']
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"مقدار حجم",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"مقدار حجم",'callback_data'=>"alphabot"]];
     while ($cat = $plans->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -4739,7 +4739,7 @@ if(preg_match('/^deleteVolumePlan(\d+)/',$data,$match) and ($from_id == $admin |
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"مقدار حجم",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"مقدار حجم",'callback_data'=>"alphabot"]];
     while ($cat = $plans->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -4785,7 +4785,7 @@ if(preg_match('/^changeVolumePlanPrice(\d+)/',$userInfo['step'],$match) and $tex
             exit;
         }
         $keyboard = [];
-        $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"مقدار حجم",'callback_data'=>"wizwizch"]];
+        $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"مقدار حجم",'callback_data'=>"alphabot"]];
         while ($cat = $plans->fetch_assoc()){
             $id = $cat['id'];
             $title = $cat['volume'];
@@ -4833,7 +4833,7 @@ if(preg_match('/^changeVolumePlanVolume(\d+)/',$userInfo['step'], $match) and $t
         exit;
     }
     $keyboard = [];
-    $keyboard[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"قیمت",'callback_data'=>"wizwizch"],['text'=>"مقدار حجم",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"قیمت",'callback_data'=>"alphabot"],['text'=>"مقدار حجم",'callback_data'=>"alphabot"]];
     while ($cat = $plans->fetch_assoc()){
         $id = $cat['id'];
         $title = $cat['volume'];
@@ -5023,20 +5023,20 @@ if(preg_match('/^closeTicket_(\d+)/',$data,$match) and  $from_id != $admin){
     
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"$from_id",'callback_data'=>"wizwizch"],
-            ['text'=>"آیدی کاربر",'callback_data'=>'wizwizch']
+            ['text'=>"$from_id",'callback_data'=>"alphabot"],
+            ['text'=>"آیدی کاربر",'callback_data'=>'alphabot']
         ],
         [
-            ['text'=>$first_name??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"اسم کاربر",'callback_data'=>'wizwizch']
+            ['text'=>$first_name??" ",'callback_data'=>"alphabot"],
+            ['text'=>"اسم کاربر",'callback_data'=>'alphabot']
         ],
         [
-            ['text'=>"$title",'callback_data'=>'wizwizch'],
-            ['text'=>"عنوان",'callback_data'=>'wizwizch']
+            ['text'=>"$title",'callback_data'=>'alphabot'],
+            ['text'=>"عنوان",'callback_data'=>'alphabot']
         ],
         [
-            ['text'=>"$category",'callback_data'=>'wizwizch'],
-            ['text'=>"دسته بندی",'callback_data'=>'wizwizch']
+            ['text'=>"$category",'callback_data'=>'alphabot'],
+            ['text'=>"دسته بندی",'callback_data'=>'alphabot']
         ],
         ]]);
     sendMessage("☑️| تیکت توسط کاربر بسته شد",$keys,"HTML",$admin);
@@ -5110,7 +5110,7 @@ if(preg_match("/^rate_+([0-9])+_+([0-9])/",$data,$match)){
     
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"رای تیکت",'callback_data'=>"wizwizch"]
+            ['text'=>"رای تیکت",'callback_data'=>"alphabot"]
             ],
         ]]);
 
@@ -5149,16 +5149,16 @@ if($data=='ticketsCategory' and ($from_id == $admin || $userInfo['isAdmin'] == t
     $ticketCategory = $stmt->get_result();
     $stmt->close();
     $keys = array();
-    $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"دسته بندی",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"دسته بندی",'callback_data'=>"alphabot"]];
     
     if($ticketCategory->num_rows>0){
         while($row = $ticketCategory->fetch_assoc()){
             $rowId = $row['id'];
             $ticketName = $row['value'];
-            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"wizwizch"]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"alphabot"]];
         }
     }else{
-        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"alphabot"]];
     }
     $keys[] = [['text'=>"افزودن دسته بندی",'callback_data'=>"addTicketCategory"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"ticketsList"]];
@@ -5183,17 +5183,17 @@ if ($userInfo['step']=="addTicketCategory" and ($from_id == $admin || $userInfo[
     $stmt->close();
     
     $keys = array();
-    $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"دسته بندی",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"دسته بندی",'callback_data'=>"alphabot"]];
     
     if($ticketCategory->num_rows>0){
         while ($row = $ticketCategory->fetch_assoc()){
             
             $rowId = $row['id'];
             $ticketName = $row['value'];
-            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"wizwizch"]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"alphabot"]];
         }
     }else{
-        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"alphabot"]];
     }
     $keys[] = [['text'=>"افزودن دسته بندی",'callback_data'=>"addTicketCategory"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"ticketsList"]];
@@ -5216,17 +5216,17 @@ if(preg_match("/^delTicketCat_(\d+)/",$data,$match) and ($from_id == $admin || $
     $stmt->close();
     
     $keys = array();
-    $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"دسته بندی",'callback_data'=>"wizwizch"]];
+    $keys[] = [['text'=>"حذف",'callback_data'=>"alphabot"],['text'=>"دسته بندی",'callback_data'=>"alphabot"]];
     
     if($ticketCategory->num_rows>0){
         while ($row = $ticketCategory->fetch_assoc()){
             
             $rowId = $row['id'];
             $ticketName = $row['value'];
-            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"wizwizch"]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"delTicketCat_$rowId"],['text'=>$ticketName,'callback_data'=>"alphabot"]];
         }
     }else{
-        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"wizwizch"]];
+        $keys[] = [['text'=>"دسته بندی یافت نشد",'callback_data'=>"alphabot"]];
     }
     $keys[] = [['text'=>"افزودن دسته بندی",'callback_data'=>"addTicketCategory"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"ticketsList"]];
@@ -5398,7 +5398,7 @@ if(preg_match('/^closeTicket_(\d+)/',$data,$match) and  ($from_id == $admin || $
         ]]);
     sendMessage($ticketClosed,$keys,'html', $userId);
     editKeys(json_encode(['inline_keyboard'=>[
-        [['text'=>"تیکت بسته شد",'callback_data'=>"wizwizch"]]
+        [['text'=>"تیکت بسته شد",'callback_data'=>"alphabot"]]
         ]]));
 
 }
@@ -6144,40 +6144,40 @@ if($userInfo['step'] == "showAccount" and $text != $buttonValues['cancel']){
         setUser();
         $keys = json_encode(['inline_keyboard'=>array_merge([
         [
-            ['text'=>$state??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"🔘 وضعیت اکانت 🔘",'callback_data'=>"wizwizch"],
+            ['text'=>$state??" ",'callback_data'=>"alphabot"],
+            ['text'=>"🔘 وضعیت اکانت 🔘",'callback_data'=>"alphabot"],
             ],
         [
-    		['text'=>$remark??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"« نام اکانت »",'callback_data'=>"wizwizch"],
+    		['text'=>$remark??" ",'callback_data'=>"alphabot"],
+            ['text'=>"« نام اکانت »",'callback_data'=>"alphabot"],
             ]],(!$isMarzban?[
         [
-            ['text'=>$upload?? " ",'callback_data'=>"wizwizch"],
-            ['text'=>"√ آپلود √",'callback_data'=>"wizwizch"],
+            ['text'=>$upload?? " ",'callback_data'=>"alphabot"],
+            ['text'=>"√ آپلود √",'callback_data'=>"alphabot"],
             ],
         [
-            ['text'=>$download??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"√ دانلود √",'callback_data'=>"wizwizch"],
+            ['text'=>$download??" ",'callback_data'=>"alphabot"],
+            ['text'=>"√ دانلود √",'callback_data'=>"alphabot"],
             ]]:[
         [
-            ['text'=>$totalUsed?? " ",'callback_data'=>"wizwizch"],
-            ['text'=>"√ آپلود + دانلود √",'callback_data'=>"wizwizch"],
+            ['text'=>$totalUsed?? " ",'callback_data'=>"alphabot"],
+            ['text'=>"√ آپلود + دانلود √",'callback_data'=>"alphabot"],
             ]]),[
         [
-            ['text'=>$total??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"† حجم کلی †",'callback_data'=>"wizwizch"],
+            ['text'=>$total??" ",'callback_data'=>"alphabot"],
+            ['text'=>"† حجم کلی †",'callback_data'=>"alphabot"],
             ],
         [
-            ['text'=>$leftMb??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"~ حجم باقیمانده ~",'callback_data'=>"wizwizch"],
+            ['text'=>$leftMb??" ",'callback_data'=>"alphabot"],
+            ['text'=>"~ حجم باقیمانده ~",'callback_data'=>"alphabot"],
             ],
         [
-            ['text'=>$expiryTime??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"تاریخ اتمام",'callback_data'=>"wizwizch"],
+            ['text'=>$expiryTime??" ",'callback_data'=>"alphabot"],
+            ['text'=>"تاریخ اتمام",'callback_data'=>"alphabot"],
             ],
         [
-            ['text'=>$expiryDay??" ",'callback_data'=>"wizwizch"],
-            ['text'=>"تعداد روز باقیمانده",'callback_data'=>"wizwizch"],
+            ['text'=>$expiryDay??" ",'callback_data'=>"alphabot"],
+            ['text'=>"تعداد روز باقیمانده",'callback_data'=>"alphabot"],
             ],
         (($botState['renewAccountState'] == "on" && $botState['updateConfigLinkState'] == "on")?
             [
@@ -6804,7 +6804,7 @@ if($data == 'backplan' and ($from_id == $admin || $userInfo['isAdmin'] == true))
         $keyboard[] = ['text' => "$title", 'callback_data' => "plansList$id"];
     }
     $keyboard = array_chunk($keyboard,2);
-    $keyboard[] = [['text'=>"➖➖➖",'callback_data'=>"wizwizch"]];
+    $keyboard[] = [['text'=>"➖➖➖",'callback_data'=>"alphabot"]];
     $keyboard[] = [['text'=>'➕ افزودن پلن اختصاصی و اشتراکی','callback_data'=>"addNewPlan"]];
     $keyboard[] = [
         ['text'=>'➕ افزودن پلن رهگذر','callback_data'=>"addNewRahgozarPlan"],
@@ -6841,11 +6841,11 @@ if(($data=="editCustomPlan" || preg_match('/^editCustom(gbPrice|dayPrice)/',$use
     $keys = json_encode(['inline_keyboard'=>[
         [
             ['text'=>$gbPrice,'callback_data'=>"editCustomgbPrice"],
-            ['text'=>"هزینه هر گیگ",'callback_data'=>"wizwizch"]
+            ['text'=>"هزینه هر گیگ",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$dayPrice,'callback_data'=>"editCustomdayPrice"],
-            ['text'=>"هزینه هر روز",'callback_data'=>"wizwizch"]
+            ['text'=>"هزینه هر روز",'callback_data'=>"alphabot"]
             ],
         [
             ['text'=>$buttonValues['back_button'],'callback_data'=>"backplan"]
@@ -7721,7 +7721,7 @@ if(preg_match('/^discountRenew(\d+)_(\d+)/',$userInfo['step'], $match) || preg_m
                 sendMessage(str_replace("AMOUNT", $discount, $mainValues['valid_discount_code']));
                 $keys = json_encode(['inline_keyboard'=>[
                     [
-                        ['text'=>"❤️", "callback_data"=>"wizwizch"]
+                        ['text'=>"❤️", "callback_data"=>"alphabot"]
                         ],
                     ]]);
                 sendMessage(
@@ -7934,7 +7934,7 @@ if(preg_match('/approveRenewAcc(.*)/',$data,$match) && ($from_id == $admin || $u
 
 
     unset($markup[count($markup)-1]);
-    $markup[] = [['text'=>"✅",'callback_data'=>"wizwizch"]];
+    $markup[] = [['text'=>"✅",'callback_data'=>"alphabot"]];
     $keys = json_encode(['inline_keyboard'=>array_values($markup)],488);
 
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
@@ -8116,7 +8116,7 @@ if(preg_match('/payRenewWithWallet(.*)/', $data,$match)){
     editText($message_id, "✅سرویس $remark با موفقیت تمدید شد",getMainKeys());
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"به به تمدید 😍",'callback_data'=>"wizwizch"]
+            ['text'=>"به به تمدید 😍",'callback_data'=>"alphabot"]
             ],
         ]]);
     $msg = str_replace(['TYPE', "USER-ID", "USERNAME", "NAME", "PRICE", "REMARK", "VOLUME", "DAYS"],['کیف پول', $from_id, $username, $first_name, $price, $remark, $volume, $days], $mainValues['renew_account_request_message']);
@@ -8948,7 +8948,7 @@ if(preg_match('/payIncraseDayWithWallet(.*)/', $data,$match)){
         
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>"اخیش یکی زمان زد 😁",'callback_data'=>"wizwizch"]
+                ['text'=>"اخیش یکی زمان زد 😁",'callback_data'=>"alphabot"]
                 ],
             ]]);
         sendMessage("
@@ -9258,7 +9258,7 @@ if(preg_match('/decIncreaseVolume(.*)/',$data,$match) && ($from_id == $admin || 
 
     $acctxt = '';
     editKeys(json_encode(['inline_keyboard'=>[
-		    [['text'=>"لغو شد ❌",'callback_data'=>"wizwizch"]]
+		    [['text'=>"لغو شد ❌",'callback_data'=>"alphabot"]]
 		    ]]));
     
     sendMessage("افزایش حجم $volume گیگ اشتراک $remark لغو شد",null,null,$uid);
@@ -9301,7 +9301,7 @@ if(preg_match('/decIncreaseDay(.*)/',$data,$match) && ($from_id == $admin || $us
 
     $acctxt = '';
     editKeys(json_encode(['inline_keyboard'=>[
-		    [['text'=>"لغو شد ❌",'callback_data'=>"wizwizch"]]
+		    [['text'=>"لغو شد ❌",'callback_data'=>"alphabot"]]
 		    ]]));
     
     sendMessage("افزایش زمان $volume روز اشتراک $remark لغو شد",null,null,$uid);
@@ -9389,7 +9389,7 @@ if(preg_match('/payIncraseWithWallet(.*)/', $data,$match)){
         $stmt->close();
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>"اخیش یکی حجم زد 😁",'callback_data'=>"wizwizch"]
+                ['text'=>"اخیش یکی حجم زد 😁",'callback_data'=>"alphabot"]
                 ],
             ]]);
         sendMessage("
@@ -9817,7 +9817,7 @@ if(preg_match('/^addServerPanePassword(.*)/',$userInfo['step'],$match) and $text
 
 برای رفع این مشکل روی لینک زیر بزن و ویس رو با دقت گوش کن 👇
 
-⛔️🔗 https://t.me/wizwizch/186
+⛔️🔗 https://t.me/alphabot/186
 
 مجدد نام کاربری پنل را وارد کنید:
 ⁮⁮ ⁮⁮
@@ -10212,7 +10212,7 @@ if($data == "managePanel" and (($from_id == $admin || $userInfo['isAdmin'] == tr
 👤 عزیزم به بخش مدیریت خوشومدی 
 🤌 هرچی نیاز داشتی میتونی اینجا طبق نیازهات اضافه و تغییر بدی ، عزیزم $first_name جان اگه از فروش ربات درآمد داری از من حمایت کن تا پروژه همیشه آپدیت بمونه !
 
-🆔 @wizwizch
+🆔 @alphabot
 
 🚪 /start
 ";

@@ -496,7 +496,7 @@ if($payType == "BUY_SUB"){
     
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'wizwizch'],
+            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'alphabot'],
             ],
         ]]);
 sendMessage("
@@ -586,7 +586,7 @@ elseif($payType == "RENEW_ACCOUNT"){
     
     $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'wizwizch'],
+            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'alphabot'],
             ],
         ]]);
     $user_info = Bot('getChat',['chat_id'=>$user_id])->result;
@@ -662,7 +662,7 @@ elseif(preg_match('/^INCREASE_DAY_(\d+)_(\d+)/',$payType,$match)){
         showForm("پرداخت شما با موفقیت انجام شد. $volume روز به مدت زمان سرویس شما اضافه شد",$payDescription, true);
         $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'wizwizch'],
+            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'alphabot'],
             ],
             ]]);
                     $user_info = Bot('getChat',['chat_id'=>$user_id])->result;
@@ -738,7 +738,7 @@ elseif(preg_match('/^INCREASE_VOLUME_(\d+)_(\d+)/',$payType, $match)){
         showForm("پرداخت شما با موفقیت انجام شد. $volume گیگ به حجم سرویس شما اضافه شد",$payDescription, true);
         $keys = json_encode(['inline_keyboard'=>[
         [
-            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'wizwizch'],
+            ['text'=>"خرید از درگاه $gateType 💞",'callback_data'=>'alphabot'],
             ],
             ]]);
                     $user_info = Bot('getChat',['chat_id'=>$user_id])->result;

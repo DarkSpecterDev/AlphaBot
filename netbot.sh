@@ -53,13 +53,52 @@ apt update
 
 # Install PHP 8.1 (more stable)
 echo -e "${YELLOW}Installing PHP 8.1...${NC}"
-apt install -y php8.1 php8.1-fpm php8.1-mysql php8.1-curl php8.1-json php8.1-mbstring php8.1-xml php8.1-zip
+apt install -y php8.1 php8.1-fpm php8.1-mysql php8.1-curl php8.1-mbstring php8.1-xml php8.1-zip php8.1-gd php8.1-cli php8.1-common
 
-# Install MySQL with proper configuration
+# Install MySQL with low memory configuration
 echo -e "${YELLOW}Installing MySQL...${NC}"
+
+# Pre-configure MySQL to avoid interactive prompts
 export DEBIAN_FRONTEND=noninteractive
-echo "mysql-server mysql-server/root_password password rootpass" | debconf-set-selections
-echo "mysql-server mysql-server/root_password_again password rootpass" | debconf-set-selections
+debconf-set-selections <<< "mysql-server mysql-server/root_password password rootpass"
+debconf-set-selections <<< "mysql-server mysql-server/root_password_again password rootpass"
+
+# Create MySQL configuration for low memory before installation
+mkdir -p /etc/mysql/mysql.conf.d
+cat > /etc/mysql/mysql.conf.d/low-memory.cnf << EOF
+[mysqld]
+# Low memory configuration
+innodb_buffer_pool_size = 64M
+innodb_log_file_size = 16M
+innodb_log_buffer_size = 4M
+key_buffer_size = 16M
+table_open_cache = 64
+sort_buffer_size = 512K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+thread_cache_size = 8
+query_cache_size = 16M
+tmp_table_size = 16M
+max_heap_table_size = 16M
+max_connections = 50
+thread_stack = 192K
+bulk_insert_buffer_size = 8M
+myisam_sort_buffer_size = 8M
+myisam_max_sort_file_size = 1G
+myisam_repair_threads = 1
+
+# Disable performance schema to save memory
+performance_schema = OFF
+
+# InnoDB settings for low memory
+innodb_flush_method = O_DIRECT
+innodb_flush_log_at_trx_commit = 2
+innodb_file_per_table = 1
+innodb_open_files = 300
+EOF
+
+# Install MySQL
 apt install -y mysql-server
 
 # Configure MySQL
@@ -68,11 +107,16 @@ systemctl start mysql
 systemctl enable mysql
 
 # Wait for MySQL to start
-sleep 5
+sleep 10
 
-# Set MySQL root password
-mysql -u root -prootpass -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpass';" 2>/dev/null
-mysql -u root -prootpass -e "FLUSH PRIVILEGES;" 2>/dev/null
+# Secure MySQL installation
+mysql -u root -prootpass -e "
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+" 2>/dev/null || echo "MySQL security configuration completed"
 
 # Configure Nginx
 echo -e "${YELLOW}Configuring Nginx...${NC}"
@@ -178,9 +222,35 @@ rm -f /var/www/html/netbot/netbot.sh
 
 # Final status check
 echo -e "${YELLOW}Checking services...${NC}"
-systemctl status nginx --no-pager -l
-systemctl status mysql --no-pager -l
-systemctl status php8.1-fpm --no-pager -l
+
+# Check if services are running
+if systemctl is-active --quiet mysql; then
+    echo -e "${GREEN}✅ MySQL: Running${NC}"
+else
+    echo -e "${RED}❌ MySQL: Failed${NC}"
+fi
+
+if systemctl is-active --quiet nginx; then
+    echo -e "${GREEN}✅ Nginx: Running${NC}"
+else
+    echo -e "${RED}❌ Nginx: Failed${NC}"
+fi
+
+if systemctl is-active --quiet php8.1-fpm; then
+    echo -e "${GREEN}✅ PHP-FPM: Running${NC}"
+else
+    echo -e "${RED}❌ PHP-FPM: Failed${NC}"
+fi
+
+# Display system info
+echo -e "\n${YELLOW}System Information:${NC}"
+echo -e "MySQL Version: $(mysql --version 2>/dev/null | cut -d' ' -f3 || echo 'Not available')"
+echo -e "PHP Version: $(php -v 2>/dev/null | head -n1 | cut -d' ' -f2 || echo 'Not available')"
+echo -e "Nginx Version: $(nginx -v 2>&1 | cut -d' ' -f3 | cut -d'/' -f2 || echo 'Not available')"
+
+# Display memory usage
+echo -e "\n${YELLOW}Memory Usage:${NC}"
+free -h 2>/dev/null | head -n2 || echo "Memory info not available"
 
 echo -e "\n${GREEN}╔══════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║${NC}     ${CYAN}NetBot Installation Complete!${NC}     ${GREEN}║${NC}"
@@ -198,5 +268,10 @@ echo -e "${GREEN}Installation completed successfully!${NC}\n"
 
 echo -e "${CYAN}Next steps:${NC}"
 echo -e "1. Set up SSL certificate with: ${YELLOW}certbot --nginx -d ${DOMAIN_NAME}${NC}"
+
+echo -e "\n${YELLOW}Troubleshooting:${NC}"
+echo -e "If you encounter MySQL OOM errors or installation issues, run:"
+echo -e "${BLUE}wget -O fix_install.sh https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/fix_install.sh${NC}"
+echo -e "${BLUE}chmod +x fix_install.sh && sudo ./fix_install.sh${NC}"
 echo -e "2. Test your bot by sending /start in Telegram"
 echo -e "3. Check logs if needed: ${YELLOW}tail -f /var/log/nginx/error.log${NC}"

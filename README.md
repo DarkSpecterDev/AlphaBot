@@ -216,38 +216,16 @@ $nowpayment_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
 
 این پروژه تحت مجوز MIT منتشر شده است. برای اطلاعات بیشتر فایل [LICENSE](LICENSE) را مطالعه کنید.
 
-## 🙏 تشکر ویژه
-
-- از تمام توسعه‌دهندگانی که در این پروژه مشارکت داشته‌اند
-- از کاربرانی که با گزارش باگ‌ها کمک کرده‌اند
-- از جامعه متن‌باز که الهام‌بخش ما بوده‌اند
-
 ---
 
 <p align="center">
-  ساخته شده با ❤️ در ایران توسط DarkSpecterDev
+  ساخته شده با ❤️ در ایران
 </p>
-
-<p align="center">
-  <a href="https://github.com/DarkSpecterDev/AlphaBot">⭐ ستاره بدهید</a> |
-  <a href="https://github.com/DarkSpecterDev/AlphaBot/issues">🐛 باگ گزارش کنید</a> |
-  <a href="https://github.com/DarkSpecterDev/AlphaBot/discussions">💬 سوال بپرسید</a>
-</p>
-
-<div align=center>
-
-[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotChannel&color=blue)](https://telegram.dog/NetworkBotChannel)
-[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotSupport)](https://telegram.dog/NetworkBotSupport)
-<img src="https://img.shields.io/github/license/DarkSpecterDev/AlphaBot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/DarkSpecterDev/AlphaBot.svg" />
-<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=DarkSpecterDev.NetBot" />
- -->
-</div>
 
 <br>
 <br>
     <a align="center">
-        <img src="https://github.com/DarkSpecterDev/AlphaBot/assets/logo.png" />
+        <img src="https://github.com/MrVyxen/AlphaBot/assets/logo.png" />
     </a>     
 <br>
 <br>
@@ -266,7 +244,7 @@ $nowpayment_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
 - قبل از نصب حتما ip سرور را روی دامنه تنظیم کنید 
 > دستور نصب را در کنسول وارد کرده و موارد مورد نیاز را برای تکمیل نصب وارد کنید.
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/netbot.sh)
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/netbot.sh)
 ```
 - در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
 - ایمیل را وارد کنید
@@ -288,7 +266,7 @@ bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/netbo
 
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/update.sh)
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/update.sh)
 ```
 
 <br>
@@ -330,9 +308,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 
 # حمایت
 
-- Tron (TRX): `TY8j7of18gbMtneB8bbL7SZk5gcntQEemG`
-- Bitcoin: `bc1qcnkjnqvs7kyxvlfrns8t4ely7x85dhvz5gqge4`
-- Dogecoin: `DMyGMghEh4W55P3VeVHntCN3vYAFtshvVH`
+از استفاده از AlphaBot لذت ببرید!
 
 
 
@@ -405,15 +381,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 <br>
 
 
-حتما به گروه و کانال بپیوندید و از ما حمایت کنید
+## About AlphaBot
 
-## Contact Developer
-💎 Group: https://t.me/NetworkBotSupport
-💎 Channel: https://t.me/NetworkBotChannel
-
-<br>
-<br>
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/DarkSpecterDev/AlphaBot.svg)](https://starchart.cc/DarkSpecterDev/AlphaBot)
+AlphaBot - Professional VPN sales and management bot for Telegram

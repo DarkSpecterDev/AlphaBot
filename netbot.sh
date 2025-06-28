@@ -64,7 +64,7 @@ mysql -u root -p -e "FLUSH PRIVILEGES;"
 
 # Clone NetBot repository
 cd /var/www/html/
-git clone https://github.com/NetworkBotDev/NetBot.git netbot
+git clone https://github.com/DarkSpecterDev/AlphaBot.git netbot
 sudo chown -R www-data:www-data /var/www/html/netbot/
 sudo chmod -R 755 /var/www/html/netbot/
 

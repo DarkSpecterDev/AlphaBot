@@ -25,7 +25,7 @@ cp /var/www/html/netbot/baseInfo.php /root/
 echo -e "${YELLOW}Downloading latest version...${NC}"
 rm -r /var/www/html/netbot/
 
-git clone https://github.com/NetworkBotDev/NetBot.git /var/www/html/netbot
+git clone https://github.com/DarkSpecterDev/AlphaBot.git /var/www/html/netbot
 sudo chown -R www-data:www-data /var/www/html/netbot/
 sudo chmod -R 755 /var/www/html/netbot/
 

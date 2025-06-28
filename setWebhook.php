@@ -2,11 +2,11 @@
 include_once 'baseInfo.php';
 
 // برای استفاده محلی با ngrok
-// لطفا آدرس ngrok خود را جایگزین کنید
-$webhookUrl = "https://YOUR_NGROK_URL.ngrok.io/AlphaBot/bot.php";
+// آدرس ngrok فعلی - ربات اصلی (IP check غیرفعال)
+$webhookUrl = "https://28f9-213-142-150-127.ngrok-free.app/AlphaBot/bot.php";
 
 // برای استفاده روی سرور واقعی
-// $webhookUrl = "https://yourdomain.com/AlphaBot/bot.php";
+// $webhookUrl = "https://28f9-213-142-150-127.ngrok-free.app/AlphaBot/bot.php";
 
 $url = "https://api.telegram.org/bot" . $botToken . "/setWebhook?url=" . $webhookUrl;
 

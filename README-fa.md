@@ -1,4 +1,40 @@
-# 🤖 آلفا ربات (AlphaBot)
+# 🤖 نت بات (NetBot)
+
+## ربات فروش VPN حرفه‌ای
+
+نت بات یک ربات پیشرفته تلگرام برای فروش و مدیریت سرویس‌های VPN است که با قابلیت‌های کاملی برای مدیریت کسب و کار شما طراحی شده است.
+
+### ویژگی‌های کلیدی:
+
+- 🔐 **پشتیبانی کامل از پنل‌ها**: x-ui, 3x-ui, Marzban
+- 💳 **درگاه‌های پرداخت**: ZarinPal، NextPay، کارت به کارت
+- 👥 **سیستم نمایندگی**: مدیریت نمایندگان با تخفیف‌های متفاوت
+- 📊 **گزارش‌گیری پیشرفته**: آمار کامل فروش و درآمد
+- 🎁 **اکانت رایگان**: سیستم تست برای کاربران جدید
+- 🔒 **امنیت بالا**: کنترل دسترسی و احراز هویت
+
+### نصب سریع:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/install.sh)
+```
+
+### تنظیمات:
+
+1. دریافت توکن از @BotFather
+2. ویرایش فایل `baseInfo.php`
+3. تنظیم Webhook
+4. شروع فروش!
+
+### پشتیبانی:
+
+- 📖 مستندات کامل
+- 🐛 گزارش مشکلات
+- 💬 انجمن پشتیبانی
+
+---
+
+**ساخته شده با ❤️ برای فروشندگان VPN**
 
 <p align="center">
   <img src="assets/logo.png" alt="AlphaBot Logo" width="200"/>
@@ -229,8 +265,8 @@ $nowpayment_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
 - یک ربات در @botfather ایجاد کنید و آن را استارت کنید
 - قبل از نصب حتما ip سرور را روی دامنه تنظیم کنید 
 > دستور نصب را در کنسول وارد کرده و موارد مورد نیاز را برای تکمیل نصب وارد کنید.
-```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/wizwiz.sh)
+```bash
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/netbot.sh)
 ```
 - در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
 - ایمیل را وارد کنید
@@ -241,7 +277,7 @@ bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/mai
 - توکن ربات را وارد کنید
 - آیدی عددی ادمین را از @userinfobot بگیرید و وارد کنید
 - مجدد «sub.domain.com» یا «domain.com» را بدون https وارد کنید
-- بسیار خوب، پیام نصب ( ✅ ربات wizwiz با موفقیت نصب شد! ) به ربات ارسال می شود.
+- بسیار خوب، پیام نصب ( ✅ ربات NetBot با موفقیت نصب شد! ) به ربات ارسال می شود.
 
 <br>
 <br>
@@ -251,8 +287,8 @@ bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/mai
 - با هر به روز رسانی و بک آپ، یک اعلان برای ربات مدیر ارسال می شود
 
 
-```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/update.sh)
+```bash
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/update.sh)
 ```
 
 <br>
@@ -265,25 +301,25 @@ bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/mai
 # پنل های پشتیبانی شده
 
 - (Marzban)
-````
+```
 sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
-````
+```
 - (Niduka Akalanka)
-````
+```
 bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh) 0.2.1.2
-````
+```
 - (Sanaei)
-````
+```
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v1.7.9
-````
+```
 - (Alireza)
-````
+```
 bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh) 1.5.5
-````
+```
 - (Vaxilu)
-````
+```
 bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
-````
+```
 
 
 

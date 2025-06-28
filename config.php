@@ -157,32 +157,60 @@ function ip_in_range($ip, $range){
 }
 
 $time = time();
-$update = json_decode(file_get_contents("php://input"));
+// دریافت ورودی از تلگرام
+if(isset($GLOBALS['test_mode']) && file_exists('temp_input.json')) {
+    $update = json_decode(file_get_contents('temp_input.json'));
+} else {
+    $input = file_get_contents("php://input");
+    $update = json_decode($input);
+}
+
+// اگر ورودی خالی باشد، یک ورودی پیش‌فرض ایجاد کن
+if(!$update) {
+    $update = (object)[];
+}
 if(isset($update->message)){
-    $from_id = $update->message->from->id;
-    $text = $update->message->text;
-    $first_name = htmlspecialchars($update->message->from->first_name);
-    $caption = $update->message->caption;
-    $chat_id = $update->message->chat->id;
-    $last_name = htmlspecialchars($update->message->from->last_name);
-    $username = $update->message->from->username?? " ندارد ";
-    $message_id = $update->message->message_id;
-    $forward_from_name = $update->message->reply_to_message->forward_sender_name;
-    $forward_from_id = $update->message->reply_to_message->forward_from->id;
-    $reply_text = $update->message->reply_to_message->text;
+    $from_id = $update->message->from->id ?? 0;
+    $text = $update->message->text ?? '';
+    $first_name = htmlspecialchars($update->message->from->first_name ?? '');
+    $caption = $update->message->caption ?? '';
+    $chat_id = $update->message->chat->id ?? 0;
+    $last_name = htmlspecialchars($update->message->from->last_name ?? '');
+    $username = $update->message->from->username ?? " ندارد ";
+    $message_id = $update->message->message_id ?? 0;
+    $forward_from_name = $update->message->reply_to_message->forward_sender_name ?? '';
+    $forward_from_id = $update->message->reply_to_message->forward_from->id ?? 0;
+    $reply_text = $update->message->reply_to_message->text ?? '';
 }
 if(isset($update->callback_query)){
-    $callbackId = $update->callback_query->id;
-    $data = $update->callback_query->data;
-    $text = $update->callback_query->message->text;
-    $message_id = $update->callback_query->message->message_id;
-    $chat_id = $update->callback_query->message->chat->id;
-    $chat_type = $update->callback_query->message->chat->type;
-    $username = htmlspecialchars($update->callback_query->from->username)?? " ندارد ";
-    $from_id = $update->callback_query->from->id;
-    $first_name = htmlspecialchars($update->callback_query->from->first_name);
-    $markup = json_decode(json_encode($update->callback_query->message->reply_markup->inline_keyboard),true);
+    $callbackId = $update->callback_query->id ?? '';
+    $data = $update->callback_query->data ?? '';
+    $text = $update->callback_query->message->text ?? '';
+    $message_id = $update->callback_query->message->message_id ?? 0;
+    $chat_id = $update->callback_query->message->chat->id ?? 0;
+    $chat_type = $update->callback_query->message->chat->type ?? '';
+    $username = htmlspecialchars($update->callback_query->from->username ?? '') ?? " ندارد ";
+    $from_id = $update->callback_query->from->id ?? 0;
+    $first_name = htmlspecialchars($update->callback_query->from->first_name ?? '');
+    $markup = json_decode(json_encode($update->callback_query->message->reply_markup->inline_keyboard ?? []),true);
 }
+// تعریف متغیرهای پایه برای جلوگیری از خطاهای undefined
+$from_id = $from_id ?? 0;
+$data = $data ?? '';
+$text = $text ?? '';
+$first_name = $first_name ?? '';
+$username = $username ?? '';
+$message_id = $message_id ?? 0;
+$chat_id = $chat_id ?? 0;
+$callbackId = $callbackId ?? '';
+$caption = $caption ?? '';
+$last_name = $last_name ?? '';
+$chat_type = $chat_type ?? '';
+$forward_from_name = $forward_from_name ?? '';
+$forward_from_id = $forward_from_id ?? 0;
+$reply_text = $reply_text ?? '';
+$markup = $markup ?? [];
+
 if($from_id < 0) exit();
 $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid`=?");
 $stmt->bind_param("i", $from_id);
@@ -190,6 +218,29 @@ $stmt->execute();
 $uinfo = $stmt->get_result();
 $userInfo = $uinfo->fetch_assoc();
 $stmt->close();
+
+// اگر کاربر وجود نداشت، یک آرایه پیش‌فرض ایجاد کن
+if(!$userInfo) {
+    $userInfo = [
+        'userid' => $from_id,
+        'name' => '',
+        'username' => '',
+        'refcode' => '',
+        'wallet' => 0,
+        'date' => time(),
+        'phone' => null,
+        'refered_by' => null,
+        'step' => 'none',
+        'freetrial' => null,
+        'isAdmin' => false,
+        'first_start' => null,
+        'temp' => null,
+        'is_agent' => 0,
+        'discount_percent' => null,
+        'agent_date' => 0,
+        'spam_info' => null
+    ];
+}
  
 $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'PAYMENT_KEYS'");
 $stmt->execute();
@@ -200,85 +251,117 @@ $stmt->close();
 
 $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'BOT_STATES'");
 $stmt->execute();
-$botState = $stmt->get_result()->fetch_assoc()['value'];
+$result = $stmt->get_result()->fetch_assoc();
+$botState = $result['value'] ?? null;
 if(!is_null($botState)) $botState = json_decode($botState,true);
 else $botState = array();
 $stmt->close();
 
-$channelLock = $botState['lockChannel'];
-$joniedState= bot('getChatMember', ['chat_id' => $channelLock,'user_id' => $from_id])->result->status;
+// تعریف متغیرهای مورد نیاز
+$mainValues = [];
+$buttonValues = [];
 
-if ($update->message->document->file_id) {
+// بارگذاری تنظیمات اصلی
+$stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'MAIN_VALUES'");
+$stmt->execute();
+$result = $stmt->get_result()->fetch_assoc();
+if($result) {
+    $mainValues = json_decode($result['value'], true) ?? [];
+}
+$stmt->close();
+
+$stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'BUTTON_VALUES'");
+$stmt->execute();
+$result = $stmt->get_result()->fetch_assoc();
+if($result) {
+    $buttonValues = json_decode($result['value'], true) ?? [];
+}
+$stmt->close();
+
+$channelLock = $botState['lockChannel'] ?? '';
+$joniedState = '';
+if($channelLock && $from_id > 0) {
+    $chatMemberResult = bot('getChatMember', ['chat_id' => $channelLock,'user_id' => $from_id]);
+    $joniedState = $chatMemberResult->result->status ?? 'left';
+}
+
+// تعریف متغیرهای فایل با بررسی وجود
+$filetype = '';
+$fileid = '';
+$voiceid = '';
+
+if (isset($update->message->document->file_id)) {
     $filetype = 'document';
     $fileid = $update->message->document->file_id;
-} elseif ($update->message->audio->file_id) {
+} elseif (isset($update->message->audio->file_id)) {
     $filetype = 'music';
     $fileid = $update->message->audio->file_id;
-} elseif ($update->message->photo[0]->file_id) {
+} elseif (isset($update->message->photo[0]->file_id)) {
     $filetype = 'photo';
-    $fileid = $update->message->photo->file_id;
+    $fileid = $update->message->photo[0]->file_id;
     if (isset($update->message->photo[2]->file_id)) {
         $fileid = $update->message->photo[2]->file_id;
-    } elseif ($fileid = $update->message->photo[1]->file_id) {
-        $fileid = $update->message->photo[1]->file_id;
-    } else {
+    } elseif (isset($update->message->photo[1]->file_id)) {
         $fileid = $update->message->photo[1]->file_id;
     }
-} elseif ($update->message->voice->file_id) {
+} elseif (isset($update->message->voice->file_id)) {
     $filetype = 'voice';
     $voiceid = $update->message->voice->file_id;
-} elseif ($update->message->video->file_id) {
+} elseif (isset($update->message->video->file_id)) {
     $filetype = 'video';
     $fileid = $update->message->video->file_id;
 }
 
 $cancelKey=json_encode(['keyboard'=>[
-    [['text'=>$buttonValues['cancel']]]
+    [['text'=>($buttonValues['cancel'] ?? 'لغو')]]
 ],'resize_keyboard'=>true]);
 $removeKeyboard = json_encode(['remove_keyboard'=>true]);
 
 function getMainKeys(){
     global $connection, $userInfo, $from_id, $admin, $botState, $buttonValues;
+    $userInfo = $userInfo ?? [];
+    $botState = $botState ?? [];
+    $buttonValues = $buttonValues ?? [];
+    
+    // تنظیم مقادیر پیش‌فرض
+    $admin = $admin ?? 0;
+    $from_id = $from_id ?? 0;
+    
     $mainKeys = array();
     $temp = array();
 
-    if($botState['agencyState'] == "on" && $userInfo['is_agent'] == 1){
+    if(($botState['agencyState'] ?? 'off') == "on" && ($userInfo['is_agent'] ?? 0) == 1){
         $mainKeys = array_merge($mainKeys, [
-            [['text'=>$buttonValues['agency_setting'],'callback_data'=>"agencySettings"]],
-            [['text'=>$buttonValues['agent_one_buy'],'callback_data'=>"agentOneBuy"],['text'=>$buttonValues['agent_much_buy'],'callback_data'=>"agentMuchBuy"]],
-            [['text'=>$buttonValues['my_subscriptions'],'callback_data'=>"agentConfigsList"]],
+            [['text'=>($buttonValues['agency_setting'] ?? 'تنظیمات نمایندگی'),'callback_data'=>"agencySettings"]],
+            [['text'=>($buttonValues['agent_one_buy'] ?? 'خرید تکی'),'callback_data'=>"agentOneBuy"],['text'=>($buttonValues['agent_much_buy'] ?? 'خرید عمده'),'callback_data'=>"agentMuchBuy"]],
+            [['text'=>($buttonValues['my_subscriptions'] ?? 'اشتراک‌های من'),'callback_data'=>"agentConfigsList"]],
             ]);
     }else{
         $mainKeys = array_merge($mainKeys,[
-            (($botState['agencyState'] == "on" && $userInfo['is_agent'] == 0)?[
-                ['text'=>$buttonValues['request_agency'],'callback_data'=>"requestAgency"]
+            (($botState['agencyState'] ?? 'off') == "on" && ($userInfo['is_agent'] ?? 0) == 0)?[
+                ['text'=>($buttonValues['request_agency'] ?? 'درخواست نمایندگی'),'callback_data'=>"requestAgency"]
                 ]:
-                []),
-            (($botState['sellState'] == "on" || $from_id == $admin || $userInfo['isAdmin'] == true)?
-                [['text'=>$buttonValues['my_subscriptions'],'callback_data'=>'mySubscriptions'],['text'=>$buttonValues['buy_subscriptions'],'callback_data'=>"buySubscription"]]
+                [],
+            (($botState['sellState'] ?? 'off') == "on" || $from_id == $admin || ($userInfo['isAdmin'] ?? false) == true)?
+                [['text'=>($buttonValues['my_subscriptions'] ?? 'اشتراک‌های من'),'callback_data'=>'mySubscriptions'],['text'=>($buttonValues['buy_subscriptions'] ?? 'خرید اشتراک'),'callback_data'=>"buySubscription"]]
                 :
-                [['text'=>$buttonValues['my_subscriptions'],'callback_data'=>'mySubscriptions']]
-                    )
+                [['text'=>($buttonValues['my_subscriptions'] ?? 'اشتراک‌های من'),'callback_data'=>'mySubscriptions']]
             ]);
     }
     $mainKeys = array_merge($mainKeys,[
-        (
-            ($botState['testAccount'] == "on")?[['text'=>$buttonValues['test_account'],'callback_data'=>"getTestAccount"]]:
-                []
-            ),
-        [['text'=>$buttonValues['sharj'],'callback_data'=>"increaseMyWallet"]],
-        [['text'=>$buttonValues['invite_friends'],'callback_data'=>"inviteFriends"],['text'=>$buttonValues['my_info'],'callback_data'=>"myInfo"]],
-        (($botState['sharedExistence'] == "on" && $botState['individualExistence'] == "on")?
-        [['text'=>$buttonValues['shared_existence'],'callback_data'=>"availableServers"],['text'=>$buttonValues['individual_existence'],'callback_data'=>"availableServers2"]]:[]),
-        (($botState['sharedExistence'] == "on" && $botState['individualExistence'] != "on")?
-            [['text'=>$buttonValues['shared_existence'],'callback_data'=>"availableServers"]]:[]),
-        (($botState['sharedExistence'] != "on" && $botState['individualExistence'] == "on")?
-            [['text'=>$buttonValues['individual_existence'],'callback_data'=>"availableServers2"]]:[]
-        ),
-        [['text'=>$buttonValues['application_links'],'callback_data'=>"reciveApplications"],['text'=>$buttonValues['my_tickets'],'callback_data'=>"supportSection"]],
-        (($botState['searchState']=="on" || $from_id == $admin || $userInfo['isAdmin'] == true)?
-            [['text'=>$buttonValues['search_config'],'callback_data'=>"showUUIDLeft"]]
-            :[]),
+        (($botState['testAccount'] ?? 'off') == "on")?
+            [['text'=>($buttonValues['test_account'] ?? 'اکانت تست'),'callback_data'=>"getTestAccount"]] : [],
+        [['text'=>($buttonValues['sharj'] ?? 'شارژ کیف پول'),'callback_data'=>"increaseMyWallet"]],
+        [['text'=>($buttonValues['invite_friends'] ?? 'دعوت دوستان'),'callback_data'=>"inviteFriends"],['text'=>($buttonValues['my_info'] ?? 'اطلاعات من'),'callback_data'=>"myInfo"]],
+        (($botState['sharedExistence'] ?? 'off') == "on" && ($botState['individualExistence'] ?? 'off') == "on")?
+            [['text'=>($buttonValues['shared_existence'] ?? 'سرورهای مشترک'),'callback_data'=>"availableServers"],['text'=>($buttonValues['individual_existence'] ?? 'سرورهای اختصاصی'),'callback_data'=>"availableServers2"]] : [],
+        (($botState['sharedExistence'] ?? 'off') == "on" && ($botState['individualExistence'] ?? 'off') != "on")?
+            [['text'=>($buttonValues['shared_existence'] ?? 'سرورهای مشترک'),'callback_data'=>"availableServers"]] : [],
+        (($botState['sharedExistence'] ?? 'off') != "on" && ($botState['individualExistence'] ?? 'off') == "on")?
+            [['text'=>($buttonValues['individual_existence'] ?? 'سرورهای اختصاصی'),'callback_data'=>"availableServers2"]] : [],
+        [['text'=>($buttonValues['application_links'] ?? 'لینک اپلیکیشن‌ها'),'callback_data'=>"reciveApplications"],['text'=>($buttonValues['my_tickets'] ?? 'تیکت‌های من'),'callback_data'=>"supportSection"]],
+        (($botState['searchState'] ?? 'off') == "on" || $from_id == $admin || ($userInfo['isAdmin'] ?? false) == true)?
+            [['text'=>($buttonValues['search_config'] ?? 'جستجوی کانفیگ'),'callback_data'=>"showUUIDLeft"]] : [],
     ]);
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` LIKE '%MAIN_BUTTONS%'");
     $stmt->execute();
@@ -297,13 +380,13 @@ function getMainKeys(){
         }
     }
     array_push($mainKeys,$temp);
-    if($from_id == $admin || $userInfo['isAdmin'] == true) array_push($mainKeys,[['text'=>"مدیریت ربات ⚙️",'callback_data'=>"managePanel"]]);
+    if($from_id == $admin || ($userInfo['isAdmin'] ?? false) == true) array_push($mainKeys,[['text'=>"مدیریت ربات ⚙️",'callback_data'=>"managePanel"]]);
     return json_encode(['inline_keyboard'=>$mainKeys]); 
 }
 function getAgentKeys(){
     global $buttonValues, $mainValues, $from_id, $userInfo, $connection;
-    $agencyDate = jdate("Y-m-d H:i:s",$userInfo['agent_date']);
-    $joinedDate = jdate("Y-m-d H:i:s",$userInfo['date']);
+    $agencyDate = jdate("Y-m-d H:i:s",($userInfo['agent_date'] ?? 0));
+    $joinedDate = jdate("Y-m-d H:i:s",($userInfo['date'] ?? time()));
     $stmt = $connection->prepare("SELECT * FROM `orders_list` WHERE `userid` = ? AND `agent_bought` = 1");
     $stmt->bind_param("i", $from_id);
     $stmt->execute();
@@ -311,36 +394,36 @@ function getAgentKeys(){
     $stmt->close();
     
     return json_encode(['inline_keyboard'=>[
-        [['text'=>$boughtAccounts,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_bought_accounts'],'callback_data'=>"alphabot"]],
-        [['text'=>$joinedDate,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_joined_date'],'callback_data'=>"alphabot"]],
-        [['text'=>$agencyDate,'callback_data'=>"alphabot"],['text'=>$buttonValues['agent_agency_date'],'callback_data'=>"alphabot"]],
-        [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]],
+        [['text'=>$boughtAccounts,'callback_data'=>"alphabot"],['text'=>($buttonValues['agent_bought_accounts'] ?? 'دکمه'),'callback_data'=>"alphabot"]],
+        [['text'=>$joinedDate,'callback_data'=>"alphabot"],['text'=>($buttonValues['agent_joined_date'] ?? 'دکمه'),'callback_data'=>"alphabot"]],
+        [['text'=>$agencyDate,'callback_data'=>"alphabot"],['text'=>($buttonValues['agent_agency_date'] ?? 'دکمه'),'callback_data'=>"alphabot"]],
+        [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]],
     ]]);
 }
 function getAdminKeys(){
     global $buttonValues, $mainValues, $from_id, $admin;
     
     return json_encode(['inline_keyboard'=>[
-        [['text'=>$buttonValues['bot_reports'],'callback_data'=>"botReports"],['text'=>$buttonValues['message_to_user'],'callback_data'=>"messageToSpeceficUser"]],
-        [['text'=>$buttonValues['user_reports'],'callback_data'=>"userReports"]],
-        ($from_id == $admin?[['text'=>$buttonValues['admins_list'],'callback_data'=>"adminsList"]]:[]),
-        [['text'=>$buttonValues['increase_wallet'],'callback_data'=>"increaseUserWallet"],['text'=>$buttonValues['decrease_wallet'],'callback_data'=>"decreaseUserWallet"]],
-        [['text'=>$buttonValues['create_account'],'callback_data'=>"createMultipleAccounts"],
-        ['text'=>$buttonValues['gift_volume_day'],'callback_data'=>"giftVolumeAndDay"]],
-        [['text'=>$buttonValues['ban_user'],'callback_data'=>"banUser"],['text'=>$buttonValues['unban_user'],'callback_data'=>"unbanUser"]],
-        [['text'=>$buttonValues['search_admin_config'],'callback_data'=>"searchUsersConfig"]],
-        [['text'=>$buttonValues['server_settings'],'callback_data'=>"serversSetting"]],
-        [['text'=>$buttonValues['categories_settings'],'callback_data'=>"categoriesSetting"]],
-        [['text'=>$buttonValues['plan_settings'],'callback_data'=>"backplan"]],
-        [['text'=>$buttonValues['discount_settings'],'callback_data'=>"discount_codes"],['text'=>$buttonValues['main_button_settings'],'callback_data'=>"mainMenuButtons"]],
-        [['text'=>$buttonValues['gateways_settings'],'callback_data'=>"gateWays_Channels"],['text'=>$buttonValues['bot_settings'],'callback_data'=>'botSettings']],
-        [['text'=>$buttonValues['tickets_list'],'callback_data'=>"ticketsList"],['text'=>$buttonValues['message_to_all'],'callback_data'=>"message2All"]],
-        [['text'=>$buttonValues['forward_to_all'],'callback_data'=>"forwardToAll"]],
+        [['text'=>($buttonValues['bot_reports'] ?? 'دکمه'),'callback_data'=>"botReports"],['text'=>($buttonValues['message_to_user'] ?? 'دکمه'),'callback_data'=>"messageToSpeceficUser"]],
+        [['text'=>($buttonValues['user_reports'] ?? 'دکمه'),'callback_data'=>"userReports"]],
+        ($from_id == $admin?[['text'=>($buttonValues['admins_list'] ?? 'دکمه'),'callback_data'=>"adminsList"]]:[]),
+        [['text'=>($buttonValues['increase_wallet'] ?? 'دکمه'),'callback_data'=>"increaseUserWallet"],['text'=>($buttonValues['decrease_wallet'] ?? 'دکمه'),'callback_data'=>"decreaseUserWallet"]],
+        [['text'=>($buttonValues['create_account'] ?? 'دکمه'),'callback_data'=>"createMultipleAccounts"],
+        ['text'=>($buttonValues['gift_volume_day'] ?? 'دکمه'),'callback_data'=>"giftVolumeAndDay"]],
+        [['text'=>($buttonValues['ban_user'] ?? 'دکمه'),'callback_data'=>"banUser"],['text'=>($buttonValues['unban_user'] ?? 'دکمه'),'callback_data'=>"unbanUser"]],
+        [['text'=>($buttonValues['search_admin_config'] ?? 'دکمه'),'callback_data'=>"searchUsersConfig"]],
+        [['text'=>($buttonValues['server_settings'] ?? 'دکمه'),'callback_data'=>"serversSetting"]],
+        [['text'=>($buttonValues['categories_settings'] ?? 'دکمه'),'callback_data'=>"categoriesSetting"]],
+        [['text'=>($buttonValues['plan_settings'] ?? 'دکمه'),'callback_data'=>"backplan"]],
+        [['text'=>($buttonValues['discount_settings'] ?? 'دکمه'),'callback_data'=>"discount_codes"],['text'=>($buttonValues['main_button_settings'] ?? 'دکمه'),'callback_data'=>"mainMenuButtons"]],
+        [['text'=>($buttonValues['gateways_settings'] ?? 'دکمه'),'callback_data'=>"gateWays_Channels"],['text'=>($buttonValues['bot_settings'] ?? 'دکمه'),'callback_data'=>'botSettings']],
+        [['text'=>($buttonValues['tickets_list'] ?? 'دکمه'),'callback_data'=>"ticketsList"],['text'=>($buttonValues['message_to_all'] ?? 'دکمه'),'callback_data'=>"message2All"]],
+        [['text'=>($buttonValues['forward_to_all'] ?? 'دکمه'),'callback_data'=>"forwardToAll"]],
         [
-            ['text'=>$buttonValues['agent_list'],'callback_data'=>"agentsList"],
+            ['text'=>($buttonValues['agent_list'] ?? 'دکمه'),'callback_data'=>"agentsList"],
             ['text'=>'درخواست های رد شده','callback_data'=>"rejectedAgentList"]
             ],
-        [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]],
+        [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]],
     ]]);
     
 }
@@ -445,7 +528,7 @@ function checkSpam(){
     global $connection, $from_id, $userInfo, $admin;
     
     if($userInfo != null && $from_id != $admin){
-        $spamInfo = json_decode($userInfo['spam_info'],true)??array();
+        $spamInfo = json_decode(($userInfo['spam_info'] ?? null),true)??array();
         $spamDate = $spamInfo['date'];
         if(isset($spamInfo['banned'])){
             if(time() <= $spamInfo['banned']) return $spamInfo['banned'];

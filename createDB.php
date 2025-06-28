@@ -7,7 +7,7 @@ if($connection->connect_error){
 }
 $connection->set_charset("utf8mb4");
 
-$connection->query("CREATE TABLE `chats` (
+$connection->query("CREATE TABLE IF NOT EXISTS `chats` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(10) NOT NULL,
   `create_date` int(255) NOT NULL,
@@ -19,7 +19,7 @@ $connection->query("CREATE TABLE `chats` (
 )");
 
 
-$connection->query("CREATE TABLE `chats_info` (
+$connection->query("CREATE TABLE IF NOT EXISTS `chats_info` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `chat_id` int(255) NOT NULL,
   `sent_date` int(255) NOT NULL,
@@ -29,7 +29,7 @@ $connection->query("CREATE TABLE `chats_info` (
 )");
 
 
-$connection->query("CREATE TABLE `discounts` (
+$connection->query("CREATE TABLE IF NOT EXISTS `discounts` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `hash_id` varchar(100) NOT NULL,
   `type` varchar(10) NOT NULL,
@@ -41,7 +41,7 @@ $connection->query("CREATE TABLE `discounts` (
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("CREATE TABLE `gift_list` (
+$connection->query("CREATE TABLE IF NOT EXISTS `gift_list` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `server_id` int(255) NOT NULL,
   `volume` int(255) NOT NULL,
@@ -52,14 +52,14 @@ $connection->query("CREATE TABLE `gift_list` (
 )
 ");
 
-$connection->query("CREATE TABLE `increase_day` (
+$connection->query("CREATE TABLE IF NOT EXISTS `increase_day` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `volume` float NOT NULL,
   `price` int(255) NOT NULL,
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("CREATE TABLE `increase_order` (
+$connection->query("CREATE TABLE IF NOT EXISTS `increase_order` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `userid` varchar(30) NOT NULL,
   `server_id` int(255) NOT NULL,
@@ -71,14 +71,14 @@ $connection->query("CREATE TABLE `increase_order` (
 )");
 
 
-$connection->query("CREATE TABLE `increase_plan` (
+$connection->query("CREATE TABLE IF NOT EXISTS `increase_plan` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `volume` float NOT NULL,
   `price` int(255) NOT NULL,
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("CREATE TABLE `needed_sofwares` (
+$connection->query("CREATE TABLE IF NOT EXISTS `needed_sofwares` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_persian_ci NOT NULL,
   `link` varchar(250) NOT NULL,
@@ -86,7 +86,7 @@ $connection->query("CREATE TABLE `needed_sofwares` (
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("INSERT INTO `needed_sofwares` (`id`, `title`, `link`, `status`) VALUES
+$connection->query("INSERT IGNORE INTO `needed_sofwares` (`id`, `title`, `link`, `status`) VALUES
 (1, 'ios fair-vpn', 'https://apps.apple.com/us/app/fair-vpn/id1533873488', 1),
 (2, 'ios napsternetv', 'https://apps.apple.com/us/app/napsternetv/id1629465476', 1),
 (3, 'ios oneclick', 'https://apps.apple.com/us/app/id1545555197', 1),
@@ -98,7 +98,7 @@ $connection->query("INSERT INTO `needed_sofwares` (`id`, `title`, `link`, `statu
 ");
 
 
-$connection->query("CREATE TABLE `orders_list` (
+$connection->query("CREATE TABLE IF NOT EXISTS `orders_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` varchar(30) NOT NULL,
   `token` varchar(1000) NOT NULL,
@@ -142,7 +142,7 @@ $connection->query("CREATE TABLE IF NOT EXISTS `pays` (
 );");
 
 
-$connection->query("CREATE TABLE `server_categories` (
+$connection->query("CREATE TABLE IF NOT EXISTS `server_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` varchar(20) NOT NULL,
   `title` varchar(50) NOT NULL,
@@ -153,7 +153,7 @@ $connection->query("CREATE TABLE `server_categories` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci");
 
 
-$connection->query("CREATE TABLE `server_config` (
+$connection->query("CREATE TABLE IF NOT EXISTS `server_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `panel_url` varchar(254) NOT NULL,
   `ip` text NOT NULL,
@@ -171,7 +171,7 @@ $connection->query("CREATE TABLE `server_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci");
 
-$connection->query("CREATE TABLE `server_info` (
+$connection->query("CREATE TABLE IF NOT EXISTS `server_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `ucount` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -184,7 +184,7 @@ $connection->query("CREATE TABLE `server_info` (
 
 
 
-$connection->query("CREATE TABLE `server_plans` (
+$connection->query("CREATE TABLE IF NOT EXISTS `server_plans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fileid` varchar(250) NOT NULL,
   `catid` int(11) NOT NULL,
@@ -215,14 +215,14 @@ $connection->query("CREATE TABLE `server_plans` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci");
 
 
-$connection->query("CREATE TABLE `setting` (
+$connection->query("CREATE TABLE IF NOT EXISTS `setting` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("INSERT INTO `setting` (`id`, `type`, `value`) VALUES
+$connection->query("INSERT IGNORE INTO `setting` (`id`, `type`, `value`) VALUES
 (1, 'TICKETS_CATEGORY', 'شکایت'),
 (2, 'INVITE_BANNER_AMOUNT', '3000'),
 (3, 'INVITE_BANNER_TEXT', '{\"type\":\"photo\",\"caption\":\"\\ud83d\\udd30\\u0628\\u0631\\u062a\\u0631\\u06cc\\u0646 \\u0648 \\u0628\\u0647\\u062a\\u0631\\u06cc\\u0646 \\u0631\\u0628\\u0627\\u062a vpn \\u0628\\u0627 \\u06a9\\u0627\\u0646\\u06a9\\u0634\\u0646 \\u0647\\u0627\\u06cc \\u0631\\u0627\\u06cc\\u06af\\u0627\\u0646\\n\\u2705 \\u062d\\u062a\\u0645\\u0627 \\u0639\\u0636\\u0648 \\u0631\\u0628\\u0627\\u062a \\u0628\\u0634\\u06cc\\u062f \\u0648 \\u0627\\u0632 \\u062a\\u062e\\u0641\\u06cc\\u0641 \\u0647\\u0627\\u06cc \\u0648\\u06cc\\u0698\\u0647 \\u0644\\u0630\\u062a \\u0628\\u0628\\u0631\\u06cc\\u0646\\n\\n\\ud83d\\udd17 LINK\",\"file_id\":\"AgACAgQAAxkBAAJRKWRtX3wObRa3qAR_gkJgyKDdkHZsAAKAuzEbRaBpU3QQ2kLLt7MVAQADAgADeAADLwQ\"}'),
@@ -232,7 +232,7 @@ $connection->query("INSERT INTO `setting` (`id`, `type`, `value`) VALUES
 
 
 
-$connection->query("CREATE TABLE `users` (
+$connection->query("CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` varchar(40) NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -255,7 +255,7 @@ $connection->query("CREATE TABLE `users` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci");
 
 
-$connection->query("CREATE TABLE `admins` (
+$connection->query("CREATE TABLE IF NOT EXISTS `admins` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `username` varchar(200) NOT NULL,
   `password` varchar(200) NOT NULL,
@@ -264,7 +264,7 @@ $connection->query("CREATE TABLE `admins` (
   PRIMARY KEY (`id`)
 )");
 
-$connection->query("CREATE TABLE `black_list` (
+$connection->query("CREATE TABLE IF NOT EXISTS `black_list` (
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `info` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   PRIMARY KEY (`id`)
@@ -275,13 +275,13 @@ $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$#@
 $random_username = substr(str_shuffle($characters), 0, 15); // Generate a random 8-character username
 $random_password = substr(str_shuffle($characters), 0, 15); // Generate a random 8-character password
 
-$connection->query("INSERT INTO `admins` (`username`, `password`, `backupchannel`, `lang`) VALUES
+$connection->query("INSERT IGNORE INTO `admins` (`username`, `password`, `backupchannel`, `lang`) VALUES
 ('$random_username', '$random_password', '-1002545458541', 'en');
 ");
 
 
 
-$connection->query("CREATE TABLE `servers` (
+$connection->query("CREATE TABLE IF NOT EXISTS `servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(200) NOT NULL,
   `port` int(10) NOT NULL,
@@ -293,7 +293,7 @@ $connection->query("CREATE TABLE `servers` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci");
 
-$connection->query("CREATE TABLE  `send_list` (
+$connection->query("CREATE TABLE IF NOT EXISTS `send_list` (
         `id` int(255) NOT NULL AUTO_INCREMENT,
         `offset` int(255) NOT NULL DEFAULT 0,
         `type` varchar(20) NOT NULL,
@@ -305,6 +305,8 @@ $connection->query("CREATE TABLE  `send_list` (
         PRIMARY KEY (`id`)
         )");
 
-
+echo "<h2>✅ جداول دیتابیس با موفقیت ایجاد شدند!</h2>";
+echo "<p>✅ دیتابیس آماده استفاده است</p>";
+echo "<p>🔗 <a href='setWebhook.php'>مرحله بعد: تنظیم Webhook</a></p>";
 
 ?>

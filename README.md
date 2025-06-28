@@ -1,20 +1,20 @@
-# 🤖 آلفا ربات (AlphaBot)
+# 🤖 نت بات (NetBot)
 
 <p align="center">
-  <img src="assets/logo.png" alt="AlphaBot Logo" width="200"/>
+  <img src="assets/logo.png" alt="NetBot Logo" width="200"/>
 </p>
 
-<h1 align="center">آلفا ربات - ربات فروش VPN حرفه‌ای</h1>
+<h1 align="center">نت بات - ربات فروش VPN حرفه‌ای</h1>
 
 <p align="center">
-فروش آسان و مدیریت پنل‌های VPN با آلفا ربات (AlphaBot)
+فروش آسان و مدیریت پنل‌های VPN با نت بات (NetBot)
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/DarkSpecterDev/AlphaBot?style=flat-square" />
-  <img src="https://img.shields.io/github/v/release/DarkSpecterDev/AlphaBot.svg" />
+  <img src="https://img.shields.io/github/license/NetworkBotDev/NetBot?style=flat-square" />
+  <img src="https://img.shields.io/github/v/release/NetworkBotDev/NetBot.svg" />
   <img src="https://img.shields.io/badge/PHP-7.4+-blue.svg" />
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg" />
+  <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Ubuntu-lightgrey.svg" />
 </p>
 
 ## 📋 ویژگی‌های اصلی
@@ -30,34 +30,25 @@
 
 ## 🚀 نصب سریع
 
-### نصب روی لینوکس (Ubuntu/Debian)
+### نصب روی لینوکس (Ubuntu/CentOS)
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/install.sh)
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/install.sh)
 ```
 
-### نصب روی ویندوز
+### نصب دستی
 
-1. **نصب XAMPP**:
-   - [دانلود XAMPP](https://www.apachefriends.org/download.html)
-   - نصب و راه‌اندازی Apache و MySQL
-
-2. **دانلود پروژه**:
+1. **کلون کردن پروژه**:
    ```bash
-   git clone https://github.com/DarkSpecterDev/AlphaBot.git
+   git clone https://github.com/NetworkBotDev/NetBot.git
+   cd NetBot
    ```
 
-3. **کپی به XAMPP**:
+2. **اجرای نصب**:
+   ```bash
+   chmod +x install.sh
+   ./install.sh
    ```
-   C:\xampp\htdocs\AlphaBot\
-   ```
-
-4. **تنظیمات**:
-   - ویرایش فایل `baseInfo.php`
-   - ایجاد دیتابیس `alphabot_db`
-   - اجرای `createDB.php`
-
-📖 **راهنمای کامل**: [WINDOWS_SETUP.md](WINDOWS_SETUP.md)
 
 ## ⚙️ تنظیمات اولیه
 
@@ -71,16 +62,16 @@ bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/in
 <?php
 $dbUserName = "root";
 $dbPassword = "";
-$dbName = "alphabot_db";
+$dbName = "netbot_db";
 $botToken = "YOUR_BOT_TOKEN";
 $admin = YOUR_CHAT_ID;
-$botUrl = "https://yourdomain.com/AlphaBot/";
+$botUrl = "https://yourdomain.com/NetBot/";
 ?>
 ```
 
 ### 3. تنظیم Webhook
 ```
-https://yourdomain.com/AlphaBot/setWebhook.php
+https://yourdomain.com/NetBot/setWebhook.php
 ```
 
 ## 📱 ویژگی‌های ربات
@@ -103,7 +94,7 @@ https://yourdomain.com/AlphaBot/setWebhook.php
 
 ## 📞 پشتیبانی
 
-- 🐛 **گزارش باگ**: [Issues](https://github.com/DarkSpecterDev/AlphaBot/issues)
+- 🐛 **گزارش باگ**: [Issues](https://github.com/NetworkBotDev/NetBot/issues)
 - 💬 **سوالات**: از بخش Discussions استفاده کنید
 - 📧 **ایمیل**: برای موارد خاص
 
@@ -118,5 +109,5 @@ https://yourdomain.com/AlphaBot/setWebhook.php
 ---
 
 <p align="center">
-  ساخته شده با ❤️ توسط DarkSpecterDev
+  ساخته شده با ❤️ توسط NetworkBotDev
 </p>

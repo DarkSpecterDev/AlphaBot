@@ -1,12 +1,33 @@
 <?php
 include_once 'config.php';
-check();
+// غیرفعال کردن چک IP برای ngrok در ویندوز
+// check();
+
+// تعریف متغیرهای پایه برای جلوگیری از خطاهای undefined
+$from_id = $from_id ?? 0;
+$data = $data ?? '';
+$text = $text ?? '';
+$userInfo = $userInfo ?? [];
+$mainValues = $mainValues ?? [];
+$buttonValues = $buttonValues ?? [];
+$botState = $botState ?? [];
+$removeKeyboard = $removeKeyboard ?? '';
+$cancelKey = $cancelKey ?? '';
+$first_name = $first_name ?? '';
+$username = $username ?? '';
+$message_id = $message_id ?? 0;
+
+// تنظیم مقادیر پیش‌فرض برای کلیدهای مورد نیاز userInfo
+$userInfo['step'] = $userInfo['step'] ?? 'none';
+$userInfo['isAdmin'] = $userInfo['isAdmin'] ?? false;
+$userInfo['phone'] = $userInfo['phone'] ?? null;
+$userInfo['first_start'] = $userInfo['first_start'] ?? null;
 
 $robotState = $botState['botState']??"on";
 
 GOTOSTART:
-if ($userInfo['step'] == "banned" && $from_id != $admin && $userInfo['isAdmin'] != true) {
-    sendMessage($mainValues['banned']);
+if (($userInfo['step'] ?? 'none') == "banned" && $from_id != $admin && ($userInfo['isAdmin'] ?? false) != true) {
+    sendMessage(($mainValues['banned'] ?? 'پیام پیش‌فرض'));
     exit();
 }
 $checkSpam = checkSpam();
@@ -17,28 +38,28 @@ if(is_numeric($checkSpam)){
 }
 if(preg_match("/^haveJoined(.*)/",$data,$match)){
     if ($joniedState== "kicked" || $joniedState== "left"){
-        alert($mainValues['not_joine_yet']);
+        alert(($mainValues['not_joine_yet'] ?? 'پیام پیش‌فرض'));
         exit();
     }else{
         delMessage();
-        $text = $match[1];
+        $text = $match[1] ?? '';
     }
 }
 if (($joniedState== "kicked" || $joniedState== "left") && $from_id != $admin){
-    sendMessage(str_replace("CHANNEL-ID", $channelLock, $mainValues['join_channel_message']), json_encode(['inline_keyboard'=>[
-        [['text'=>$buttonValues['join_channel'],'url'=>"https://t.me/" . str_replace("@", "", $botState['lockChannel'])]],
-        [['text'=>$buttonValues['have_joined'],'callback_data'=>'haveJoined' . $text]],
+    sendMessage(str_replace("CHANNEL-ID", $channelLock, ($mainValues['join_channel_message'] ?? 'پیام پیش‌فرض')), json_encode(['inline_keyboard'=>[
+        [['text'=>($buttonValues['join_channel'] ?? 'دکمه'),'url'=>"https://t.me/" . str_replace("@", "", $botState['lockChannel'] ?? '')]],
+        [['text'=>($buttonValues['have_joined'] ?? 'دکمه'),'callback_data'=>'haveJoined' . $text]],
         ]]),"HTML");
     exit;
 }
 if($robotState == "off" && $from_id != $admin){
-    sendMessage($mainValues['bot_is_updating']);
+    sendMessage(($mainValues['bot_is_updating'] ?? 'پیام پیش‌فرض'));
     exit();
 }
 if(strstr($text, "/start ")){
     $inviter = str_replace("/start ", "", $text);
     if($inviter < 0) exit();
-    if($uinfo->num_rows == 0 && $inviter != $from_id){
+    if(($uinfo->num_rows ?? 0) == 0 && $inviter != $from_id){
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
         $stmt->bind_param("i", $inviter);
         $stmt->execute();
@@ -48,7 +69,7 @@ if(strstr($text, "/start ")){
         if($inviterInfo->num_rows > 0){
             $first_name = !empty($first_name)?$first_name:" ";
             $username = !empty($username)?$username:" ";
-            if($uinfo->num_rows == 0){
+            if(($uinfo->num_rows ?? 0) == 0){
                 $sql = "INSERT INTO `users` (`userid`, `name`, `username`, `refcode`, `wallet`, `date`, `refered_by`)
                                     VALUES (?,?,?, 0,0,?,?)";
                 $stmt = $connection->prepare($sql);
@@ -73,28 +94,28 @@ if(strstr($text, "/start ")){
             
             setUser("referedBy" . $inviter);
             $userInfo['step'] = "referedBy" . $inviter;
-            sendMessage($mainValues['invited_user_joined_message'],null,null, $inviter);
+            sendMessage(($mainValues['invited_user_joined_message'] ?? 'پیام پیش‌فرض'),null,null, $inviter);
         }
     }
     
     $text = "/start";
 }
-if($userInfo['phone'] == null && $from_id != $admin && $userInfo['isAdmin'] != true && $botState['requirePhone'] == "on"){
+if(($userInfo['phone'] ?? null) == null && $from_id != $admin && ($userInfo['isAdmin'] ?? false) != true && ($botState['requirePhone'] ?? 'off') == "on"){
     if(isset($update->message->contact)){
         $contact = $update->message->contact;
         $phone_number = $contact->phone_number;
         $phone_id = $contact->user_id;
         if($phone_id != $from_id){
-            sendMessage($mainValues['please_select_from_below_buttons']);
+            sendMessage(($mainValues['please_select_from_below_buttons'] ?? 'پیام پیش‌فرض'));
             exit();
         }else{
             if(!preg_match('/^\+98(\d+)/',$phone_number) && !preg_match('/^98(\d+)/',$phone_number) && !preg_match('/^0098(\d+)/',$phone_number) && $botState['requireIranPhone'] == 'on'){
-                sendMessage($mainValues['use_iranian_number_only']);
+                sendMessage(($mainValues['use_iranian_number_only'] ?? 'پیام پیش‌فرض'));
                 exit();
             }
             setUser($phone_number, 'phone');
             
-            sendMessage($mainValues['phone_confirmed'],$removeKeyboard);
+            sendMessage(($mainValues['phone_confirmed'] ?? 'پیام پیش‌فرض'),$removeKeyboard);
             $text = "/start";
             
             $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid`=?");
@@ -105,9 +126,9 @@ if($userInfo['phone'] == null && $from_id != $admin && $userInfo['isAdmin'] != t
             $stmt->close();
         }
     }else{
-        sendMessage($mainValues['send_your_phone_number'], json_encode([
+        sendMessage(($mainValues['send_your_phone_number'] ?? 'پیام پیش‌فرض'), json_encode([
 			'keyboard' => [[[
-					'text' => $buttonValues['send_phone_number'],
+					'text' => ($buttonValues['send_phone_number'] ?? 'دکمه'),
 					'request_contact' => true,
 				]]],
 			'resize_keyboard' => true
@@ -115,35 +136,35 @@ if($userInfo['phone'] == null && $from_id != $admin && $userInfo['isAdmin'] != t
 		exit();
     }
 }
-if(preg_match('/^\/([Ss]tart)/', $text) or $text == $buttonValues['back_to_main'] or $data == 'mainMenu') {
+if(preg_match('/^\/([Ss]tart)/', $text) or $text == ($buttonValues['back_to_main'] ?? 'دکمه') or $data == 'mainMenu') {
     setUser();
     setUser("", "temp"); 
     if(isset($data) and $data == "mainMenu"){
-        $res = editText($message_id, $mainValues['start_message'], getMainKeys());
+        $res = editText($message_id, ($mainValues['start_message'] ?? 'پیام پیش‌فرض'), getMainKeys());
         if(!$res->ok){
-            sendMessage($mainValues['start_message'], getMainKeys());
+            sendMessage(($mainValues['start_message'] ?? 'پیام پیش‌فرض'), getMainKeys());
         }
     }else{
-        if($from_id != $admin && empty($userInfo['first_start'])){
+        if($from_id != $admin && empty($userInfo['first_start'] ?? '')){
             setUser('sent','first_start');
             $keys = json_encode(['inline_keyboard'=>[
-                [['text'=>$buttonValues['send_message_to_user'],'callback_data'=>'sendMessageToUser' . $from_id]]
+                [['text'=>($buttonValues['send_message_to_user'] ?? 'دکمه'),'callback_data'=>'sendMessageToUser' . $from_id]]
             ]]);
     
-            sendMessage(str_replace(["FULLNAME", "USERNAME", "USERID"], ["<a href='tg://user?id=$from_id'>$first_name</a>", $username, $from_id], $mainValues['new_member_joined'])
+            sendMessage(str_replace(["FULLNAME", "USERNAME", "USERID"], ["<a href='tg://user?id=$from_id'>$first_name</a>", $username ?? '', $from_id], ($mainValues['new_member_joined'] ?? 'پیام پیش‌فرض'))
                 ,$keys, "html",$admin);
         }
-        sendMessage($mainValues['start_message'],getMainKeys());
+        sendMessage(($mainValues['start_message'] ?? 'پیام پیش‌فرض'),getMainKeys());
     }
 }
-if(preg_match('/^sendMessageToUser(\d+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^sendMessageToUser(\d+)/',$data,$match) && ($from_id == $admin || ($userInfo['isAdmin'] ?? false) == true) && $text != ($buttonValues['cancel'] ?? '')){
     editText($message_id,'🔘|لطفا پیامت رو بفرست');
     setUser($data);
 }
-if(preg_match('/^sendMessageToUser(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^sendMessageToUser(\d+)/',($userInfo['step'] ?? ''),$match) && ($from_id == $admin || ($userInfo['isAdmin'] ?? false) == true) && $text != ($buttonValues['cancel'] ?? '')){
     sendMessage($text,null,null,$match[1]);
     sendMessage("پیامت به کاربر ارسال شد",$removeKeyboard);
-    sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+    sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
     setUser();
 }
 if($data=='botReports' && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -166,7 +187,7 @@ if($data=="addNewAdmin" && $from_id === $admin){
     sendMessage("🧑‍💻| کسی که میخوای ادمین کنی رو آیدی عددیشو بفرست ببینم:",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "addNewAdmin" && $from_id === $admin && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "addNewAdmin" && $from_id === $admin && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `users` SET `isAdmin` = true WHERE `userid` = ?");
         $stmt->bind_param("i", $text);
@@ -178,7 +199,7 @@ if($userInfo['step'] == "addNewAdmin" && $from_id === $admin && $text != $button
         
         sendMessage("لیست ادمین ها",getAdminsKeys());
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
 if(($data=="botSettings" or preg_match("/^changeBot(\w+)/",$data,$match)) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -187,19 +208,19 @@ if(($data=="botSettings" or preg_match("/^changeBot(\w+)/",$data,$match)) && ($f
         else $newValue = $botState[$match[1]]=="on"?"off":"on";
         setSettings($match[1], $newValue);
     }
-    editText($message_id,$mainValues['change_bot_settings_message'],getBotSettingKeys());
+    editText($message_id,($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getBotSettingKeys());
 }
 if($data=="changeUpdateConfigLinkState" && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $newValue = $botState['updateConnectionState']=="robot"?"site":"robot";
     setSettings('updateConnectionState', $newValue);
-    editText($message_id,$mainValues['change_bot_settings_message'],getBotSettingKeys());
+    editText($message_id,($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getBotSettingKeys());
 }
 if(($data=="gateWays_Channels" or preg_match("/^changeGateWays(\w+)/",$data,$match)) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if($data!="gateWays_Channels"){
         $newValue = $botState[$match[1]]=="on"?"off":"on";
         setSettings($match[1], $newValue);
     }
-    editText($message_id,$mainValues['change_bot_settings_message'],getGateWaysKeys());
+    editText($message_id,($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getGateWaysKeys());
 }
 if($data=="changeConfigRemarkType"){
     switch($botState['remark']){
@@ -214,7 +235,7 @@ if($data=="changeConfigRemarkType"){
             break;
     }
     setSettings('remark', $newValue);
-    editText($message_id,$mainValues['change_bot_settings_message'],getBotSettingKeys());
+    editText($message_id,($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getBotSettingKeys());
 }
 if(preg_match('/^changePaymentKeys(\w+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     delMessage();
@@ -241,7 +262,7 @@ if(preg_match('/^changePaymentKeys(\w+)/',$data,$match) && ($from_id == $admin |
     sendMessage("🔘|لطفا $gate را وارد کنید", $cancelKey);
     setUser($data);
 }
-if(preg_match('/^changePaymentKeys(\w+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^changePaymentKeys(\w+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
 
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'PAYMENT_KEYS'");
     $stmt->execute();
@@ -259,7 +280,7 @@ if(preg_match('/^changePaymentKeys(\w+)/',$userInfo['step'],$match) && $text != 
     
 
     sendMessage($mainValues['saved_successfuly'],$removeKeyboard);
-    sendMessage($mainValues['change_bot_settings_message'],getGateWaysKeys());
+    sendMessage(($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getGateWaysKeys());
     setUser();
 }
 if(($data == "agentsList" || preg_match('/^nextAgentList(\d+)/',$data,$match)) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -432,7 +453,7 @@ if(preg_match('/^editAgentDiscount(Server|Plan|Normal)(\d+)_(.*)/',$data,$match)
     sendMessage($mainValues['send_agent_discount_percent'], $cancelKey);
     setUser($data);
 }
-if(preg_match('/^editAgentDiscount(Server|Plan|Normal)(\d+)_(.*)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editAgentDiscount(Server|Plan|Normal)(\d+)_(.*)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
         $stmt->bind_param('i',$match[2]);
@@ -454,7 +475,7 @@ if(preg_match('/^editAgentDiscount(Server|Plan|Normal)(\d+)_(.*)/',$userInfo['st
         $stmt->close();
         sendMessage(str_replace("AGENT-NAME", $userName, $mainValues['agent_discount_settings']), getAgentDiscounts($match[2]));
         setUser();
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
 if(preg_match('/^edit(RewaredTime|cartToCartAutoAcceptTime)/', $data, $match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     delMessage();
@@ -469,7 +490,7 @@ if($data=="userReports" && ($from_id == $admin || $userInfo['isAdmin'] == true))
     sendMessage("🙃 | لطفا آیدی عددی کاربر رو وارد کن",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "userReports" && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if($userInfo['step'] == "userReports" && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         sendMessage($mainValues['please_wait_message'],$removeKeyboard);
         $keys = getUserInfoKeys($text);
@@ -529,7 +550,7 @@ if($data=="editInviteBannerText" && ($from_id == $admin || $userInfo['isAdmin'] 
     sendMessage("🤖 | لطفا بنر جدید را بفرستید از متن  LINK برای نمایش لینک دعوت استفاده کنید)",$cancelKey);
     setUser($data);
 }
-if($userInfo['step']=="editInviteBannerText" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step']=="editInviteBannerText" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $data = array();
     if(isset($update->message->photo)){
         $data['type'] = 'photo';
@@ -614,9 +635,9 @@ if($userInfo['step'] == "editInviteAmount" && ($from_id == $admin || $userInfo['
             ]]); 
         sendMessage("✅ تنظیمات بازاریابی",$keys);
         setUser();
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
-if(preg_match('/^edit(RewaredTime|cartToCartAutoAcceptTime)/', $userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^edit(RewaredTime|cartToCartAutoAcceptTime)/', ($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!is_numeric($text)){
         sendMessage("لطفا عدد بفرستید");
         exit();
@@ -627,7 +648,7 @@ if(preg_match('/^edit(RewaredTime|cartToCartAutoAcceptTime)/', $userInfo['step']
     }
     
     setSettings(lcfirst($match[1]), $text);
-    sendMessage($mainValues['change_bot_settings_message'],getBotSettingKeys());
+    sendMessage(($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getBotSettingKeys());
     setUser();
     exit();
 }
@@ -657,7 +678,7 @@ if($data=="inviteFriends"){
             $res = sendPhoto($inviteText['file_id'],$txt,null,"HTML");
         }
         $msgId = $res->result->message_id;
-        sendMessage("با لینک بالا دوستاتو به ربات دعوت کن و با هر خرید $inviteAmount بدست بیار",json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),null,null,$msgId);
+        sendMessage("با لینک بالا دوستاتو به ربات دعوت کن و با هر خرید $inviteAmount بدست بیار",json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),null,null,$msgId);
     }
     else alert("این قسمت غیر فعال است");
 }
@@ -668,7 +689,7 @@ if($data=="myInfo"){
     $totalBuys = $stmt->get_result()->num_rows;
     $stmt->close();
     
-    $myWallet = number_format($userInfo['wallet']) . " تومان";
+    $myWallet = number_format(($userInfo['wallet'] ?? 0)) . " تومان";
     
     $keys = json_encode(['inline_keyboard'=>[
         [
@@ -693,13 +714,13 @@ if($data=="myInfo"){
             $keys,"html");
 }
 if($data=="transferMyWallet"){
-    if($userInfo['wallet'] > 0 ){
+    if(($userInfo['wallet'] ?? 0) > 0 ){
         delMessage();
         sendMessage("لطفا آیدی عددی کاربر مورد نظر رو وارد کن",$cancelKey);
         setUser($data);
     }else alert("موجودی حساب شما کم است");
 }
-if($userInfo['step'] =="transferMyWallet" && $text != $buttonValues['cancel']){
+if($userInfo['step'] =="transferMyWallet" && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         if($text != $from_id){
             $stmt= $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
@@ -713,12 +734,12 @@ if($userInfo['step'] =="transferMyWallet" && $text != $buttonValues['cancel']){
                 sendMessage("لطفا مبلغ مورد نظر رو وارد کن");
             }else sendMessage("کاربری با این آیدی یافت نشد");
         }else sendMessage("میخای به خودت انتقال بدی ؟؟");
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
-if(preg_match('/^tranfserUserAmount(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel']){
+if(preg_match('/^tranfserUserAmount(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         if($text > 0){
-            if($userInfo['wallet'] >= $text){
+            if(($userInfo['wallet'] ?? 0) >= $text){
                 $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` + ? WHERE `userid` = ?");
                 $stmt->bind_param("ii", $text, $match[1]);
                 $stmt->execute();
@@ -735,16 +756,16 @@ if(preg_match('/^tranfserUserAmount(\d+)/',$userInfo['step'],$match) && $text !=
                 sendMessage("لطفا یکی از کلید های زیر را انتخاب کنید",getMainKeys());
             }else sendMessage("موجودی حساب شما کم است");
         }else sendMessage("لطفا عددی بزرگتر از صفر وارد کنید");
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
 if($data=="increaseMyWallet"){
     delMessage();
     sendMessage("🙂 عزیزم مقدار شارژ مورد نظر خود را به تومان وارد کن (بیشتر از 5000 تومان)",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "increaseMyWallet" && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "increaseMyWallet" && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!is_numeric($text)){
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
         exit();
     }
     elseif($text < 5000){
@@ -774,7 +795,7 @@ if($userInfo['step'] == "increaseMyWallet" && $text != $buttonValues['cancel']){
     if($botState['weSwapState'] == "on") $keyboard[] = [['text' => $buttonValues['weswap_gateway'],  'callback_data' => "payWithWeSwap" . $hash_id]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-    $keyboard[] = [['text'=>$buttonValues['cancel'], 'callback_data'=> "mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=> "mainMenu"]];
 
     
 	$keys = json_encode(['inline_keyboard'=>$keyboard]);
@@ -800,12 +821,12 @@ if(preg_match('/increaseWalletWithCartToCart(?<hashId>.*)/',$data, $match)) {
     sendMessage(str_replace(["ACCOUNT-NUMBER", "HOLDER-NAME"],[$paymentKeys['bankAccount'],$paymentKeys['holderName']], $mainValues['increase_wallet_cart_to_cart']),$cancelKey, "HTML");
     exit;
 }
-if(preg_match('/increaseWalletWithCartToCart(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel']){
+if(preg_match('/increaseWalletWithCartToCart(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         setUser();
-        $uid = $userInfo['userid'];
-        $name = $userInfo['name'];
-        $username = $userInfo['username'];
+        $uid = ($userInfo['userid'] ?? 0);
+        $name = ($userInfo['name'] ?? '');
+        $username = ($userInfo['username'] ?? '');
     
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -817,7 +838,7 @@ if(preg_match('/increaseWalletWithCartToCart(.*)/',$userInfo['step'], $match) an
     
 
         sendMessage($mainValues['order_increase_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         $msg = str_replace(['PRICE', 'USERNAME', 'NAME', 'USER-ID'],[$price, $username, $name, $from_id], $mainValues['increase_wallet_request_message']);
         
         $keyboard = json_encode([
@@ -877,7 +898,7 @@ if(preg_match('/^decPayment(.*)/',$data,$match) && ($from_id == $admin || $userI
     sendMessage("لطفا دلیل عدم تأیید افزایش موجودی را وارد کنید",$cancelKey);
     setUser("decPayment" . $message_id . "_" . $match[1]);
 }
-if(preg_match('/^decPayment(\d+)_(.*)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^decPayment(\d+)_(.*)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
     $stmt->bind_param("s", $match[2]);
     $stmt->execute();
@@ -905,7 +926,7 @@ if($data=="increaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] ==
     sendMessage($mainValues['send_user_id'],$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "increaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "increaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
         $stmt->bind_param("i", $text);
@@ -919,13 +940,13 @@ if($userInfo['step'] == "increaseUserWallet" && ($from_id == $admin || $userInfo
         else{
             setUser();
             sendMessage($mainValues['user_not_found'], $removeKeyboard);
-            sendMessage($mainValues['reached_main_menu'],getMainKeys());
+            sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         }
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
-if(preg_match('/^increaseWalletUser(\d+)/',$userInfo['step'], $match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^increaseWalletUser(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` + ? WHERE `userid` = ?");
         $stmt->bind_param("ii", $text, $match[1]);
@@ -934,10 +955,10 @@ if(preg_match('/^increaseWalletUser(\d+)/',$userInfo['step'], $match) && $text !
     
         sendMessage("✅ مبلغ " . number_format($text). " تومان به حساب شما اضافه شد",null,null,$match[1]);
         sendMessage("✅ مبلغ " . number_format($text) . " تومان به کیف پول کاربر مورد نظر اضافه شد",$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         setUser();
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
 if($data=="decreaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -945,7 +966,7 @@ if($data=="decreaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] ==
     sendMessage($mainValues['send_user_id'],$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "decreaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "decreaseUserWallet" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
         $stmt->bind_param("i", $text);
@@ -959,13 +980,13 @@ if($userInfo['step'] == "decreaseUserWallet" && ($from_id == $admin || $userInfo
         else{
             setUser();
             sendMessage($mainValues['user_not_found'], $removeKeyboard);
-            sendMessage($mainValues['reached_main_menu'],getMainKeys());
+            sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         }
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
-if(preg_match('/^decreaseWalletUser(\d+)/',$userInfo['step'], $match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^decreaseWalletUser(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` - ? WHERE `userid` = ?");
         $stmt->bind_param("ii", $text, $match[1]);
@@ -974,10 +995,10 @@ if(preg_match('/^decreaseWalletUser(\d+)/',$userInfo['step'], $match) && $text !
     
         sendMessage(str_replace("AMOUNT", number_format($text), $mainValues['amount_decreased_from_your_wallet']),null,null,$match[1]);
         sendMessage(str_replace("AMOUNT", number_format($text), $mainValues['amount_decreased_from_user_wallet']),$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         setUser();
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
 if($data=="editRewardChannel" && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -985,13 +1006,13 @@ if($data=="editRewardChannel" && ($from_id == $admin || $userInfo['isAdmin'] == 
     sendMessage("🤗|لطفا ربات رو در کانال ادمین کن و آیدی کانال رو بفرست",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "editRewardChannel" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "editRewardChannel" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $botId = json_decode(file_get_contents("https://api.telegram.org/bot$botToken/getme"))->result->id;
     $result = json_decode(file_get_contents("https://api.telegram.org/bot$botToken/getChatMember?chat_id=$text&user_id=$botId"));
     if($result->ok){
         if($result->result->status == "administrator"){
             setSettings('rewardChannel', $text);
-            sendMessage($mainValues['change_bot_settings_message'],getGateWaysKeys());
+            sendMessage(($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getGateWaysKeys());
             setUser();
             exit();
         }
@@ -1003,13 +1024,13 @@ if($data=="editLockChannel" && ($from_id == $admin || $userInfo['isAdmin'] == tr
     sendMessage("🤗|لطفا ربات رو در کانال ادمین کن و آیدی کانال رو بفرست",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "editLockChannel" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "editLockChannel" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $botId = json_decode(file_get_contents("https://api.telegram.org/bot$botToken/getme"))->result->id;
     $result = json_decode(file_get_contents("https://api.telegram.org/bot$botToken/getChatMember?chat_id=$text&user_id=$botId"));
     if($result->ok){
         if($result->result->status == "administrator"){
             setSettings("lockChannel", $text);
-            sendMessage($mainValues['change_bot_settings_message'],getGateWaysKeys());
+            sendMessage(($mainValues['change_bot_settings_message'] ?? 'پیام پیش‌فرض'),getGateWaysKeys());
             setUser();
             exit();
         }
@@ -1041,7 +1062,7 @@ if(($data == "agentOneBuy" || $data=='buySubscription' || $data == "agentMuchBuy
         $keyboard[] = ['text' => "$flag $name", 'callback_data' => "selectServer{$id}_{$buyType}"];
     }
     $keyboard = array_chunk($keyboard,1);
-    $keyboard[] = [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]];
     editText($message_id, $mainValues['buy_sub_select_location'], json_encode(['inline_keyboard'=>$keyboard]));
 }
 if($data=='createMultipleAccounts' && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -1060,7 +1081,7 @@ if($data=='createMultipleAccounts' && ($from_id == $admin || $userInfo['isAdmin'
         $flag = $cat['flag'];
         $keyboard[] = ['text' => "$flag $name", 'callback_data' => "createAccServer$id"];
     }
-    $keyboard[] = ['text'=>$buttonValues['back_to_main'],'callback_data'=>"managePanel"];
+    $keyboard[] = ['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"managePanel"];
     $keyboard = array_chunk($keyboard,1);
     editText($message_id, $mainValues['buy_sub_select_location'], json_encode(['inline_keyboard'=>$keyboard]));
     
@@ -1092,7 +1113,7 @@ if(preg_match('/createAccServer(\d+)/',$data, $match) && ($from_id == $admin || 
             alert("هیچ دسته بندی برای این سرور وجود ندارد");exit;
         }
         alert("♻️ | دریافت دسته بندی ...");
-        $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => "createMultipleAccounts"];
+        $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "createMultipleAccounts"];
         $keyboard = array_chunk($keyboard,1);
         editText($message_id, "2️⃣ مرحله دو:
 
@@ -1118,7 +1139,7 @@ if(preg_match('/createAccCategory(\d+)_(\d+)/',$data,$match) && ($from_id == $ad
             $name = $file['title'];
             $keyboard[] = ['text' => "$name", 'callback_data' => "createAccPlan{$id}"];
         }
-        $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => "createAccServer$sid"];
+        $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "createAccServer$sid"];
         $keyboard = array_chunk($keyboard,1);
         editText($message_id, "3️⃣ مرحله سه:
 
@@ -1126,12 +1147,12 @@ if(preg_match('/createAccCategory(\d+)_(\d+)/',$data,$match) && ($from_id == $ad
     }
 
 }
-if(preg_match('/^createAccPlan(\d+)/',$data,$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^createAccPlan(\d+)/',$data,$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     delMessage();
     sendMessage("❗️لطفا مدت زمان اکانت را به ( روز ) وارد کن:",$cancelKey);
     setUser('createAccDate' . $match[1]);
 }
-if(preg_match('/^createAccDate(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^createAccDate(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         if($text >0){
             sendMessage("❕حجم اکانت ها رو به گیگابایت ( GB ) وارد کن:");
@@ -1143,9 +1164,9 @@ if(preg_match('/^createAccDate(\d+)/',$userInfo['step'],$match) && $text != $but
         sendMessage('😡 | مگه نمیگم فقط عدد بفرس نمیفهمی؟ یا خودتو زدی به نفهمی؟');
     }
 }
-if(preg_match('/^createAccVolume(\d+)_(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^createAccVolume(\d+)_(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(!is_numeric($text)){
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
         exit();
     }elseif($text <=0){
         sendMessage("مقداری بزرگتر از 0 وارد کن");
@@ -1154,9 +1175,9 @@ if(preg_match('/^createAccVolume(\d+)_(\d+)/',$userInfo['step'],$match) && $text
     sendMessage($mainValues['enter_account_amount']);
     setUser("createAccAmount" . $match[1] . "_" . $match[2] . "_" . $text);
 }
-if(preg_match('/^createAccAmount(\d+)_(\d+)_(\d+)/',$userInfo['step'], $match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^createAccAmount(\d+)_(\d+)_(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(!is_numeric($text)){
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
         exit();
     }elseif($text <=0){
         sendMessage("مقداری بزرگتر از 0 وارد کن");
@@ -1342,7 +1363,7 @@ if(preg_match('/^createAccAmount(\d+)_(\d+)_(\d+)/',$userInfo['step'], $match) &
             imagedestroy($qrImage);
 
 
-        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
             unlink($file);
         }
         $stmt->bind_param("ssiiisssisiii", $uid, $token, $fid, $server_id, $inbound_id, $remark, $uniqid, $protocol, $expire_date, $vray_link, $price, $date, $rahgozar);
@@ -1447,7 +1468,7 @@ if(preg_match('/payWithTronWallet(.*)/',$data,$match)) {
     sendMessage(str_replace(["AMOUNT", "TRON-WALLET"], [$priceInTrx, $paymentKeys['tronwallet']], $mainValues['pay_with_tron_wallet']), $cancelKey, "html");
     setUser($data);
 }
-if(preg_match('/^payWithTronWallet(.*)/',$userInfo['step'], $match) && $text != $buttonValues['cancel']){
+if(preg_match('/^payWithTronWallet(.*)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!preg_match('/^[0-9a-f]{64}$/i',$text)){
         sendMessage($mainValues['incorrect_tax_id']);
         exit(); 
@@ -1466,7 +1487,7 @@ if(preg_match('/^payWithTronWallet(.*)/',$userInfo['step'], $match) && $text != 
             
             sendMessage($mainValues['in_review_tax_id'], $removeKeyboard);
             setUser();
-            sendMessage($mainValues['reached_main_menu'],getMainKeys());
+            sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         }else sendMessage($mainValues['used_tax_id']);
     }
 
@@ -1812,7 +1833,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
             imagedestroy($backgroundImage);
             imagedestroy($qrImage);
 
-        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
             unlink($file);
         }
         
@@ -1827,12 +1848,12 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         $stmt->close();
     }
     
-    if($userInfo['refered_by'] != null){
+    if(($userInfo['refered_by'] ?? null) != null){
         $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'INVITE_BANNER_AMOUNT'");
         $stmt->execute();
         $inviteAmount = $stmt->get_result()->fetch_assoc()['value']??0;
         $stmt->close();
-        $inviterId = $userInfo['refered_by'];
+        $inviterId = ($userInfo['refered_by'] ?? null);
         
         $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` + ? WHERE `userid` = ?");
         $stmt->bind_param("ii", $inviteAmount, $inviterId);
@@ -2155,9 +2176,9 @@ if($data=="messageToSpeceficUser" && ($from_id == $admin || $userInfo['isAdmin']
     sendMessage($mainValues['send_user_id'], $cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "messageToSpeceficUser" && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if($userInfo['step'] == "messageToSpeceficUser" && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(!is_numeric($text)){
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
         exit();
     }
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
@@ -2216,7 +2237,7 @@ if($data == 'message2All' and ($from_id == $admin || $userInfo['isAdmin'] == tru
         sendMessage("لطفا پیامت رو بنویس ، میخوام برا همه بفرستمش: 🙂",$cancelKey);
     }
 }
-if($userInfo['step'] == 's2a' and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if($userInfo['step'] == 's2a' and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     setUser();
 
     if($fileid !== null) {
@@ -2295,7 +2316,7 @@ if($data=="forwardToAll" && ($from_id == $admin || $userInfo['isAdmin'] == true)
         setUser($data);
     }
 }
-if($userInfo['step'] == "forwardToAll" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "forwardToAll" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("INSERT INTO `send_list` (`type`, `message_id`, `chat_id`) VALUES ('forwardall', ?, ?)");
     $stmt->bind_param('ss', $message_id, $chat_id);
     $stmt->execute();
@@ -2335,7 +2356,7 @@ if(preg_match('/selectServer(?<serverId>\d+)_(?<buyType>\w+)/',$data, $match) &&
         }
         alert($mainValues['receive_categories']);
 
-        $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => 
+        $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => 
         ($match['buyType'] == "one"?"agentOneBuy":($match['buyType'] == "much"?"agentMuchBuy":"buySubscription"))];
         $keyboard = array_chunk($keyboard,1);
         editText($message_id,$mainValues['buy_sub_select_category'], json_encode(['inline_keyboard'=>$keyboard]));
@@ -2360,7 +2381,7 @@ if(preg_match('/selectCategory(?<categoryId>\d+)_(?<serverId>\d+)_(?<buyType>\w+
             $name = $file['title'];
             $price = $file['price'];
             if($userInfo['is_agent'] == true && ($match['buyType'] == "one" || $match['buyType'] == "much")){
-                $discounts = json_decode($userInfo['discount_percent'],true);
+                $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
                 if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$id]?? $discounts['normal'];
                 else $discount = $discounts['servers'][$sid]?? $discounts['normal'];
                 
@@ -2372,7 +2393,7 @@ if(preg_match('/selectCategory(?<categoryId>\d+)_(?<serverId>\d+)_(?<buyType>\w+
         if($botState['plandelkhahState'] == "on" && $match['buyType'] != "much"){
 	        $keyboard[] = ['text' => $mainValues['buy_custom_plan'], 'callback_data' => "selectCustomPlan{$call_id}_{$sid}_{$match['buyType']}"];
         }
-        $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => "selectServer{$sid}_{$match['buyType']}"];
+        $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "selectServer{$sid}_{$match['buyType']}"];
         $keyboard = array_chunk($keyboard,1);
         editText($message_id,$mainValues['buy_sub_select_plan'], json_encode(['inline_keyboard'=>$keyboard]));
     }
@@ -2393,14 +2414,14 @@ if(preg_match('/selectCustomPlan(?<categoryId>\d+)_(?<serverId>\d+)_(?<buyType>\
         $name = preg_replace("/پلن\s(\d+)\sگیگ\s/","",$file['title']);
         $keyboard[] = ['text' => "$name", 'callback_data' => "selectCustomePlan{$id}_{$call_id}_{$match['buyType']}"];
     }
-    $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => "selectServer{$sid}_{$match['buyType']}"];
+    $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "selectServer{$sid}_{$match['buyType']}"];
     $keyboard = array_chunk($keyboard,1);
     editText($message_id, $mainValues['select_one_plan_to_edit'], json_encode(['inline_keyboard'=>$keyboard]));
 
 }
 if(preg_match('/selectCustomePlan(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\w+)/',$data, $match) && ($botState['sellState']=="on" ||$from_id == $admin)){
 	delMessage();
-	$price = $botState['gbPrice'];
+	$price = ($botState['gbPrice'] ?? '100');
 	if($match['buyType'] == "one" && $userInfo['is_agent'] == true){ 
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ?");
         $stmt->bind_param("i", $match[1]);
@@ -2408,7 +2429,7 @@ if(preg_match('/selectCustomePlan(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\w
         $serverId = $stmt->get_result()->fetch_assoc()['server_id'];
         $stmt->close();
 
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$match[1]]?? $discounts['normal'];
         else $discount = $discounts['servers'][$serverId]?? $discounts['normal'];
         $price -= floor($price * $discount / 100);
@@ -2416,7 +2437,7 @@ if(preg_match('/selectCustomePlan(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\w
 	sendMessage(str_replace("VOLUME-PRICE", $price, $mainValues['customer_custome_plan_volume']),$cancelKey);
 	setUser("selectCustomPlanGB" . $match[1] . "_" . $match[2] . "_" . $match['buyType']);
 }
-if(preg_match('/selectCustomPlanGB(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\w+)/',$userInfo['step'], $match) && ($botState['sellState']=="on" ||$from_id == $admin) && $text != $buttonValues['cancel']){
+if(preg_match('/selectCustomPlanGB(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\w+)/',($userInfo['step'] ?? 'none'), $match) && ($botState['sellState']=="on" ||$from_id == $admin) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!is_numeric($text)){
         sendMessage("😡|لطفا فقط عدد ارسال کن");
         exit();
@@ -2435,7 +2456,7 @@ if(preg_match('/selectCustomPlanGB(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\
     }
     
     $id = $match['planId'];
-    $price = $botState['dayPrice'];
+    $price = ($botState['dayPrice'] ?? '100');
 	if($match['buyType'] == "one" && $userInfo['is_agent'] == true){
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ?");
         $stmt->bind_param("i", $id);
@@ -2443,7 +2464,7 @@ if(preg_match('/selectCustomPlanGB(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\
         $serverId = $stmt->get_result()->fetch_assoc()['server_id'];
         $stmt->close();
 
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$id]?? $discounts['normal'];
         else $discount = $discounts['servers'][$serverId]?? $discounts['normal'];
         $price -= floor($price * $discount / 100);
@@ -2452,7 +2473,7 @@ if(preg_match('/selectCustomPlanGB(?<planId>\d+)_(?<categoryId>\d+)_(?<buyType>\
 	sendMessage(str_replace("DAY-PRICE", $price, $mainValues['customer_custome_plan_day']));
 	setUser("selectCustomPlanDay" . $id . "_" . $match['categoryId'] . "_" . $text . "_" . $match['buyType']);
 }
-if((preg_match('/selectCustomPlanDay(?<planId>\d+)_(?<categoryId>\d+)_(?<accountCount>\d+)_(?<buyType>\w+)/',$userInfo['step'], $match)) && ($botState['sellState']=="on" ||$from_id == $admin) && $text != $buttonValues['cancel']){
+if((preg_match('/selectCustomPlanDay(?<planId>\d+)_(?<categoryId>\d+)_(?<accountCount>\d+)_(?<buyType>\w+)/',($userInfo['step'] ?? 'none'), $match)) && ($botState['sellState']=="on" ||$from_id == $admin) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!is_numeric($text)){
         sendMessage("😡|لطفا فقط عدد ارسال کن");
         exit();
@@ -2473,8 +2494,8 @@ if((preg_match('/selectCustomPlanDay(?<planId>\d+)_(?<categoryId>\d+)_(?<account
 	sendMessage($mainValues['customer_custome_plan_name']);
 	setUser("enterCustomPlanName" . $match['planId'] . "_" . $match['categoryId'] . "_" . $match['accountCount'] . "_" . $text . "_" . $match['buyType']);
 }
-if((preg_match('/^discountCustomPlanDay(\d+)/',$userInfo['step'], $match) || preg_match('/enterCustomPlanName(\d+)_(\d+)_(\d+)_(\d+)_(?<buyType>\w+)/',$userInfo['step'], $match)) && ($botState['sellState']=="on" ||$from_id ==$admin) && $text != $buttonValues['cancel']){
-    if(preg_match('/^discountCustomPlanDay/', $userInfo['step'])){
+if((preg_match('/^discountCustomPlanDay(\d+)/',($userInfo['step'] ?? 'none'), $match) || preg_match('/enterCustomPlanName(\d+)_(\d+)_(\d+)_(\d+)_(?<buyType>\w+)/',($userInfo['step'] ?? 'none'), $match)) && ($botState['sellState']=="on" ||$from_id ==$admin) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+    if(preg_match('/^discountCustomPlanDay/', ($userInfo['step'] ?? 'none'))){
         $rowId = $match[1];
 
         $time = time();
@@ -2571,10 +2592,10 @@ if((preg_match('/^discountCustomPlanDay(\d+)/',$userInfo['step'], $match) || pre
 	$keyboard = array();
     $token = base64_encode("{$from_id}.{$id}");
 
-    if(!preg_match('/^discountCustomPlanDay/', $userInfo['step'])){
+    if(!preg_match('/^discountCustomPlanDay/', ($userInfo['step'] ?? 'none'))){
         $discountPrice = 0;
-        $gbPrice = $botState['gbPrice'];
-        $dayPrice = $botState['dayPrice'];
+        $gbPrice = ($botState['gbPrice'] ?? '100');
+        $dayPrice = ($botState['dayPrice'] ?? '100');
         
         if($userInfo['is_agent'] == true && $match['buyType'] == "one") {
             $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ?");
@@ -2583,7 +2604,7 @@ if((preg_match('/^discountCustomPlanDay(\d+)/',$userInfo['step'], $match) || pre
             $serverId = $stmt->get_result()->fetch_assoc()['server_id'];
             $stmt->close();
             
-            $discounts = json_decode($userInfo['discount_percent'],true);
+            $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
             if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$id]?? $discounts['normal'];
             else $discount = $discounts['servers'][$sid]?? $discounts['normal'];
             
@@ -2621,8 +2642,8 @@ if((preg_match('/^discountCustomPlanDay(\d+)/',$userInfo['step'], $match) || pre
     if($botState['walletState'] == "on") $keyboard[] = [['text' => $buttonValues['pay_with_wallet'],  'callback_data' => "payCustomWithWallet$hash_id"]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-    if(!preg_match('/^discountCustomPlanDay/', $userInfo['step'])) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountCustom_" . $rowId]];
-	$keyboard[] = [['text' => $buttonValues['cancel'], 'callback_data' => "mainMenu"]];
+    if(!preg_match('/^discountCustomPlanDay/', ($userInfo['step'] ?? 'none'))) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountCustom_" . $rowId]];
+	$keyboard[] = [['text' => ($buttonValues['cancel'] ?? 'دکمه'), 'callback_data' => "mainMenu"]];
     $price = ($price == 0) ? 'رایگان' : number_format($price).' تومان ';
     sendMessage(str_replace(['VOLUME', 'DAYS', 'PLAN-NAME', 'PRICE', 'DESCRIPTION'], [$volume, $days, $name, $price, $desc], $mainValues['buy_subscription_detail']),json_encode(['inline_keyboard'=>$keyboard]), "HTML");
     setUser();
@@ -2635,7 +2656,7 @@ if(preg_match('/^haveDiscount(.+?)_(.*)/',$data,$match)){
     elseif($match[1] == "Renew") setUser('discountRenew' . $match[2]);
 }
 if($data=="getTestAccount"){
-    if($userInfo['freetrial'] != null && $from_id != $admin && $userInfo['isAdmin'] != true){
+    if(($userInfo['freetrial'] ?? null) != null && $from_id != $admin && ($userInfo['isAdmin'] ?? false) != true){
         alert("شما اکانت تست را قبلا استفاده کرده اید");
         exit();
     }
@@ -2663,17 +2684,17 @@ if($data=="getTestAccount"){
             $keyboard[] = [['text' => $name, 'callback_data' => "freeTrial{$id}_normal"]];
 
         }
-    	$keyboard[] = [['text' => $buttonValues['back_to_main'], 'callback_data' => "mainMenu"]];
+    	$keyboard[] = [['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "mainMenu"]];
         editText($message_id,"لطفا یکی از کلید های زیر را انتخاب کنید", json_encode(['inline_keyboard'=>$keyboard]), "HTML");
     }else alert("این بخش موقتا غیر فعال است");
 }
-if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match) || 
-    preg_match('/selectPlan(\d+)_(\d+)_(?<buyType>\w+)/',$userInfo['step'], $match) || 
-    preg_match('/enterAccountName(\d+)_(\d+)_(?<buyType>\w+)/',$userInfo['step'], $match) || 
+if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',($userInfo['step'] ?? 'none'),$match) || 
+    preg_match('/selectPlan(\d+)_(\d+)_(?<buyType>\w+)/',($userInfo['step'] ?? 'none'), $match) || 
+    preg_match('/enterAccountName(\d+)_(\d+)_(?<buyType>\w+)/',($userInfo['step'] ?? 'none'), $match) || 
     preg_match('/selectPlan(\d+)_(\d+)_(?<buyType>\w+)/',$data, $match)) && 
     ($botState['sellState']=="on" ||$from_id ==$admin) && 
-    $text != $buttonValues['cancel']){
-    if(preg_match('/^discountSelectPlan/', $userInfo['step'])){
+    $text != ($buttonValues['cancel'] ?? 'دکمه')){
+    if(preg_match('/^discountSelectPlan/', ($userInfo['step'] ?? 'none'))){
         $rowId = $match[3];
         
         $time = time();
@@ -2747,17 +2768,17 @@ if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match
     }
 
     $remark = "";
-    if(preg_match("/selectPlan(\d+)_(\d+)_(\w+)/",$userInfo['step'])){
+    if(preg_match("/selectPlan(\d+)_(\d+)_(\w+)/",($userInfo['step'] ?? 'none'))){
         if($match['buyType'] == "much"){
             if(is_numeric($text)){
                 if($text > 0){
                     $accountCount = $text;
                     setUser();
                 }else{sendMessage( $mainValues['send_positive_number']); exit(); }
-            }else{ sendMessage($mainValues['send_only_number']); exit(); }
+            }else{ sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض')); exit(); }
         }        
     }
-    elseif(preg_match("/enterAccountName(\d+)_(\d+)/",$userInfo['step'])){
+    elseif(preg_match("/enterAccountName(\d+)_(\d+)/",($userInfo['step'] ?? 'none'))){
         if(preg_match('/^[a-z]+[0-9]+$/',$text)){
             $remark = $text;
             setUser();
@@ -2799,7 +2820,7 @@ if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match
     
     $agentBought = false;
     if($userInfo['is_agent'] == true && ($match['buyType'] == "one" || $match['buyType'] == "much")){
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$id]?? $discounts['normal'];
         else $discount = $discounts['servers'][$sid]?? $discounts['normal'];
         $price -= floor($price * $discount / 100);
@@ -2812,7 +2833,7 @@ if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match
     }else{
         $token = base64_encode("{$from_id}.{$id}");
         
-        if(!preg_match('/^discountSelectPlan/', $userInfo['step'])){
+        if(!preg_match('/^discountSelectPlan/', ($userInfo['step'] ?? 'none'))){
             $hash_id = RandomString();
             $stmt = $connection->prepare("DELETE FROM `pays` WHERE `user_id` = ? AND `type` = 'BUY_SUB' AND `state` = 'pending'");
             $stmt->bind_param("i", $from_id);
@@ -2844,10 +2865,10 @@ if((preg_match('/^discountSelectPlan(\d+)_(\d+)_(\d+)/',$userInfo['step'],$match
         if($botState['walletState'] == "on") $keyboard[] = [['text' => $buttonValues['pay_with_wallet'],  'callback_data' => "payWithWallet$hash_id"]];
         if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
         
-        if(!preg_match('/^discountSelectPlan/', $userInfo['step'])) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountSelectPlan_" . $match[1] . "_" . $match[2] . "_" . $rowId]];
+        if(!preg_match('/^discountSelectPlan/', ($userInfo['step'] ?? 'none'))) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountSelectPlan_" . $match[1] . "_" . $match[2] . "_" . $rowId]];
 
     }
-	$keyboard[] = [['text' => $buttonValues['back_to_main'], 'callback_data' => "selectCategory{$call_id}_{$sid}_{$match['buyType']}"]];
+	$keyboard[] = [['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "selectCategory{$call_id}_{$sid}_{$match['buyType']}"]];
     $priceC = ($price == 0) ? 'رایگان' : number_format($price).' تومان ';
     if(isset($accountCount)){
         $eachPrice = number_format($price / $accountCount) . " تومان";
@@ -2900,7 +2921,7 @@ if(preg_match('/payCustomWithWallet(.*)/',$data, $match)){
     $protocol = $file_detail['protocol'];
     $price = $payInfo['price'];
 
-    if($userInfo['wallet'] < $price){
+    if(($userInfo['wallet'] ?? 0) < $price){
         alert("موجودی حساب شما کم است");
         exit();
     }
@@ -3063,17 +3084,17 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         imagedestroy($backgroundImage);
         imagedestroy($qrImage);
 
-    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
         unlink($file);
     }
 
     
-    if($userInfo['refered_by'] != null){
+    if(($userInfo['refered_by'] ?? null) != null){
         $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'INVITE_BANNER_AMOUNT'");
         $stmt->execute();
         $inviteAmount = $stmt->get_result()->fetch_assoc()['value']??0;
         $stmt->close();
-        $inviterId = $userInfo['refered_by'];
+        $inviterId = ($userInfo['refered_by'] ?? null);
         
         $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` + ? WHERE `userid` = ?");
         $stmt->bind_param("ii", $inviteAmount, $inviterId);
@@ -3142,7 +3163,7 @@ if(preg_match('/^showQr(Sub|Config)(\d+)/',$data,$match)){
         imagedestroy($backgroundImage);
         imagedestroy($qrImage);
 
-    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
         unlink($file);
     }
     elseif($match[1] == "Config"){
@@ -3170,7 +3191,7 @@ if(preg_match('/^showQr(Sub|Config)(\d+)/',$data,$match)){
             imagedestroy($backgroundImage);
             imagedestroy($qrImage);
             
-        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+        	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
             unlink($file);
         }
     }
@@ -3230,7 +3251,7 @@ if(preg_match('/payCustomWithCartToCart(.*)/',$data, $match)) {
     sendMessage(str_replace(["ACCOUNT-NUMBER", "HOLDER-NAME"],[$paymentKeys['bankAccount'],$paymentKeys['holderName']], $mainValues['buy_account_cart_to_cart']),$cancelKey, "HTML");
     exit;
 }
-if(preg_match('/payCustomWithCartToCart(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel']){
+if(preg_match('/payCustomWithCartToCart(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -3243,9 +3264,9 @@ if(preg_match('/payCustomWithCartToCart(.*)/',$userInfo['step'], $match) and $te
         $days = $payInfo['day'];
         
         setUser();
-        $uid = $userInfo['userid'];
-        $name = $userInfo['name'];
-        $username = $userInfo['username'];
+        $uid = ($userInfo['userid'] ?? 0);
+        $name = ($userInfo['name'] ?? '');
+        $username = ($userInfo['username'] ?? '');
     
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=?");
         $stmt->bind_param("i", $fid);
@@ -3263,7 +3284,7 @@ if(preg_match('/payCustomWithCartToCart(.*)/',$userInfo['step'], $match) and $te
         $remark = $payInfo['description'];
         
         sendMessage($mainValues['order_buy_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
     
         $msg = str_replace(['TYPE', 'USER-ID', 'USERNAME', 'NAME', 'PRICE', 'REMARK', 'VOLUME', 'DAYS'],
                             ["کارت به کارت", $from_id, $username, $first_name, $fileprice, $remark,$volume, $days], $mainValues['buy_custom_account_request']);
@@ -3286,7 +3307,7 @@ if(preg_match('/payCustomWithCartToCart(.*)/',$userInfo['step'], $match) and $te
         sendMessage($mainValues['please_send_only_image']);
     }
 }
-if(preg_match('/accCustom(.*)/',$data, $match) and $text != $buttonValues['cancel']){
+if(preg_match('/accCustom(.*)/',$data, $match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser();
 
     $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
@@ -3471,7 +3492,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         imagedestroy($backgroundImage);
         imagedestroy($qrImage);
 
-    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+    	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
         unlink($file);
     }
     sendMessage('✅ کانفیگ و براش ارسال کردم', getMainKeys());
@@ -3586,7 +3607,7 @@ if(preg_match('/payWithWallet(.*)/',$data, $match)){
     $customPort = $file_detail['custom_port'];
     $customSni = $file_detail['custom_sni'];
     
-    if($userInfo['wallet'] < $price){
+    if(($userInfo['wallet'] ?? 0) < $price){
         alert("موجودی حساب شما کم است");
         exit();
     }
@@ -3632,7 +3653,7 @@ if(preg_match('/payWithWallet(.*)/',$data, $match)){
     	$stmt->close();
         $keys = json_encode(['inline_keyboard'=>[
             [
-                ['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]
+                ['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]
             ],
             ]]);
         editText($message_id,"✅سرویس $remark با موفقیت تمدید شد",$keys);
@@ -3796,7 +3817,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
                 imagedestroy($backgroundImage);
                 imagedestroy($qrImage);
 
-            	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+            	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
                 unlink($file);
             }
             
@@ -3810,12 +3831,12 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         }
     
         delMessage($msg);
-        if($userInfo['refered_by'] != null){
+        if(($userInfo['refered_by'] ?? null) != null){
             $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'INVITE_BANNER_AMOUNT'");
             $stmt->execute();
             $inviteAmount = $stmt->get_result()->fetch_assoc()['value']??0;
             $stmt->close();
-            $inviterId = $userInfo['refered_by'];
+            $inviterId = ($userInfo['refered_by'] ?? null);
             
             $stmt = $connection->prepare("UPDATE `users` SET `wallet` = `wallet` + ? WHERE `userid` = ?");
             $stmt->bind_param("ii", $inviteAmount, $inviterId);
@@ -3909,7 +3930,7 @@ if(preg_match('/payWithCartToCart(.*)/',$data,$match)) {
     sendMessage(str_replace(["ACCOUNT-NUMBER", "HOLDER-NAME"],[$paymentKeys['bankAccount'],$paymentKeys['holderName']], $mainValues['buy_account_cart_to_cart']),$cancelKey, "HTML");
     exit;
 }
-if(preg_match('/payWithCartToCart(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel']){
+if(preg_match('/payWithCartToCart(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -3920,9 +3941,9 @@ if(preg_match('/payWithCartToCart(.*)/',$userInfo['step'], $match) and $text != 
         
         $fid = $payInfo['plan_id'];
         setUser();
-        $uid = $userInfo['userid'];
-        $name = $userInfo['name'];
-        $username = $userInfo['username'];
+        $uid = ($userInfo['userid'] ?? 0);
+        $name = ($userInfo['name'] ?? '');
+        $username = ($userInfo['username'] ?? '');
     
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=?");
         $stmt->bind_param("i", $fid);
@@ -3953,7 +3974,7 @@ if(preg_match('/payWithCartToCart(.*)/',$userInfo['step'], $match) and $text != 
         $fileprice = $payInfo['price'];
     
         sendMessage($mainValues['order_buy_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
     
         if($payInfo['agent_count'] != 0) $msg = str_replace(['ACCOUNT-COUNT', 'TYPE', 'USER-ID', "USERNAME", "NAME", "PRICE", "REMARK"],[$payInfo['agent_count'], 'کارت به کارت', $from_id, $username, $name, $fileprice, $filename], $mainValues['buy_new_much_account_request']);
         else $msg = str_replace(['SERVERNAME', 'TYPE', 'USER-ID', "USERNAME", "NAME", "PRICE", "REMARK", "VOLUME", "DAYS"],[$serverTitle, 'کارت به کارت', $from_id, $username, $name, $fileprice, $filename, $volume, $days], $mainValues['buy_new_account_request']);
@@ -4084,7 +4105,7 @@ if(preg_match('/^agencyApprove(\d+)/',$data,$match) && ($from_id == $admin || $u
     setUser($data . "_" . $message_id);
     sendMessage($mainValues['send_agent_discount_percent'], $cancelKey);
 }
-if(preg_match('/^agencyApprove(\d+)_(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^agencyApprove(\d+)_(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         editKeys(json_encode(['inline_keyboard'=>[
             [['text'=>$buttonValues['approved'],'callback_data'=>"alphabot"]]
@@ -4097,9 +4118,9 @@ if(preg_match('/^agencyApprove(\d+)_(\d+)/',$userInfo['step'],$match) && $text !
         $stmt->execute();
         $stmt->close();
         sendMessage($mainValues['agency_request_approved'], null,null,$match[1]);
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
-if(preg_match('/accept(.*)/',$data, $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/accept(.*)/',$data, $match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     setUser();
     
     $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
@@ -4328,7 +4349,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
                 imagedestroy($backgroundImage);
                 imagedestroy($qrImage);
 
-            	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
+            	sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML", $uid);
                 unlink($file);
             }
             $agent_bought = $payInfo['agent_bought'];
@@ -4407,7 +4428,7 @@ if(preg_match('/decline/',$data) and ($from_id == $admin || $userInfo['isAdmin']
     setUser($data . "_" . $message_id);
     sendMessage('دلیلت از عدم تایید چیه؟ ( بفرس براش ) 😔 ',$cancelKey);
 }
-if(preg_match('/decline(\d+)_(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) and $text != $buttonValues['cancel']){
+if(preg_match('/decline(\d+)_(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser();
     $uid = $match[1];
     editKeys(
@@ -4416,7 +4437,7 @@ if(preg_match('/decline(\d+)_(\d+)/',$userInfo['step'],$match) && ($from_id == $
 	    ]]) ,$match[2]);
 
     sendMessage('پیامت رو براش ارسال کردم ... 🤝',$removeKeyboard);
-    sendMessage($mainValues['reached_main_menu'],getMainKeys());
+    sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
     
     sendMessage($text, null, null, $uid);
 }
@@ -4504,7 +4525,7 @@ if($data=='addNewDayPlan' and ($from_id == $admin || $userInfo['isAdmin'] == tru
 مقدار دوم قیمت (30000) تومان
  ",$cancelKey);exit;
 }
-if($userInfo['step'] == "addNewDayPlan" and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if($userInfo['step'] == "addNewDayPlan" and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $input = explode('-',$text); 
     $volume = $input[0];
     $price = $input[1];
@@ -4514,7 +4535,7 @@ if($userInfo['step'] == "addNewDayPlan" and $text != $buttonValues['cancel'] && 
     $stmt->close();
     
     sendMessage("پلن زمانی جدید با موفقیت اضافه شد",$removeKeyboard);
-    sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+    sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
     setUser();
 }
 if(preg_match('/^deleteDayPlan(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -4565,7 +4586,7 @@ if(preg_match('/^changeDayPlanPrice(\d+)/',$data,$match) and ($from_id == $admin
     sendMessage("قیمت جدید را وارد کنید:", $cancelKey);
     exit;
 }
-if(preg_match('/^changeDayPlanPrice(\d+)/',$userInfo['step'],$match) and $text != $buttonValues['cancel']){
+if(preg_match('/^changeDayPlanPrice(\d+)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         setUser();
         $stmt = $connection->prepare("UPDATE `increase_day` SET `price` = ? WHERE `id` = ?");
@@ -4618,7 +4639,7 @@ if(preg_match('/^changeDayPlanDay(\d+)/',$data,$match) and ($from_id == $admin |
     sendMessage("روز جدید را وارد کنید:", $cancelKey);
     exit;
 }
-if(preg_match('/^changeDayPlanDay(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) and $text != $buttonValues['cancel']) {
+if(preg_match('/^changeDayPlanDay(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) and $text != ($buttonValues['cancel'] ?? 'دکمه')) {
     setUser();
     $stmt = $connection->prepare("UPDATE `increase_day` SET `volume` = ? WHERE `id` = ?");
     $stmt->bind_param("ii", $text, $match[1]);
@@ -4704,7 +4725,7 @@ if($data=='addNewVolumePlan' and ($from_id == $admin || $userInfo['isAdmin'] == 
  ",$cancelKey);
  exit;
 }
-if($userInfo['step'] == "addNewVolumePlan" and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if($userInfo['step'] == "addNewVolumePlan" and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $input = explode('-',$text); 
     $volume = $input[0];
     $price = $input[1];
@@ -4714,7 +4735,7 @@ if($userInfo['step'] == "addNewVolumePlan" and $text != $buttonValues['cancel'] 
     $stmt->close();
     
     sendMessage("پلن حجمی جدید با موفقیت اضافه شد",$removeKeyboard);
-    sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+    sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
     setUser();
 }
 if(preg_match('/^deleteVolumePlan(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -4761,7 +4782,7 @@ if(preg_match('/^changeVolumePlanPrice(\d+)/',$data,$match) and ($from_id == $ad
     sendMessage("قیمت جدید را وارد کنید:", $cancelKey);
     exit;
 }
-if(preg_match('/^changeVolumePlanPrice(\d+)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] and ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^changeVolumePlanPrice(\d+)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') and ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $pid=$match[1];
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `increase_plan` SET `price` = ? WHERE `id` = ?");
@@ -4810,7 +4831,7 @@ if(preg_match('/^changeVolumePlanVolume(\d+)/',$data) and ($from_id == $admin ||
     sendMessage("حجم جدید را وارد کنید:", $cancelKey);
     exit;
 }
-if(preg_match('/^changeVolumePlanVolume(\d+)/',$userInfo['step'], $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^changeVolumePlanVolume(\d+)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $pid=$match[1];
     $stmt = $connection->prepare("UPDATE `increase_plan` SET `volume` = ? WHERE `id` = ?");
     $stmt->bind_param("ii", $text, $pid);
@@ -4855,16 +4876,16 @@ if(preg_match('/^supportCat(.*)/',$data,$match)){
     sendMessage($mainValues['enter_ticket_title'], $cancelKey);
     setUser("newTicket_" . $match[1]);
 }
-if(preg_match('/^newTicket_(.*)/',$userInfo['step'],$match)  and $text!=$buttonValues['cancel']){
+if(preg_match('/^newTicket_(.*)/',($userInfo['step'] ?? 'none'),$match)  and $text!=($buttonValues['cancel'] ?? 'دکمه')){
     setUser($text, 'temp');
 	setUser("sendTicket_" . $match[1]);
     sendMessage($mainValues['enter_ticket_description']);
 }
-if(preg_match('/^sendTicket_(.*)/',$userInfo['step'],$match)  and $text!=$buttonValues['cancel']){
+if(preg_match('/^sendTicket_(.*)/',($userInfo['step'] ?? 'none'),$match)  and $text!=($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($text) || isset($update->message->photo)){
         $ticketCat = $match[1];
         
-        $ticketTitle = $userInfo['temp'];
+        $ticketTitle = ($userInfo['temp'] ?? null);
         $time = time();
     
         $ticketTitle = str_replace(["/","'","#"],['\/',"\'","\#"],$ticketTitle);
@@ -5047,7 +5068,7 @@ if(preg_match('/^replySupport_(.*)/',$data,$match)){
     sendMessage("💠لطفا متن پیام خود را بصورت ساده و مختصر ارسال کنید!",$cancelKey);
 	setUser("sendMsg_" . $match[1]);
 }
-if(preg_match('/^sendMsg_(.*)/',$userInfo['step'],$match)  and $text!=$buttonValues['cancel']){
+if(preg_match('/^sendMsg_(.*)/',($userInfo['step'] ?? 'none'),$match)  and $text!=($buttonValues['cancel'] ?? 'دکمه')){
     $ticketRowId = $match[1];
 
     $stmt = $connection->prepare("SELECT * FROM `chats` WHERE `id` = ?");
@@ -5452,7 +5473,7 @@ if($data=="unbanUser" && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     sendMessage("آیدی عددیشو بفرست تا آزادش کنم", $cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "banUser" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "banUser" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
@@ -5475,9 +5496,9 @@ if($userInfo['step'] == "banUser" && ($from_id == $admin || $userInfo['isAdmin']
             }
         }else sendMessage("کاربری با این آیدی یافت نشد");
         setUser();
-        sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
 if($data=="mainMenuButtons" && ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -5497,7 +5518,7 @@ if($data == "addNewMainButton" && ($from_id == $admin || $userInfo['isAdmin'] ==
     sendMessage("لطفا اسم دکمه را وارد کنید",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "addNewMainButton" && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if($userInfo['step'] == "addNewMainButton" && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(!isset($update->message->text)){
         sendMessage("لطفا فقط متن بفرستید");
         exit();
@@ -5505,7 +5526,7 @@ if($userInfo['step'] == "addNewMainButton" && $text != $buttonValues['cancel'] &
     sendMessage("لطفا پاسخ دکمه را وارد کنید");
     setUser("setMainButtonAnswer" . $text);
 }
-if(preg_match('/^setMainButtonAnswer(.*)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^setMainButtonAnswer(.*)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(!isset($update->message->text)){
         sendMessage("لطفا فقط متن بفرستید");
         exit();
@@ -5520,7 +5541,7 @@ if(preg_match('/^setMainButtonAnswer(.*)/',$userInfo['step'],$match) && ($from_i
     
     sendMessage("مدیریت دکمه های صفحه اصلی",getMainMenuButtonsKeys());
 }
-if($userInfo['step'] == "unbanUser" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if($userInfo['step'] == "unbanUser" && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
         $stmt->bind_param("i", $text);
@@ -5542,16 +5563,16 @@ if($userInfo['step'] == "unbanUser" && ($from_id == $admin || $userInfo['isAdmin
             }
         }else sendMessage("کاربری با این آیدی یافت نشد");
         setUser();
-        sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
     }else{
-        sendMessage($mainValues['send_only_number']);
+        sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
     }
 }
 if(preg_match("/^reply_(.*)/",$data,$match) and  ($from_id == $admin || $userInfo['isAdmin'] == true)){
     setUser("answer_" . $match[1]);
     sendMessage("لطفا پیام خود را ارسال کنید",$cancelKey);
 }
-if(preg_match('/^answer_(.*)/',$userInfo['step'],$match) and  $from_id ==$admin  and $text!=$buttonValues['cancel']){
+if(preg_match('/^answer_(.*)/',($userInfo['step'] ?? 'none'),$match) and  $from_id ==$admin  and $text!=($buttonValues['cancel'] ?? 'دکمه')){
     $chatRowId = $match[1];
     $stmt = $connection->prepare("SELECT * FROM `chats` WHERE `id` = ?");
     $stmt->bind_param("i", $chatRowId);
@@ -5608,7 +5629,7 @@ if(preg_match('/^answer_(.*)/',$userInfo['step'],$match) and  $from_id ==$admin 
 if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
     $id = $match[1];
  
-    if($userInfo['freetrial'] == 'used' and !($from_id == $admin) && json_decode($userInfo['discount_percent'],true)['normal'] != "100"){
+    if($userInfo['freetrial'] == 'used' and !($from_id == $admin) && json_decode(($userInfo['discount_percent'] ?? null),true)['normal'] != "100"){
         alert('⚠️شما قبلا هدیه رایگان خود را دریافت کردید');
         exit;
     }
@@ -5642,7 +5663,7 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
         $agentBought = true;
         
         
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$id]?? $discounts['normal'];
         else $discount = $discounts['servers'][$server_id]?? $discounts['normal'];
         $price -= floor($price * $discount / 100);
@@ -5688,8 +5709,8 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
     $panelUrl = $serverConfig['panel_url'];
     $stmt->close();
 
-    if($from_id == $admin && !empty($userInfo['temp'])){
-        $remark = $userInfo['temp'];
+    if($from_id == $admin && !empty(($userInfo['temp'] ?? null))){
+        $remark = ($userInfo['temp'] ?? null);
         setUser('','temp');
     }else{
         if($botState['remark'] == "digits"){
@@ -5793,7 +5814,7 @@ if($botState['subLinkState'] == "on") $acc_text .= "
         imagedestroy($backgroundImage);
         imagedestroy($qrImage);
 
-        sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]]]),"HTML");
+        sendPhoto($botUrl . $file, $acc_text,json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]]]),"HTML");
         unlink($file);
     }
 	$stmt = $connection->prepare("INSERT INTO `orders_list` 
@@ -5841,7 +5862,7 @@ if(preg_match('/^marzbanHostSettings(\d+)/',$data,$match) && ($from_id == $admin
     foreach($hosts as $key => $inbound){
         $networkType[] = [['text'=>$inbound->tag, 'callback_data'=>"selectHost{$match[1]}*_*{$inbound->protocol}*_*{$inbound->tag}"]];
     }
-    $networkType[] = [['text'=>$buttonValues['cancel'], 'callback_data'=>"planDetails" . $match[1]]];
+    $networkType[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=>"planDetails" . $match[1]]];
     $networkType = json_encode(['inline_keyboard'=>$networkType]);
     editText($message_id, "لطفا نوع شبکه های این پلن را انتخاب کنید",$networkType);
 }
@@ -5856,7 +5877,7 @@ if(preg_match('/^selectHost(?<planId>\d+)\*_\*(?<protocol>.+)\*_\*(?<tag>.*)/',$
     if(strstr(json_encode($markup,JSON_UNESCAPED_UNICODE), "✅") && !strstr(json_encode($markup,JSON_UNESCAPED_UNICODE), $saveBtn)){
         $markup[] = [['text'=>$saveBtn,'callback_data'=>"saveServerHost" . $match['planId']]];
     }
-    $markup[] = [['text'=>$buttonValues['cancel'], 'callback_data'=>"planDetails" . $match['planId']]];
+    $markup[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=>"planDetails" . $match['planId']]];
     $markup = json_encode(['inline_keyboard'=>array_values($markup)]);
     editKeys($markup);
 }
@@ -5906,14 +5927,14 @@ if(preg_match('/^releaseRejectedAgent(\d+)/',$data,$match) && ($from_id == $admi
     $keys = getRejectedAgentList();
     if($keys != null){
         editText($message_id,"لیست کاربران رد شده از نمایندگی",$keys);
-    }else editText($message_id,"کاربری یافت نشد",json_encode(['inline_keyboard'=>[[['text'=>$buttonValues['back_to_main'],'callback_data'=>"managePanel"]]]]));
+    }else editText($message_id,"کاربری یافت نشد",json_encode(['inline_keyboard'=>[[['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"managePanel"]]]]));
 }
 if($data=="showUUIDLeft" && ($botState['searchState']=="on" || $from_id== $admin)){
     delMessage();
     sendMessage($mainValues['send_config_uuid'],$cancelKey);
     setUser('showAccount');
 }
-if($userInfo['step'] == "showAccount" and $text != $buttonValues['cancel']){
+if($userInfo['step'] == "showAccount" and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(preg_match('/^vmess:\/\/(.*)/',$text,$match)){
         $jsonDecode = json_decode(base64_decode($match[1]),true);
         $text = $jsonDecode['id'];
@@ -6203,13 +6224,13 @@ if($userInfo['step'] == "showAccount" and $text != $buttonValues['cancel']){
 }
 
 if(preg_match('/sConfigRenew(\d+)/', $data,$match)){
-    if($botState['sellState']=="off" && $from_id !=$admin){ alert($mainValues['bot_is_updating']); exit(); }
+    if($botState['sellState']=="off" && $from_id !=$admin){ alert(($mainValues['bot_is_updating'] ?? 'پیام پیش‌فرض')); exit(); }
     
     alert($mainValues['please_wait_message']);
     $server_id = $match[1];
-    if(empty($userInfo['temp'])){delMessage(); exit();}
+    if(empty(($userInfo['temp'] ?? null))){delMessage(); exit();}
     
-    $configInfo = json_decode($userInfo['temp'],true);
+    $configInfo = json_decode(($userInfo['temp'] ?? null),true);
     $inboundId = $configInfo['id']??0;
     $uuid = $configInfo['uuid'];
     $remark = $configInfo['remark'];
@@ -6272,21 +6293,21 @@ if(preg_match('/sConfigRenew(\d+)/', $data,$match)){
                 $keyboard[] = ['text' => "$name - $price", 'callback_data' => "sConfigRenewPlan{$id}_{$inboundId}"];
             }
         }
-        $keyboard[] = ['text' => $buttonValues['back_to_main'], 'callback_data' => "mainMenu"];
+        $keyboard[] = ['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "mainMenu"];
         $keyboard = array_chunk($keyboard,1);
         editText($message_id, "3️⃣ مرحله سه:
 
 یکی از پلن هارو انتخاب کن و برو برای پرداختش 🤲 🕋", json_encode(['inline_keyboard'=>$keyboard]));
     }else sendMessage("💡پلنی در این دسته بندی وجود ندارد ");
 }
-if(preg_match('/sConfigRenewPlan(\d+)_(\d+)/',$data, $match) && ($botState['sellState']=="on" ||$from_id ==$admin) && $text != $buttonValues['cancel']){
+if(preg_match('/sConfigRenewPlan(\d+)_(\d+)/',$data, $match) && ($botState['sellState']=="on" ||$from_id ==$admin) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $id = $match[1];
 	$inbound_id = $match[2];
 
 
-    if(empty($userInfo['temp'])){delMessage(); exit();}
+    if(empty(($userInfo['temp'] ?? null))){delMessage(); exit();}
     
-    $configInfo = json_decode($userInfo['temp'],true);
+    $configInfo = json_decode(($userInfo['temp'] ?? null),true);
     $uuid = $configInfo['uuid'];
     $remark = $configInfo['remark'];
 
@@ -6336,15 +6357,15 @@ if(preg_match('/sConfigRenewPlan(\d+)_(\d+)/',$data, $match) && ($botState['sell
     if($botState['walletState'] == "on") $keyboard[] = [['text' => $buttonValues['pay_with_wallet'],  'callback_data' => "payWithWallet$hash_id"]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-	$keyboard[] = [['text' => $buttonValues['back_to_main'], 'callback_data' => "mainMenu"]];
+	$keyboard[] = [['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "mainMenu"]];
     sendMessage(str_replace(['PLAN-NAME', 'PRICE', 'DESCRIPTION'], [$name, $price, $desc], $mainValues['buy_subscription_detail']), json_encode(['inline_keyboard'=>$keyboard]), "HTML");
 }
 if(preg_match('/sConfigUpdate(\d+)/', $data,$match)){
     alert($mainValues['please_wait_message']);
     $server_id = $match[1];
-    if(empty($userInfo['temp'])){delMessage(); exit();}
+    if(empty(($userInfo['temp'] ?? null))){delMessage(); exit();}
     
-    $configInfo = json_decode($userInfo['temp'],true);
+    $configInfo = json_decode(($userInfo['temp'] ?? null),true);
     $inboundId = $configInfo['id']??0;
     $uuid = $configInfo['uuid'];
     $remark = $configInfo['remark'];
@@ -6432,7 +6453,7 @@ if (($data == 'addNewPlan' || $data=="addNewRahgozarPlan" || $data == "addNewMar
     sendMessage($msg,$cancelKey);
     exit;
 }
-if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['step']) and $text!=$buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',($userInfo['step'] ?? 'none')) and $text!=($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $catkey = [];
     $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `parent` =0 and `active`=1");
     $stmt->execute();
@@ -6444,11 +6465,11 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $name = $cat['title'];
         $catkey[] = ["$id - $name"];
     }
-    $catkey[] = [$buttonValues['cancel']];
+    $catkey[] = [($buttonValues['cancel'] ?? 'دکمه')];
 
     $step = checkStep('server_plans');
 
-    if($step==1 and $text!=$buttonValues['cancel']){
+    if($step==1 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         $msg = '🔰 لطفا قیمت پلن رو به تومان وارد کنید!';
         if(strlen($text)>1){
             $stmt = $connection->prepare("UPDATE `server_plans` SET `title`=?,`step`=2 WHERE `active`=0 and `step`=1");
@@ -6458,7 +6479,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             sendMessage($msg,$cancelKey);
         }
     } 
-    if($step==2 and $text!=$buttonValues['cancel']){
+    if($step==2 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         $msg = '🔰لطفا یه دسته از لیست زیر برا پلن انتخاب کن ';
         if(is_numeric($text)){
             $stmt = $connection->prepare("UPDATE `server_plans` SET `price`=?,`step`=3 WHERE `active`=0");
@@ -6471,7 +6492,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             sendMessage($msg,$cancelKey);
         }
     } 
-    if($step==3 and $text!=$buttonValues['cancel']){
+    if($step==3 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         $srvkey = [];
 
         $stmt = $connection->prepare("SELECT `id` FROM `server_config` WHERE `type` = 'marzban'");
@@ -6502,7 +6523,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
                 'inline_keyboard' => $srvkey]), "HTML");
         $inarr = 0;
         foreach ($catkey as $op) {
-            if (in_array($text, $op) and $text != $buttonValues['cancel']) {
+            if (in_array($text, $op) and $text != ($buttonValues['cancel'] ?? 'دکمه')) {
                 $inarr = 1;
             }
         }
@@ -6520,7 +6541,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             sendMessage($msg,$catkey);
         }
     } 
-    if($step==50 and $text!=$buttonValues['cancel'] and preg_match('/selectNewPlanServer(\d+)/', $data,$match)){
+    if($step==50 and $text!=($buttonValues['cancel'] ?? 'دکمه') and preg_match('/selectNewPlanServer(\d+)/', $data,$match)){
         $newStep = $userInfo['step'] == "addNewMarzbanPlan"?53:51;
         
         $stmt = $connection->prepare("UPDATE `server_plans` SET `server_id`=?,`step`=? WHERE `active`=0");
@@ -6532,10 +6553,10 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             [['text'=>"🎖پورت اختصاصی",'callback_data'=>"withSpecificPort"]],
             [['text'=>"🎗پورت اشتراکی",'callback_data'=>"withSharedPort"]]
             ]]);
-        if($userInfo['step'] != "addNewMarzbanPlan") editText($message_id, "لطفا نوعیت پورت پنل رو انتخاب کنید", $keys);
+        if(($userInfo['step'] ?? 'none') != "addNewMarzbanPlan") editText($message_id, "لطفا نوعیت پورت پنل رو انتخاب کنید", $keys);
         else editText($message_id, "📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
     }
-    if($step==51 and $text!=$buttonValues['cancel'] and preg_match('/^with(Specific|Shared)Port/',$data,$match)){
+    if($step==51 and $text!=($buttonValues['cancel'] ?? 'دکمه') and preg_match('/^with(Specific|Shared)Port/',$data,$match)){
         if($userInfo['step'] == "addNewRahgozarPlan") $msg =  "📡 | لطفا پروتکل پلن مورد نظر را وارد کنید (vless | vmess)";
         else $msg =  "📡 | لطفا پروتکل پلن مورد نظر را وارد کنید (vless | vmess | trojan)";
         editText($message_id,$msg);
@@ -6550,7 +6571,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             $stmt->close();
         }
     }
-    if($step==60 and $text!=$buttonValues['cancel']){
+    if($step==60 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if($text != "vless" && $text != "vmess" && $text != "trojan" && $userInfo['step'] == "addNewPlan"){
             sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
             exit();
@@ -6566,9 +6587,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
         sendMessage("📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
     }
-    if($step==61 and $text!=$buttonValues['cancel']){
+    if($step==61 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6579,9 +6600,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage("🔋 | لطفا مقدار حجم به GB این پلن را وارد کنید:");
     }
-    if($step==62 and $text!=$buttonValues['cancel']){
+    if($step==62 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6591,9 +6612,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
         sendMessage("🛡 | لطفا آیدی سطر کانکشن در پنل را وارد کنید:");
     }
-    if($step==63 and $text!=$buttonValues['cancel']){
+    if($step==63 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6621,9 +6642,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage("لطفا ظرفیت تعداد اکانت رو پورت مورد نظر را وارد کنید");
     }
-    if($step==64 and $text!=$buttonValues['cancel']){
+    if($step==64 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6634,9 +6655,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage("🧲 | لطفا تعداد چند کاربره این پلن را وارد کنید ( 0 نامحدود است )");
     }
-    if($step==65 and $text!=$buttonValues['cancel']){
+    if($step==65 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         $stmt = $connection->prepare("UPDATE `server_plans` SET `limitip`=?,`step`=4 WHERE `active`=0");
@@ -6647,7 +6668,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $msg = '🔻یه توضیح برای پلن مورد نظرت بنویس:';
         sendMessage($msg,$cancelKey); 
     }
-    if($step==52 and $text!=$buttonValues['cancel']){
+    if($step==52 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if($userInfo['step'] == "addNewPlan" && $text != "vless" && $text != "vmess" && $text != "trojan"){
             sendMessage("لطفا فقط پروتکل های vless و vmess را وارد کنید",$cancelKey);
             exit();
@@ -6663,9 +6684,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage("📅 | لطفا تعداد روز های اعتبار این پلن را وارد کنید:");
     }
-    if($step==53 and $text!=$buttonValues['cancel']){
+    if($step==53 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6676,9 +6697,9 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage("🔋 | لطفا مقدار حجم به GB این پلن را وارد کنید:");
     }
-    if($step==54 and $text!=$buttonValues['cancel']){
+    if($step==54 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if(!is_numeric($text)){
-            sendMessage($mainValues['send_only_number']);
+            sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
             exit();
         }
         
@@ -6696,7 +6717,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
 
         sendMessage($msg);
     }
-    if($step==55 and $text!=$buttonValues['cancel']){
+    if($step==55 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         if($text != "tcp" && $text != "ws" && $text != "grpc"){
             sendMessage("لطفا فقط نوع (ws | tcp | grpc) را وارد کنید");
             exit();
@@ -6711,7 +6732,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         sendMessage($msg,$cancelKey); 
     }
     
-    if($step==4 and $text!=$buttonValues['cancel']){
+    if($step==4 and $text!=($buttonValues['cancel'] ?? 'دکمه')){
         
         if($userInfo['step'] == "addNewMarzbanPlan"){
             $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `active` = 0 AND `step` = 4");
@@ -6734,7 +6755,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
             $imgtxt = '☑️ | پنل با موفقیت ثبت و ایجاد شد ( لذت ببرید ) ';
             
             sendMessage($imgtxt,$removeKeyboard);
-            sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+            sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
             setUser();
         }
         $stmt->bind_param("s", $text);
@@ -6742,7 +6763,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
 
     } 
-    elseif($step == 5 and $text != $buttonValues['cancel'] && preg_match('/^planNetworkType(?<protocol>.+)\*_\*(?<tag>.*)/',$data,$match)){
+    elseif($step == 5 and $text != ($buttonValues['cancel'] ?? 'دکمه') && preg_match('/^planNetworkType(?<protocol>.+)\*_\*(?<tag>.*)/',$data,$match)){
         $saveBtn = "ذخیره ✅";
         if($markup[count($markup)-1][0]['text'] == $saveBtn) unset($markup[count($markup)-1]);
 
@@ -6757,7 +6778,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         
         editKeys($markup);
     }
-    elseif($step == 5 && $text != $buttonValues['cancel'] && $data == "savePlanNetworkType"){
+    elseif($step == 5 && $text != ($buttonValues['cancel'] ?? 'دکمه') && $data == "savePlanNetworkType"){
         delMessage();
         $inbounds = array();
         $proxies = array();
@@ -6787,7 +6808,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         
         $imgtxt = '☑️ | پنل با موفقیت ثبت و ایجاد شد ( لذت ببرید ) ';
         sendMessage($imgtxt,$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getAdminKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getAdminKeys());
         setUser();
     }
 }
@@ -6825,7 +6846,7 @@ if($data == 'backplan' and ($from_id == $admin || $userInfo['isAdmin'] == true))
     
     exit;
 }
-if(($data=="editCustomPlan" || preg_match('/^editCustom(gbPrice|dayPrice)/',$userInfo['step'],$match)) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(($data=="editCustomPlan" || preg_match('/^editCustom(gbPrice|dayPrice)/',($userInfo['step'] ?? 'none'),$match)) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(!isset($data)){
         if(is_numeric($text)){
             setSettings($match[1], $text);
@@ -6941,12 +6962,12 @@ if(preg_match('/^wizwizplandelete(\d+)/',$data,$match) and ($from_id == $admin |
     
     editText($message_id,"لطفا یکی از کلید های زیر را انتخاب کنید",getMainKeys());
 }
-if(preg_match('/^wizwizplanname(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplanname(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 یه اسم برا پلن جدید انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanname(\d+)/',$userInfo['step'], $match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^wizwizplanname(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `title`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -6961,12 +6982,12 @@ if(preg_match('/^wizwizplanname(\d+)/',$userInfo['step'], $match) && $text != $b
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys);
 }
-if(preg_match('/^wizwizplanslimit(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplanslimit(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 ظرفیت جدید برای پلن انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanslimit(\d+)/',$userInfo['step'], $match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^wizwizplanslimit(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `acount`=? WHERE `id`=?");
     $stmt->bind_param("ii", $text, $match[1]);
     $stmt->execute();
@@ -6981,12 +7002,12 @@ if(preg_match('/^wizwizplanslimit(\d+)/',$userInfo['step'], $match) && $text != 
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplansinobundid(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplansinobundid(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 سطر جدید برای پلن انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplansinobundid(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplansinobundid(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `inbound_id`=? WHERE `id`=?");
     $stmt->bind_param("ii", $text, $match[1]);
     $stmt->execute();
@@ -7001,12 +7022,12 @@ if(preg_match('/^wizwizplansinobundid(\d+)/',$userInfo['step'], $match) && ($fro
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplaneditdes(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplaneditdes(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 توضیحاتت رو برام وارد کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplaneditdes(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplaneditdes(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `descr`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -7022,12 +7043,12 @@ if(preg_match('/^wizwizplaneditdes(\d+)/',$userInfo['step'], $match) && ($from_i
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^editDestName(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editDestName(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 dest رو برام وارد کن:\nبرای حذف کردن متن /empty رو وارد کن",$cancelKey);exit;
 }
-if(preg_match('/^editDestName(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) &&  $text != $buttonValues['cancel']){
+if(preg_match('/^editDestName(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) &&  $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if($text == "/empty"){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `dest` = NULL WHERE `id`=?");
         $stmt->bind_param("i", $match[1]);
@@ -7048,12 +7069,12 @@ if(preg_match('/^editDestName(\d+)/',$userInfo['step'], $match) && ($from_id == 
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^editSpiderX(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editSpiderX(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 spiderX رو برام وارد کن\nبرای حذف کردن متن /empty رو وارد کن",$cancelKey);exit;
 }
-if(preg_match('/^editSpiderX(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editSpiderX(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if($text == "/empty"){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `spiderX`=NULL WHERE `id`=?");
         $stmt->bind_param("s", $match[1]);
@@ -7074,7 +7095,7 @@ if(preg_match('/^editSpiderX(\d+)/',$userInfo['step'], $match) && ($from_id == $
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^editServerNames(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editServerNames(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 serverNames رو به صورت زیر برام وارد کن:\n
@@ -7084,7 +7105,7 @@ if(preg_match('/^editServerNames(\d+)/',$data) and ($from_id == $admin || $userI
 ]`
     \n\nبرای حذف کردن متن /empty رو وارد کن",$cancelKey);exit;
 }
-if(preg_match('/^editServerNames(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editServerNames(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if($text == "/empty"){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `serverNames`=NULL WHERE `id`=?");
         $stmt->bind_param("s", $match[1]);
@@ -7105,7 +7126,7 @@ if(preg_match('/^editServerNames(\d+)/',$userInfo['step'], $match) && ($from_id 
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^editFlow(\d+)/',$data, $match) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editFlow(\d+)/',$data, $match) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     $keys = json_encode(['inline_keyboard'=>[
@@ -7114,7 +7135,7 @@ if(preg_match('/^editFlow(\d+)/',$data, $match) and ($from_id == $admin || $user
         ]]);
     sendMessage("🎯 لطفا یکی از موارد زیر رو انتخاب کن",$keys);exit;
 }
-if(preg_match('/^editPFlow(\d+)_(.*)/',$data, $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^editPFlow(\d+)_(.*)/',$data, $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `flow`=? WHERE `id`=?");
     $stmt->bind_param("si", $match[2], $match[1]);
     $stmt->execute();
@@ -7126,12 +7147,12 @@ if(preg_match('/^editPFlow(\d+)_(.*)/',$data, $match) && ($from_id == $admin || 
     $keys = getPlanDetailsKeys($match[1]);
     editText($message_id, "ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplanrial(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplanrial(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 شیطون قیمت و گرون کردی 😂 ، خب قیمت جدید و بزن ببینم :",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanrial(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true)&& $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizplanrial(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true)&& $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `price`=? WHERE `id`=?");
         $stmt->bind_param("ii", $text, $match[1]);
@@ -7195,7 +7216,7 @@ if(($data == 'mySubscriptions' || $data == "agentConfigsList" or preg_match('/(c
     $keyboard[] = $buttons;
     if($data == "agentConfigsList" || $match[1] == "changeAgentOrder") $keyboard[] = [['text'=>$buttonValues['search_agent_config'],'callback_data'=>"searchAgentConfig"]];
     else $keyboard[] = [['text'=>$buttonValues['search_agent_config'],'callback_data'=>"searchMyConfig"]];
-    $keyboard[] = [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]];
     
     if(isset($data)) {
         editText($message_id, $mainValues['select_one_to_show_detail'], json_encode(['inline_keyboard'=>$keyboard]));
@@ -7209,7 +7230,7 @@ if($data=="searchAgentConfig" || $data == "searchMyConfig" || $data=="searchUser
     sendMessage($mainValues['send_config_remark'],$cancelKey);
     setUser($data);
 }
-if(($userInfo['step'] == "searchAgentConfig" || $userInfo['step'] == "searchMyConfig") && $text != $buttonValues['cancel']){
+if(($userInfo['step'] == "searchAgentConfig" || $userInfo['step'] == "searchMyConfig") && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     sendMessage($mainValues['please_wait_message'], $removeKeyboard);
     if($userInfo['step'] == "searchMyConfig") $condition = "AND `agent_bought` = 0";
     $stmt = $connection->prepare("SELECT * FROM `orders_list` WHERE `userid` = ? AND `remark` LIKE CONCAT('%', ?, '%') $condition");
@@ -7225,7 +7246,7 @@ if(($userInfo['step'] == "searchAgentConfig" || $userInfo['step'] == "searchMyCo
         setUser();
     }
 }
-if(($userInfo['step'] == "searchUsersConfig" && $text != $buttonValues['cancel']) || preg_match('/^userOrderDetails(\d+)_(\d+)/',$data,$match)){
+if(($userInfo['step'] == "searchUsersConfig" && $text != ($buttonValues['cancel'] ?? 'دکمه')) || preg_match('/^userOrderDetails(\d+)_(\d+)/',$data,$match)){
     if(isset($data)){
         $stmt = $connection->prepare("SELECT * FROM `orders_list` WHERE `id` = ?");
         $stmt->bind_param("i", $match[1]);
@@ -7267,7 +7288,7 @@ if(preg_match('/^changeCustomPort(\d+)/',$data,$match) && ($from_id == $admin ||
     sendMessage("لطفا پورت مورد نظر خود را وارد کنید\nبرای حذف پورت دلخواه عدد 0 را وارد کنید", $cancelKey);
     setUser($data);
 }
-if(preg_match('/^changeCustomPort(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^changeCustomPort(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `custom_port`= ? WHERE `id` = ?");
         $stmt->bind_param("ii", $text, $match[1]);
@@ -7277,14 +7298,14 @@ if(preg_match('/^changeCustomPort(\d+)/',$userInfo['step'],$match) && ($from_id 
          
         sendMessage("ویرایش تنظیمات پلن", getPlanDetailsKeys($match[1]));
         setUser();
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
 if(preg_match('/^changeCustomSni(\d+)/',$data,$match) && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     delMessage();
     sendMessage("لطفا sni مورد نظر خود را وارد کنید\nبرای حذف متن /empty را وارد کنید", $cancelKey);
     setUser($data);
 }
-if(preg_match('/^changeCustomSni(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^changeCustomSni(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if($text == "/empty"){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `custom_sni`= NULL WHERE `id` = ?");
         $stmt->bind_param("i", $match[1]);
@@ -7664,8 +7685,8 @@ if(preg_match('/changeAccProtocol(\d+)_(\d+)_(.*)/', $data,$match)){
     $keys = getOrderDetailKeys($from_id, $oid);
     editText($message_id, $keys['msg'], $keys['keyboard'],"HTML");
 }
-if(preg_match('/^discountRenew(\d+)_(\d+)/',$userInfo['step'], $match) || preg_match('/renewAccount(\d+)/',$data,$match) && $text != $buttonValues['cancel']){
-    if(preg_match('/^discountRenew/', $userInfo['step'])){
+if(preg_match('/^discountRenew(\d+)_(\d+)/',($userInfo['step'] ?? 'none'), $match) || preg_match('/renewAccount(\d+)/',$data,$match) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+    if(preg_match('/^discountRenew/', ($userInfo['step'] ?? 'none'))){
         $rowId = $match[2];
         
         $time = time();
@@ -7757,12 +7778,12 @@ if(preg_match('/^discountRenew(\d+)_(\d+)/',$userInfo['step'], $match) || preg_m
     $stmt->close();
     $price = $respd['price'];
     if($agentBought == true){
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$fid]?? $discounts['normal'];
         else $discount = $discounts['servers'][$serverId]?? $discounts['normal'];
         $price -= floor($price * $discount / 100);
     }
-    if(!preg_match('/^discountRenew/', $userInfo['step'])){
+    if(!preg_match('/^discountRenew/', ($userInfo['step'] ?? 'none'))){
         $hash_id = RandomString();
         $stmt = $connection->prepare("DELETE FROM `pays` WHERE `user_id` = ? AND `type` = 'RENEW_ACCOUNT' AND `state` = 'pending'");
         $stmt->bind_param("i", $from_id);
@@ -7789,9 +7810,9 @@ if(preg_match('/^discountRenew(\d+)_(\d+)/',$userInfo['step'], $match) || preg_m
     if($botState['walletState'] == "on") $keyboard[] = [['text' => "پرداخت با موجودی مبلغ $price",  'callback_data' => "payRenewWithWallet$hash_id"]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-    if(!preg_match('/^discountRenew/', $userInfo['step'])) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountRenew_" . $match[1] . "_" . $rowId]];
+    if(!preg_match('/^discountRenew/', ($userInfo['step'] ?? 'none'))) $keyboard[] = [['text' => " 🎁 نکنه کد تخفیف داری؟ ",  'callback_data' => "haveDiscountRenew_" . $match[1] . "_" . $rowId]];
 
-    $keyboard[] = [['text'=>$buttonValues['cancel'], 'callback_data'=> "mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=> "mainMenu"]];
 
 
 
@@ -7833,7 +7854,7 @@ if(preg_match('/payRenewWithCartToCart(.*)/',$data,$match)) {
     sendMessage(str_replace(['ACCOUNT-NUMBER', 'HOLDER-NAME'],[$paymentKeys['bankAccount'], $paymentKeys['holderName']], $mainValues['renew_ccount_cart_to_cart']),$cancelKey,"html");
     exit;
 }
-if(preg_match('/payRenewWithCartToCart(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel']){
+if(preg_match('/payRenewWithCartToCart(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -7852,8 +7873,8 @@ if(preg_match('/payRenewWithCartToCart(.*)/',$userInfo['step'],$match) and $text
         $fid = $order['fileid'];
         $remark = $order['remark'];
         $uid = $order['userid'];
-        $userName = $userInfo['username'];
-        $uname = $userInfo['name'];
+        $userName = ($userInfo['username'] ?? '');
+        $uname = ($userInfo['name'] ?? '');
         
         $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ? AND `active` = 1");
         $stmt->bind_param("i", $fid);
@@ -7865,7 +7886,7 @@ if(preg_match('/payRenewWithCartToCart(.*)/',$userInfo['step'],$match) and $text
         $days = $respd['days'];
         
         sendMessage($mainValues['renew_order_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
         // notify admin
         
         $msg = str_replace(['TYPE', "USER-ID", "USERNAME", "NAME", "PRICE", "REMARK", "VOLUME", "DAYS"],['کارت به کارت', $from_id, $username, $first_name, $price, $remark, $volume, $days], $mainValues['renew_account_request_message']);
@@ -8070,7 +8091,7 @@ if(preg_match('/payRenewWithWallet(.*)/', $data,$match)){
     $volume = $respd['volume'];
     $price = $payInfo['price'];
 
-    $userwallet = $userInfo['wallet'];
+    $userwallet = ($userInfo['wallet'] ?? 0);
 
     if($userwallet < $price) {
         $needamount = $price - $userwallet;
@@ -8179,15 +8200,15 @@ if(preg_match('/^giftToServer(\d+)/',$data,$match) && ($from_id == $admin || $us
     sendMessage("لطفا مدت زمان هدیه را به روز وارد کنید\nبرای اضافه نشدن زمان 0 را وارد کنید", $cancelKey);
     setUser('giftServerDay' . $match[1]);
 }
-if(preg_match('/^giftServerDay(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^giftServerDay(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         if($text >= 0){
             sendMessage("لطفا حجم هدیه را به مگابایت وارد کنید\nبرای اضافه نشدن حجم 0 را وارد کنید");
             setUser('giftServerVolume' . $match[1] . "_" . $text);
         }else sendMessage("عددی بزرگتر و یا مساوی به 0 واردکنید");
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
-if(preg_match('/^giftServerVolume(\d+)_(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^giftServerVolume(\d+)_(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         if($text >= 0){
             $stmt = $connection->prepare("INSERT INTO `gift_list` (`server_id`, `volume`, `day`) VALUES (?, ?, ?)");
@@ -8196,11 +8217,11 @@ if(preg_match('/^giftServerVolume(\d+)_(\d+)/',$userInfo['step'],$match) && ($fr
             $stmt->close();
             
             sendMessage($mainValues['saved_successfuly'],$removeKeyboard);
-            sendMessage($mainValues['reached_main_menu'],getMainKeys());
+            sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
 
             setUser();
         }else sendMessage("عددی بزرگتر و یا مساوی به 0 واردکنید");
-    }else sendMessage($mainValues['send_only_number']);
+    }else sendMessage(($mainValues['send_only_number'] ?? 'پیام پیش‌فرض'));
 }
 if(preg_match('/switchLocation(.+)_(.+)_(.+)_(.+)/', $data,$match)){
     $order_id = $match[1];
@@ -8420,7 +8441,7 @@ if(preg_match('/switchServer(.+)_(.+)/',$data,$match)){
         $keyboard[] = ['text' => "$cremark", 'callback_data' => "orderDetails$id"];
     }
     $keyboard = array_chunk($keyboard,2);
-    $keyboard[] = [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]];
     $msg = " 📍لوکیشن سرویس $remark به $server_title با ریمارک $newRemark تغییر یافت.\n لطفا برای مشاهده مشخصات, روی آن بزنید👇";
     
     editText($message_id, $msg,json_encode([
@@ -8446,7 +8467,7 @@ elseif(preg_match('/^deleteMyConfig(\d+)/',$data,$match)){
 elseif($data=="noDontDelete"){
     editText($message_id, "عملیه مورد نظر لغو شد",json_encode([
         'inline_keyboard' => [
-            [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]
+            [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]
             ]
     ]));
 }
@@ -8515,7 +8536,7 @@ elseif(preg_match('/^yesDeleteConfig(\d+)/',$data,$match)){
 
     editText($message_id, "کانفیگ $remark با موفقیت حذف شد",json_encode([
             'inline_keyboard' => [
-                [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]
+                [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]
                 ]
         ]));
         
@@ -8590,7 +8611,7 @@ elseif(preg_match('/^yesDeleteUserConfig(\d+)/',$data,$match) && ($from_id == $a
 
     editText($message_id, "کانفیگ $remark با موفقیت حذف شد",json_encode([
             'inline_keyboard' => [
-                [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]]
+                [['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"]]
                 ]
         ]));
         
@@ -8619,7 +8640,7 @@ if(preg_match('/increaseADay(.*)/', $data, $match)){
         $title = $cat['volume'];
         $price = $cat['price'];
         if($agentBought == true){
-            $discounts = json_decode($userInfo['discount_percent'],true);
+            $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
             if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$orderInfo['fileid']]?? $discounts['normal'];
             else $discount = $discounts['servers'][$orderInfo['server_id']]?? $discounts['normal'];
             $price -= floor($price * $discount / 100);
@@ -8629,7 +8650,7 @@ if(preg_match('/increaseADay(.*)/', $data, $match)){
         $keyboard[] = ['text' => "$title روز $price", 'callback_data' => "selectPlanDayIncrease{$match[1]}_$id"];
     }
     $keyboard = array_chunk($keyboard,2);
-    $keyboard[] = [['text' => $buttonValues['back_to_main'], 'callback_data' => "mainMenu"]];
+    $keyboard[] = [['text' => ($buttonValues['back_to_main'] ?? 'دکمه'), 'callback_data' => "mainMenu"]];
     editText($message_id, "لطفا یکی از پلن های افزایشی را انتخاب کنید :", json_encode([
             'inline_keyboard' => $keyboard
         ]));
@@ -8652,7 +8673,7 @@ if(preg_match('/selectPlanDayIncrease(?<orderId>.+)_(?<dayId>.+)/',$data,$match)
     $agentBought = $orderInfo['agent_bought'];
     
     if($agentBought == true){
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$orderInfo['fileid']]?? $discounts['normal'];
         else $discount = $discounts['servers'][$orderInfo['server_id']]?? $discounts['normal'];
 
@@ -8684,7 +8705,7 @@ if(preg_match('/selectPlanDayIncrease(?<orderId>.+)_(?<dayId>.+)/',$data,$match)
     if($botState['walletState'] == "on") $keyboard[] = [['text' => $buttonValues['pay_with_wallet'],  'callback_data' => "payIncraseDayWithWallet$hash_id"]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-    $keyboard[] = [['text'=>$buttonValues['cancel'], 'callback_data'=> "mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=> "mainMenu"]];
     editText($message_id, "لطفا با یکی از روش های زیر پرداخت خود را تکمیل کنید :",json_encode(['inline_keyboard' => $keyboard]));
 }
 if(preg_match('/payIncreaseDayWithCartToCart(.*)/',$data,$match)) {
@@ -8706,7 +8727,7 @@ if(preg_match('/payIncreaseDayWithCartToCart(.*)/',$data,$match)) {
 
     exit;
 }
-if(preg_match('/payIncreaseDayWithCartToCart(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel']){
+if(preg_match('/payIncreaseDayWithCartToCart(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -8742,7 +8763,7 @@ if(preg_match('/payIncreaseDayWithCartToCart(.*)/',$userInfo['step'], $match) an
         $volume = $res['volume'];
     
         sendMessage($mainValues['renew_order_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
     
         // notify admin   
         $msg = str_replace(['INCREASE', 'TYPE', "USER-ID", "USERNAME", "NAME", "PRICE", "REMARK"],[$volume, 'زمان', $from_id, $username, $first_name, $price, $remark], $mainValues['increase_account_request_message']);
@@ -8908,7 +8929,7 @@ if(preg_match('/payIncraseDayWithWallet(.*)/', $data,$match)){
     $price = $payParam['price'];
     $volume = $res['volume'];
     
-    $userwallet = $userInfo['wallet'];
+    $userwallet = ($userInfo['wallet'] ?? 0);
 
     if($userwallet < $price) {
         $needamount = $price - $userwallet;
@@ -8992,7 +9013,7 @@ if(preg_match('/^increaseAVolume(.*)/', $data, $match)){
         $title = $cat['volume'];
         $price = $cat['price'];
         if($agentBought == true){
-            $discounts = json_decode($userInfo['discount_percent'],true);
+            $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
             if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$orderInfo['fileid']]?? $discounts['normal'];
             else $discount = $discounts['servers'][$orderInfo['server_id']]?? $discounts['normal'];
             $price -= floor($price * $discount / 100);
@@ -9026,7 +9047,7 @@ if(preg_match('/increaseVolumePlan(?<orderId>.+)_(?<volumeId>.+)/',$data,$match)
     $agentBought = $orderInfo['agent_bought'];
  
     if($agentBought == true){
-        $discounts = json_decode($userInfo['discount_percent'],true);
+        $discounts = json_decode(($userInfo['discount_percent'] ?? null),true);
         if($botState['agencyPlanDiscount']=="on") $discount = $discounts['plans'][$orderInfo['fileid']]?? $discounts['normal'];
         else $discount = $discounts['servers'][$orderInfo['server_id']]?? $discounts['normal'];
         
@@ -9061,7 +9082,7 @@ if(preg_match('/increaseVolumePlan(?<orderId>.+)_(?<volumeId>.+)/',$data,$match)
     if($botState['walletState'] == "on") $keyboard[] = [['text' => "💰پرداخت با موجودی  " . $planprice,  'callback_data' => "payIncraseWithWallet$hash_id"]];
     if($botState['tronWallet'] == "on") $keyboard[] = [['text' => $buttonValues['tron_gateway'],  'callback_data' => "payWithTronWallet" . $hash_id]];
 
-    $keyboard[] = [['text'=>$buttonValues['cancel'], 'callback_data'=> "mainMenu"]];
+    $keyboard[] = [['text'=>($buttonValues['cancel'] ?? 'دکمه'), 'callback_data'=> "mainMenu"]];
     editText($message_id, "لطفا با یکی از روش های زیر پرداخت خود را تکمیل کنید :",json_encode(['inline_keyboard' => $keyboard]));
 } 
 if(preg_match('/payIncreaseWithCartToCart(.*)/',$data, $match)) {
@@ -9083,7 +9104,7 @@ if(preg_match('/payIncreaseWithCartToCart(.*)/',$data, $match)) {
     sendMessage(str_replace(['ACCOUNT-NUMBER', 'HOLDER-NAME'],[$paymentKeys['bankAccount'], $paymentKeys['holderName']], $mainValues['renew_ccount_cart_to_cart']),$cancelKey,"html");
     exit;
 }
-if(preg_match('/payIncreaseWithCartToCart(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel']){
+if(preg_match('/payIncreaseWithCartToCart(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(isset($update->message->photo)){
         $stmt = $connection->prepare("SELECT * FROM `pays` WHERE `hash_id` = ?");
         $stmt->bind_param("s", $match[1]);
@@ -9117,9 +9138,9 @@ if(preg_match('/payIncreaseWithCartToCart(.*)/',$userInfo['step'],$match) and $t
         $stmt->close();
         $price = $payParam['price'];
         $volume = $res['volume'];
-        $state = str_replace('payIncreaseWithCartToCart','',$userInfo['step']);
+        $state = str_replace('payIncreaseWithCartToCart','',($userInfo['step'] ?? 'none'));
         sendMessage($mainValues['renew_order_sent'],$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getMainKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
     
         // notify admin
 
@@ -9354,7 +9375,7 @@ if(preg_match('/payIncraseWithWallet(.*)/', $data,$match)){
     $price = $payParam['price'];
     $volume = $res['volume'];
     
-    $userwallet = $userInfo['wallet'];
+    $userwallet = ($userInfo['wallet'] ?? 0);
 
     if($userwallet < $price) {
         $needamount = $price - $userwallet;
@@ -9439,9 +9460,9 @@ if($data=='addNewCategory' and (($from_id == $admin || $userInfo['isAdmin'] == t
     sendMessage($msg,$cancelKey);
     exit;
 }
-if(preg_match('/^addNewCategory/',$userInfo['step']) and $text!=$buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^addNewCategory/',($userInfo['step'] ?? 'none')) and $text!=($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $step = checkStep('server_categories');
-    if($step==2 and $text!=$buttonValues['cancel'] ){
+    if($step==2 and $text!=($buttonValues['cancel'] ?? 'دکمه') ){
         
         $stmt = $connection->prepare("UPDATE `server_categories` SET `title`=?,`step`=4,`active`=1 WHERE `active`=0");
         $stmt->bind_param("s", $text);
@@ -9451,7 +9472,7 @@ if(preg_match('/^addNewCategory/',$userInfo['step']) and $text!=$buttonValues['c
 
         $msg = 'یه دسته بندی جدید برات ثبت کردم 🙂☑️';
         sendMessage($msg,$removeKeyboard);
-        sendMessage($mainValues['reached_main_menu'],getCategoriesKeys());
+        sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getCategoriesKeys());
     }
 }
 if(preg_match('/^wizwizcategorydelete(\d+)_(\d+)/',$data, $match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
@@ -9470,12 +9491,12 @@ if(preg_match('/^wizwizcategorydelete(\d+)_(\d+)/',$data, $match) and ($from_id 
     $keys = getCategoriesKeys($match[2]);
     editText($message_id,"☑️ مدیریت دسته ها:", $keys);
 }
-if(preg_match('/^wizwizcategoryedit/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^wizwizcategoryedit/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("〽️ یه اسم جدید برا دسته بندی انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/wizwizcategoryedit(\d+)_(\d+)/',$userInfo['step'], $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/wizwizcategoryedit(\d+)_(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_categories` SET `title`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -9520,7 +9541,7 @@ if(preg_match('/^changesServerIp(\d+)/',$data,$match) && ($from_id == $admin || 
     setUser($data);
     exit();
 }
-if(preg_match('/^changesServerIp(\d+)/',$userInfo['step'],$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != $buttonValues['cancel']){
+if(preg_match('/^changesServerIp(\d+)/',($userInfo['step'] ?? 'none'),$match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_config` SET `ip` = ? WHERE `id`=?");
     if($text == "/empty") $text = "";
     $stmt->bind_param("si", $text, $match[1]);
@@ -9592,7 +9613,7 @@ if(($data == "addNewMarzbanPanel" || $data=='addNewServer') and ($from_id == $ad
 ▪️یه اسم برا سرورت انتخاب کن:",$cancelKey);
     exit();
 }
-if($userInfo['step'] == 'addserverName' and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if($userInfo['step'] == 'addserverName' and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
 	sendMessage('مرحله دوم: 
 ▪️ظرفیت تعداد ساخت کانفیگ رو برای سرورت مشخص کن ( عدد باشه )');
     $data = array();
@@ -9601,7 +9622,7 @@ if($userInfo['step'] == 'addserverName' and $text != $buttonValues['cancel'] && 
     setUser('addServerUCount' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
-if(preg_match('/^addServerUCount(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerUCount(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['ucount'] = $text;
 
@@ -9612,7 +9633,7 @@ if(preg_match('/^addServerUCount(.*)/',$userInfo['step'],$match) and $text != $b
     setUser('addServerRemark' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
-if(preg_match('/^addServerRemark(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerRemark(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1], true);
     $data['remark'] = $text;
 
@@ -9621,7 +9642,7 @@ if(preg_match('/^addServerRemark(.*)/',$userInfo['step'], $match) and $text != $
     setUser('addServerFlag' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
-if(preg_match('/^addServerFlag(.*)/',$userInfo['step'], $match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerFlag(.*)/',($userInfo['step'] ?? 'none'), $match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['flag'] = $text;
     sendMessage("مرحله پنجم:
@@ -9640,7 +9661,7 @@ if(preg_match('/^addServerFlag(.*)/',$userInfo['step'], $match) and $text != $bu
     setUser('addServerPanelUrl' . json_encode($data,JSON_UNESCAPED_UNICODE));
     exit();
 }
-if(preg_match('/^addServerPanelUrl(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerPanelUrl(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_url'] = $text;
     if($userInfo['temp'] == "addNewMarzbanPanel"){
@@ -9669,35 +9690,35 @@ if(preg_match('/^addServerPanelUrl(.*)/',$userInfo['step'],$match) and $text != 
         exit();
     }
 }
-if(preg_match('/^addServerIp(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerIp(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_ip'] = $text;
     setUser('addServerSni' . json_encode($data, JSON_UNESCAPED_UNICODE));
     sendMessage( "🔅 لطفا sni پنل را وارد کنید\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
     exit();
 }
-if(preg_match('/^addServerSni(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerSni(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['sni'] = $text;
     setUser('addServerHeaderType' . json_encode($data, JSON_UNESCAPED_UNICODE));
     sendMessage( "🔅 اگر  از header type استفاده میکنید لطفا http را تایپ کنید:\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
     exit();
 }
-if(preg_match('/^addServerHeaderType(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerHeaderType(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['header_type'] = $text;
     setUser('addServerRequestHeader' . json_encode($data, JSON_UNESCAPED_UNICODE));
     sendMessage( "🔅اگر از هدر استفاده میکنید لطفا آدرس رو به این صورت Host:test.com وارد کنید و به جای test.com آدرس دلخواه بزنید:\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
     exit();
 }
-if(preg_match('/^addServerRequestHeader(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerRequestHeader(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['request_header'] = $text;
     setUser('addServerResponseHeader' . json_encode($data, JSON_UNESCAPED_UNICODE));
     sendMessage( "🔅 لطفا response header پنل را وارد کنید\n\n🔻برای خالی گذاشتن متن /empty را وارد کنید");
     exit();
 }
-if(preg_match('/^addServerResponseHeader(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerResponseHeader(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['response_header'] = $text;
     setUser('addServerSecurity' . json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -9707,7 +9728,7 @@ if(preg_match('/^addServerResponseHeader(.*)/',$userInfo['step'],$match) and $te
 \n🔻برای خالی گذاشتن متن /empty را وارد کنید");
 exit();
 }
-if(preg_match('/^addServerSecurity(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerSecurity(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['security'] = $text;
     setUser('addServerTlsSetting' . json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -9725,7 +9746,7 @@ if(preg_match('/^addServerSecurity(.*)/',$userInfo['step'],$match) and $text != 
 
     exit();
 }
-if(preg_match('/^addServerTlsSetting(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerTlsSetting(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['tls_setting'] = $text;
     setUser('addServerPanelUser' . json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -9734,7 +9755,7 @@ if(preg_match('/^addServerTlsSetting(.*)/',$userInfo['step'],$match) and $text !
 
     exit();
 }
-if(preg_match('/^addServerPanelUser(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^addServerPanelUser(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_user'] = $text;
     setUser('addServerPanePassword' . json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -9742,7 +9763,7 @@ if(preg_match('/^addServerPanelUser(.*)/',$userInfo['step'],$match) and $text !=
 ▪️لطفا پسورد پنل را وارد کنید:");
 exit();
 }
-if(preg_match('/^addServerPanePassword(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^addServerPanePassword(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     sendMessage("⏳ در حال ورود به اکانت ...");
     $data = json_decode($match[1],true);
     $title = $data['title'];
@@ -9872,7 +9893,7 @@ if(preg_match('/^changesServerLoginInfo(\d+)/',$data,$match) && ($from_id == $ad
     setUser($data);
     sendMessage( "▪️لطفا آدرس پنل را وارد کنید:",$cancelKey);
 }
-if(preg_match('/^changesServerLoginInfo(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^changesServerLoginInfo(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = array();
     $data['rowId'] = $match[1];
     $data['panel_url'] = $text;
@@ -9880,14 +9901,14 @@ if(preg_match('/^changesServerLoginInfo(\d+)/',$userInfo['step'],$match) && $tex
     sendMessage( "▪️لطفا یوزر پنل را وارد کنید:",$cancelKey);
     exit();
 }
-if(preg_match('/^editServerPaneUser(.*)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
+if(preg_match('/^editServerPaneUser(.*)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)) {
     $data = json_decode($match[1],true);
     $data['panel_user'] = $text;
     setUser('editServerPanePassword' . json_encode($data, JSON_UNESCAPED_UNICODE));
     sendMessage( "▪️لطفا پسورد پنل را وارد کنید:");
     exit();
 }
-if(preg_match('/^editServerPanePassword(.*)/',$userInfo['step'],$match) and $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editServerPanePassword(.*)/',($userInfo['step'] ?? 'none'),$match) and $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     sendMessage("⏳ در حال ورود به اکانت ...");
     $data = json_decode($match[1],true);
 
@@ -9989,7 +10010,7 @@ if(preg_match('/^yesDeleteServer(\d+)/',$data,$match) && ($from_id == $admin || 
     if($keys == null) editText($message_id,"موردی یافت نشد");
     else editText($message_id,"☑️ مدیریت سرور ها:",$keys);
 }
-if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     switch($match[1]){
         case "Name":
             $txt ="اسم";
@@ -10013,7 +10034,7 @@ if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != $buttonValues[
     setUser($data);
     exit();
 }
-if(preg_match('/^editServer(\D+)(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editServer(\D+)(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     switch($match[1]){
         case "Name":
             $sql = "UPDATE `server_info` SET `title`";
@@ -10048,14 +10069,14 @@ if(preg_match('/^editServer(\D+)(\d+)/',$userInfo['step'],$match) && $text != $b
     sendMessage("مدیریت سرور $cname",$keys);
     exit();
 }
-if(preg_match('/^editsServer(\D+)(\d+)/',$data,$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editsServer(\D+)(\d+)/',$data,$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $txt = str_replace("_", " ", $match[1]);
     delMessage();
     sendMessage("🔘|لطفا " . $txt . " جدید را وارد کنید\nبرای خالی کردن متن /empty را وارد کنید",$cancelKey);
     setUser($data);
     exit();
 }
-if(preg_match('/^editsServer(\D+)(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editsServer(\D+)(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if($text == "/empty"){
         if($match[1] == "sni") $stmt = $connection->prepare("UPDATE `server_config` SET `sni` = '' WHERE `id`=?");
         elseif($match[1] == "header_type") $stmt = $connection->prepare("UPDATE `server_config` SET `header_type` = 'none' WHERE `id`=?");
@@ -10094,7 +10115,7 @@ if(preg_match('/^editsServer(\D+)(\d+)/',$userInfo['step'],$match) && $text != $
     sendMessage("مدیریت سرور $cname",$keys);
     exit();
 }
-if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     switch($match[1]){
         case "Name":
             $txt ="اسم";
@@ -10113,7 +10134,7 @@ if(preg_match('/^editServer(\D+)(\d+)/',$data,$match) && $text != $buttonValues[
     sendMessage("🔘|لطفا " . $txt . " جدید را وارد کنید",$cancelKey);
     setUser($data);
 }
-if(preg_match('/^editServer(\D+)(\d+)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^editServer(\D+)(\d+)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     switch($match[1]){
         case "Name":
             $stmt = $connection->prepare("UPDATE `server_info` SET `title`=? WHERE `id`=?");
@@ -10147,7 +10168,7 @@ if($data=="addDiscountCode" && ($from_id == $admin || $userInfo['isAdmin'] == tr
     sendMessage("🔘|لطفا مقدار تخفیف را وارد کنید\nبرای درصد علامت % را در کنار عدد وارد کنید در غیر آن مقدار تخفیف به تومان محاسبه میشود",$cancelKey);
     setUser($data);
 }
-if($userInfo['step'] == "addDiscountCode" && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if($userInfo['step'] == "addDiscountCode" && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $dInfo = array();
     $dInfo['type'] = 'amount';
     if(strstr($text, "%")) $dInfo['type'] = 'percent';
@@ -10158,7 +10179,7 @@ if($userInfo['step'] == "addDiscountCode" && $text != $buttonValues['cancel'] &&
         sendMessage("🔘|لطفا مدت زمان این تخفیف را به روز وارد کنید\nبرای نامحدود بودن 0 وارد کنید");
     }else sendMessage("🔘|لطفا فقط عدد و یا درصد بفرستید");
 }
-if(preg_match('/^addDiscountDate(.*)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^addDiscountDate(.*)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){
         $dInfo = json_decode($match[1],true);
         $dInfo['date'] = $text != 0?time() + ($text * 24 * 60 * 60):0;
@@ -10167,7 +10188,7 @@ if(preg_match('/^addDiscountDate(.*)/',$userInfo['step'],$match) && $text != $bu
         sendMessage("🔘|لطفا تعداد استفاده این تخفیف را وارد کنید\nبرای نامحدود بودن 0 وارد کنید");
     }else sendMessage("🔘|لطفا فقط عدد بفرستید");
 }
-if(preg_match('/^addDiscountCount(.*)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^addDiscountCount(.*)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){ 
         $dInfo = json_decode($match[1],true);
         $dInfo['count'] = $text>0?$text:-1;
@@ -10176,7 +10197,7 @@ if(preg_match('/^addDiscountCount(.*)/',$userInfo['step'],$match) && $text != $b
         sendMessage("لطفا تعداد استفاده هر یوزر را وارد کنید");
     }else sendMessage("🔘|لطفا فقط عدد بفرستید");
 }
-if(preg_match('/^addDiscountCanUse(.*)/',$userInfo['step'],$match) && $text != $buttonValues['cancel'] && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^addDiscountCanUse(.*)/',($userInfo['step'] ?? 'none'),$match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     if(is_numeric($text)){ 
         $dInfo = json_decode($match[1],true);
         $dInfo['can_use'] = $text>0?$text:-1;
@@ -10230,7 +10251,7 @@ if($data == 'reciveApplications') {
         $title = $file['title'];
         $keyboard[] = ['text' => "$title", 'url' => $link];
     }
-    $keyboard[] = ['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"];
+    $keyboard[] = ['text'=>($buttonValues['back_to_main'] ?? 'دکمه'),'callback_data'=>"mainMenu"];
     $keyboard = array_chunk($keyboard,1); 
     editText($message_id, "
 🔸می توانید به راحتی همه فایل ها را (به صورت رایگان) دریافت کنید
@@ -10239,13 +10260,13 @@ if($data == 'reciveApplications') {
 ✅ پیشنهاد ما برنامه V2rayng است زیرا کار با آن ساده است و برای تمام سیستم عامل ها قابل اجرا است، میتوانید به بخش سیستم عامل مورد نظر مراجعه کنید و لینک دانلود را دریافت کنید
 ", json_encode(['inline_keyboard'=>$keyboard]));
 }
-if ($text == $buttonValues['cancel']) {
+if ($text == ($buttonValues['cancel'] ?? 'دکمه')) {
     setUser();
     $stmt = $connection->prepare("DELETE FROM `server_plans` WHERE `active`=0");
     $stmt->execute();
     $stmt->close();
 
-    sendMessage($mainValues['waiting_message'], $removeKeyboard);
-    sendMessage($mainValues['reached_main_menu'],getMainKeys());
+    sendMessage(($mainValues['waiting_message'] ?? 'پیام پیش‌فرض'), $removeKeyboard);
+    sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getMainKeys());
 }
 ?>

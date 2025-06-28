@@ -1,173 +1,419 @@
-# Welcome to AlphaBot
+# 🤖 آلفا ربات (AlphaBot)
 
-Easy to sell with AlphaBot - easy install with few clicks
+## ربات فروش VPN حرفه‌ای
 
-AlphaBot is a powerful and professional robot that supports several types of panels and is the best option for sale, supports most protocols and has easy installation. This robot is optimized for VPN sales and is a great alternative for business.
+آلفا ربات یک ربات پیشرفته تلگرام برای فروش و مدیریت سرویس‌های VPN است که با قابلیت‌های کاملی برای مدیریت کسب و کار شما طراحی شده است.
+
+### ویژگی‌های کلیدی:
+
+- 🔐 **پشتیبانی کامل از پنل‌ها**: x-ui, 3x-ui, Marzban
+- 💳 **درگاه‌های پرداخت**: ZarinPal، NextPay، کارت به کارت
+- 👥 **سیستم نمایندگی**: مدیریت نمایندگان با تخفیف‌های متفاوت
+- 📊 **گزارش‌گیری پیشرفته**: آمار کامل فروش و درآمد
+- 🎁 **اکانت رایگان**: سیستم تست برای کاربران جدید
+- 🔒 **امنیت بالا**: کنترل دسترسی و احراز هویت
+
+### نصب سریع:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/install.sh)
+```
+
+### تنظیمات:
+
+1. دریافت توکن از @BotFather
+2. ویرایش فایل `baseInfo.php`
+3. تنظیم Webhook
+4. شروع فروش!
+
+### پشتیبانی:
+
+- 📖 مستندات کامل
+- 🐛 گزارش مشکلات
+- 💬 انجمن پشتیبانی
+
+---
+
+**ساخته شده با ❤️ برای فروشندگان VPN**
+
+<p align="center">
+  <img src="assets/logo.png" alt="AlphaBot Logo" width="200"/>
+</p>
+
+<h1 align="center">آلفا ربات - ربات فروش VPN پیشرفته</h1>
+
+<p align="center">
+مدیریت و فروش آسان سرویس‌های VPN با آلفا ربات
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README.md">فارسی</a>
+</p>
+
+## 🌟 ویژگی‌های کلیدی
+
+### 🔧 پشتیبانی از پنل‌ها
+- **x-ui** (تمام نسخه‌ها)
+- **3x-ui** (Mhsanaei)
+- **Marzban**
+- **Hiddify**
+
+### 💳 درگاه‌های پرداخت
+- **ZarinPal** - درگاه معتبر ایرانی
+- **NextPay** - پرداخت سریع و امن
+- **NowPayment** - پرداخت با ارزهای دیجیتال
+- **Tron (TRX)** - پرداخت مستقیم با ترون
+- **کارت به کارت** - انتقال دستی
+
+### 👥 مدیریت کاربران
+- **سیستم نمایندگی** با درصد تخفیف قابل تنظیم
+- **کیف پول داخلی** برای کاربران
+- **سیستم ارجاع** با پاداش
+- **احراز هویت شماره تلفن** (اختیاری)
+
+### 📊 گزارش‌گیری و آمار
+- آمار فروش روزانه، هفتگی، ماهانه
+- گزارش درآمد نمایندگان
+- آمار استفاده سرورها
+- لیست کاربران فعال
+
+## 🚀 نصب و راه‌اندازی
+
+### نصب خودکار روی لینوکس
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/install.sh)
+```
+
+### نصب دستی روی ویندوز
+
+#### پیش‌نیازها:
+1. **XAMPP** - [دانلود از اینجا](https://www.apachefriends.org/download.html)
+2. **Git** (اختیاری)
+3. **ربات تلگرام** از [@BotFather](https://t.me/BotFather)
+
+#### مراحل نصب:
+
+1. **دانلود پروژه**:
+   ```bash
+   git clone https://github.com/MrVyxen/AlphaBot.git
+   ```
+
+2. **کپی به XAMPP**:
+   - پوشه را به `C:\xampp\htdocs\AlphaBot\` کپی کنید
+
+3. **راه‌اندازی XAMPP**:
+   - Apache و MySQL را Start کنید
+
+4. **ایجاد دیتابیس**:
+   - به `http://localhost/phpmyadmin` بروید
+   - دیتابیس `alphabot_db` را ایجاد کنید
+
+5. **تنظیم اطلاعات**:
+   فایل `baseInfo.php` را ویرایش کنید:
+   ```php
+   <?php
+   $dbUserName = "root";
+   $dbPassword = "";
+   $dbName = "alphabot_db";
+   $botToken = "YOUR_BOT_TOKEN";
+   $admin = YOUR_CHAT_ID;
+   $botUrl = "http://localhost/AlphaBot/";
+   ?>
+   ```
+
+6. **ایجاد جداول**:
+   - به `http://localhost/AlphaBot/createDB.php` بروید
+
+7. **تنظیم Webhook**:
+   - برای تست محلی از localhost استفاده کنید
+   - به `http://localhost/AlphaBot/setWebhook.php` بروید
+
+## 📱 قابلیت‌های ربات
+
+### برای کاربران عادی:
+- 🛒 **خرید اکانت** با انواع پلن‌ها
+- 💰 **شارژ کیف پول** از طریق درگاه‌های مختلف
+- 🎁 **دریافت اکانت تست** رایگان
+- 🔄 **تمدید سرویس** موجود
+- 📊 **مشاهده آمار** استفاده
+- 🔗 **دریافت لینک اشتراک** برای نرم‌افزارها
+- 📱 **QR Code** برای اتصال آسان
+
+### برای نمایندگان:
+- 💼 **خرید عمده** با تخفیف ویژه
+- 📈 **آمار فروش** شخصی
+- 👥 **مدیریت مشتریان** زیرمجموعه
+- 💵 **گزارش درآمد** دقیق
+
+### برای مدیران:
+- ⚙️ **مدیریت سرورها** و پنل‌ها
+- 📋 **تعریف پلن‌ها** و قیمت‌گذاری
+- 👨‍💼 **مدیریت نمایندگان** و کاربران
+- 💳 **تنظیم درگاه‌های پرداخت**
+- 📊 **گزارش‌گیری کامل**
+- 🎁 **ایجاد کد تخفیف**
+- 📢 **ارسال پیام همگانی**
+
+## 🛠️ تنظیمات پیشرفته
+
+### اتصال به پنل‌ها:
+```php
+// مثال اتصال به x-ui
+$panels = [
+    [
+        'url' => 'https://panel.example.com:2053',
+        'username' => 'admin',
+        'password' => 'password123',
+        'type' => 'xui'
+    ]
+];
+```
+
+### تنظیم درگاه‌های پرداخت:
+```php
+// ZarinPal
+$zarinpal_merchant = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+
+// NextPay
+$nextpay_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+
+// NowPayment
+$nowpayment_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+```
+
+## 🔧 عیب‌یابی
+
+### مشکلات رایج:
+
+1. **خطای اتصال به دیتابیس**:
+   - اطلاعات `baseInfo.php` را بررسی کنید
+   - MySQL فعال باشد
+
+2. **Webhook کار نمی‌کند**:
+   - SSL معتبر داشته باشید
+   - URL صحیح باشد
+
+3. **پنل متصل نمی‌شود**:
+   - اطلاعات ورود صحیح باشد
+   - پورت و پروتکل درست باشد
+
+## 📞 پشتیبانی و کمک
+
+- 🐛 **گزارش باگ**: [GitHub Issues](https://github.com/DarkSpecterDev/AlphaBot/issues)
+- 💬 **سوالات فنی**: از بخش Discussions استفاده کنید
+- 📧 **تماس مستقیم**: برای پروژه‌های تجاری
+
+## 🤝 مشارکت در پروژه
+
+ما از مشارکت شما استقبال می‌کنیم! برای مشارکت:
+
+1. پروژه را Fork کنید
+2. تغییرات خود را اعمال کنید
+3. Pull Request ارسال کنید
+
+## 📄 مجوز استفاده
+
+این پروژه تحت مجوز MIT منتشر شده است. برای اطلاعات بیشتر فایل [LICENSE](LICENSE) را مطالعه کنید.
+
+## 🙏 تشکر ویژه
+
+- از تمام توسعه‌دهندگانی که در این پروژه مشارکت داشته‌اند
+- از کاربرانی که با گزارش باگ‌ها کمک کرده‌اند
+- از جامعه متن‌باز که الهام‌بخش ما بوده‌اند
+
+---
+
+<p align="center">
+  ساخته شده با ❤️ در ایران توسط DarkSpecterDev
+</p>
+
+<p align="center">
+  <a href="https://github.com/DarkSpecterDev/AlphaBot">⭐ ستاره بدهید</a> |
+  <a href="https://github.com/DarkSpecterDev/AlphaBot/issues">🐛 باگ گزارش کنید</a> |
+  <a href="https://github.com/DarkSpecterDev/AlphaBot/discussions">💬 سوال بپرسید</a>
+</p>
+
+<div align=center>
 
 [![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotChannel&color=blue)](https://telegram.dog/NetworkBotChannel)
-[![Telegram Group](https://img.shields.io/endpoint?label=Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotSupport)](https://telegram.dog/NetworkBotSupport)
-<img src="https://img.shields.io/github/license/MrVyxen/AlphaBot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/MrVyxen/AlphaBot.svg" />
-<img src="https://img.shields.io/badge/PHP-7.4+-blue.svg" />
-<img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Ubuntu-lightgrey.svg" />
+[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotSupport)](https://telegram.dog/NetworkBotSupport)
+<img src="https://img.shields.io/github/license/DarkSpecterDev/AlphaBot?style=flat-square" />
+<img src="https://img.shields.io/github/v/release/DarkSpecterDev/AlphaBot.svg" />
+<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=DarkSpecterDev.NetBot" />
+ -->
+</div>
 
----
+<br>
+<br>
+    <a align="center">
+        <img src="https://github.com/DarkSpecterDev/AlphaBot/assets/logo.png" />
+    </a>     
+<br>
+<br>
 
-# Installation Ubuntu-20.4
 
-* If your server does not have root access, please grant root access with "sudo -i" command and then install
-* Create a bot in @botfather and /start it
-* The first option asks you for a domain, you must set the ip server for the domain and then enter it according to the example
 
-> Enter the installation command in the console and enter the required items to complete the installation.
+
+
+
+
+# دستور نصب روی Ubuntu-20.4
+
+
+- اگر سرور شما دسترسی روت ندارد، لطفا با دستور sudo -i دسترسی روت بدهید و سپس نصب کنید
+- یک ربات در @botfather ایجاد کنید و آن را استارت کنید
+- قبل از نصب حتما ip سرور را روی دامنه تنظیم کنید 
+> دستور نصب را در کنسول وارد کرده و موارد مورد نیاز را برای تکمیل نصب وارد کنید.
+```bash
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/netbot.sh)
+```
+- در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
+- ایمیل را وارد کنید
+- کلمه y را وارد کنید
+- عدد 2 را وارد کنید
+- نام کاربری برای دیتابیس را وارد کنید
+- رمز عبور برای دیتابیس را وارد کنید
+- توکن ربات را وارد کنید
+- آیدی عددی ادمین را از @userinfobot بگیرید و وارد کنید
+- مجدد «sub.domain.com» یا «domain.com» را بدون https وارد کنید
+- بسیار خوب، پیام نصب ( ✅ ربات NetBot با موفقیت نصب شد! ) به ربات ارسال می شود.
+
+<br>
+<br>
+
+## دستور آپدیت ربات - آپدیت پنل - بک آپ - حذف ویزویز
+
+- با هر به روز رسانی و بک آپ، یک اعلان برای ربات مدیر ارسال می شود
+
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/netbot.sh)
+bash <(curl -s https://raw.githubusercontent.com/NetworkBotDev/NetBot/main/update.sh)
 ```
 
-* First enter "sub.domain.com" or "domain.com" without https
-* Enter email
-* Enter y
-* Enter 2
-* Enter username database
-* Enter password database
-* Enter token
-* Enter Numerical ID of admin from @userinfobot
-* Re-enter "sub.domain.com" or "domain.com" without https
-* Very good, the installation message ( ✅ The AlphaBot has been successfully installed! ) is sent to the bot
+<br>
+<hr>
+<br>
+<br>
 
----
 
-## Update bot - Update panel - backup - remove AlphaBot
 
-* With every update and backup, a notification is sent to the manager robot
+# پنل های پشتیبانی شده
 
-```bash
-bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/update.sh)
+- (Marzban)
 ```
-
----
-
-# Supported Panels
-
-* (Marzban)
-```bash
 sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
 ```
-
-* (Niduka Akalanka)
-```bash
+- (Niduka Akalanka)
+```
 bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh) 0.2.1.2
 ```
-
-* (Sanaei)
-```bash
+- (Sanaei)
+```
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v1.7.9
 ```
-
-* (Alireza)
-```bash
+- (Alireza)
+```
 bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh) 1.5.5
 ```
-
-* (Vaxilu)
-```bash
+- (Vaxilu)
+```
 bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 ```
 
----
 
-# Donation
 
-* Tron (TRX): `TY8j7of18gbMtneB8bbL7SZk5gcntQEemG`
-* Bitcoin: `bc1qcnkjnqvs7kyxvlfrns8t4ely7x85dhvz5gqge4`
-* Dogecoin: `DMyGMghEh4W55P3VeVHntCN3vYAFtshvVH`
+<br>
+<hr>
+<br>
 
----
 
-# Features
+# حمایت
 
-* nowpayments - zarinpal - nextpay portal and rial currency
-* Support for - xtls - tls - reality - Grpc - ws - tcp
-* vless - vmess - trojan support
-* The possibility of extending the service
-* Display the configuration profile as a sub (in the v2ray software)
-* Representation (individual and mass purchase - configuration management - sales statistics, etc.)
-* Ability to search purchased configurations for easy access (representative)
-* View configuration information on the web
-* Button to register the link to renew and update the config (not purchased from bot)
-* Config QRcode button
-* Delete configuration by user (delete from x-ui panel and database + delete notification)
-* Ability to add volume and time on desired server + notification
-* Ability to deduct balance from user credit
-* Ability to disconnect and receive a new link by the user (change uuid)
-* Ability to update the connection (according to your changes in the panel)
-* The ability to change the config name (random and normal)
-* Determining the configuration name when purchasing by the user (custom plan)
-* Smart subscription
-* Filtering status of servers
-* Automatic relocation
-* Increasing volume and service time
-* ability to pass
-* The possibility of ordering the desired design by the user
-* Authentication of Iranian and foreign contact numbers
-* Backup x-ui panel
-* Subcommittee and commission
-* Create discount and gift codes
-* Ability to track the user
-* Create button and answer for it
-* Configuration output with different IP or domains
-* Ability to change protocol and network type
-* Set configuration port randomly or automatically
-* Wallet (possibility of charging - balance transfer)
-* Send notification of new member in robot to (admin)
-* Display user information (user-admin)
-* Ability to send private messages from the admin to the user
-* Ability to manage and view servers - categories - plans
-* Ability to block and release
-* Ability to add admin
-* Show the inventory of servers
-* Ability to send income reports to the channel
-* Send public messages
-* Get sold configurations
-* Create a shared port and configure a dedicated port
-* Account testing for users
-* Card to card functionality
-* Display the sold accounts of each plan
-* Display capability (software link)
-* Send public messages with CronJob
-* Announcing the end of volume and configuration time (to the user)
-* Forced channel lock
-* Ability to get link details
-* Off/on capability (all robot features)
-* Notification of purchase information + renewal etc. in full to the admin robot
+- Tron (TRX): `TY8j7of18gbMtneB8bbL7SZk5gcntQEemG`
+- Bitcoin: `bc1qcnkjnqvs7kyxvlfrns8t4ely7x85dhvz5gqge4`
+- Dogecoin: `DMyGMghEh4W55P3VeVHntCN3vYAFtshvVH`
 
----
 
-Be sure to join the group and channel and support us
+
+<br>
+<hr>
+<br>
+
+
+# امکانات
+
+- درگاه nowpayments - zarinpal - nextpay و ارزی ریالی
+- پشتیبانی از - xtls - tls - reality - Grpc - ws - tcp
+- پشتیبانی vless - vmess - trojan
+- امکان تمدید سرویس
+- نمایش مشخصات کانفیگ به صورت ساب ( داخل نرم افزار v2ray )
+- نمایندگی ( خرید تکی و انبوه - مدیریت کانفیگ - آمار فروش و ... )
+- قابلیت جست و جو کانفیگ های خریداری شده برای دسترسی راحت ( نماینده )
+- نمایش مشخصات  کانفیگ به صورت وب
+- دکمه ثبت لینک برای تمدید و به روزرسانی کانفیگ ( از بات خرید نشده )
+- دکمه دریافت QRcode کانفیگ 
+- حذف کانفیگ توسط کاربر ( حذف از پنل x-ui و دیتابیس + اعلان حذف )
+- قابلیت اضافه کردن حجم و زمان روی سرور دلخواه + اعلان
+- قابلیت کسر موجودی از اعتبار کاربر
+- قابلیت قطع و دریافت لینک جدید توسط کاربر ( تغییر uuid )
+- قابلیت به روزرسانی کانکشن ( با توجه به تغییرات شما در پنل )
+- قابلیت تغییر نام کانفیگ ( رندم و عادی )
+- تعیین نام کانفیگ هنگام خرید توسط کاربر ( پلن دلخواه )
+- اشتراک هوشمند
+- وضعیت فیلتر شدن سرورها
+- تغییر مکان خودکار
+- افزایش حجم و زمان سرویس دهی
+- قابلیت پاس کردن
+- امکان سفارش طرح مورد نظر توسط کاربر
+- احراز هویت شماره تماس ایرانی و خارجی
+- پشتیبان گیری از پنل x-ui
+- زیر مجموعه و کمیسیون
+- کدهای تخفیف و هدیه ایجاد کنید
+- امکان ردیابی کاربر
+- ایجاد دکمه و پاسخ برای آن
+- خروجی پیکربندی با IP یا دامنه های مختلف
+- امکان تغییر پروتکل و نوع شبکه
+- تنظیم پورت پیکربندی به صورت تصادفی یا خودکار
+- کیف پول (امکان شارژ - انتقال موجودی)
+- ارسال اعلان عضو جدید در ربات به (ادمین)
+- نمایش اطلاعات کاربر (user-admin)
+- امکان ارسال پیام خصوصی از ادمین به کاربر
+- امکان مدیریت و مشاهده سرورها - دسته بندی ها - پلن ها
+- قابلیت مسدود کردن و آزادسازی
+- امکان اضافه کردن ادمین
+- نمایش موجودی سرورها
+- امکان ارسال گزارش درآمد به کانال
+- ارسال پیام های عمومی
+- پیکربندی های فروخته شده را دریافت کنید
+- ایجاد پورت مشترک و پیکربندی پورت اختصاصی
+- تست حساب برای کاربران
+- قابلیت کارت به کارت
+- نمایش حساب های فروخته شده هر طرح
+- قابلیت نمایش (لینک نرم افزار)
+- ارسال پیام های عمومی با CronJob
+- اعلام پایان حجم و زمان پیکربندی (به کاربر)
+- قفل اجباری کانال
+- امکان دریافت جزئیات لینک
+- قابلیت خاموش/روشن (همه ویژگی های ربات)
+- اطلاع رسانی اطلاعات خرید + تمدید و ... به صورت کامل به ربات ادمین
+
+
+
+<br>
+<hr>
+<br>
+
+
+حتما به گروه و کانال بپیوندید و از ما حمایت کنید
 
 ## Contact Developer
-
 💎 Group: https://t.me/NetworkBotSupport
 💎 Channel: https://t.me/NetworkBotChannel
 
----
+<br>
+<br>
 
-## About
+## Stargazers over time
 
-Bot showing the volume and remaining subscription x-ui panel for VPN sales
-
-### License
-
-MIT license
-
-### Topics
-
-bot, tls, telegram, cdn, grpc, trojan, v2ray, reality, vmess, xray, xui, vless, xtls, xtls-rprx-vision
-
-### Languages
-
-* PHP 61.3%
-* CSS 37.5%
-* Shell 1.1%
-* Other 0.1%
+[![Stargazers over time](https://starchart.cc/DarkSpecterDev/AlphaBot.svg)](https://starchart.cc/DarkSpecterDev/AlphaBot)

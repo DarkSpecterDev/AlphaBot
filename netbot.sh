@@ -1,7 +1,7 @@
 #!/bin/bash
-# NetBot Installation Script
+# AlphaBot Installation Script
 # Network VPN Bot for Linux Servers
-# Written By: NetworkBotDev
+# Written By: MrVyxen
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -72,7 +72,6 @@ fi
 
 # Stop conflicting services
 echo -e "${YELLOW}${BOLD}🔄 STEP 1: Stopping conflicting services...${NC}"
-progress_bar 1
 systemctl stop apache2 2>/dev/null
 systemctl disable apache2 2>/dev/null
 systemctl stop mysql 2>/dev/null
@@ -221,15 +220,15 @@ mysql -u root -prootpass -e "GRANT ALL PRIVILEGES ON netbot_db.* TO 'netbot_user
 mysql -u root -prootpass -e "FLUSH PRIVILEGES;" 2>/dev/null
 echo -e "${GREEN}✅ Database created successfully${NC}\n"
 
-# Clone NetBot repository
-echo -e "${YELLOW}${BOLD}📥 STEP 11: Downloading NetBot files...${NC}"
+# Clone AlphaBot repository
+echo -e "${YELLOW}${BOLD}📥 STEP 11: Downloading AlphaBot files...${NC}"
 progress_bar 3
 cd /var/www/html/
 rm -rf netbot 2>/dev/null
-git clone https://github.com/DarkSpecterDev/AlphaBot.git netbot
+git clone https://github.com/MrVyxen/AlphaBot.git netbot
 sudo chown -R www-data:www-data /var/www/html/netbot/
 sudo chmod -R 755 /var/www/html/netbot/
-echo -e "${GREEN}✅ NetBot files downloaded and configured${NC}\n"
+echo -e "${GREEN}✅ AlphaBot files downloaded and configured${NC}\n"
 
 # Create baseInfo.php
 echo -e "${YELLOW}${BOLD}⚙️ STEP 12: Creating configuration file...${NC}"
@@ -247,7 +246,7 @@ error_reporting(0);
 EOF
 echo -e "${GREEN}✅ Configuration file created${NC}\n"
 
-# Configure Nginx for NetBot
+# Configure Nginx for AlphaBot
 echo -e "${YELLOW}${BOLD}🌐 STEP 13: Configuring web server...${NC}"
 progress_bar 2
 cat > /etc/nginx/sites-available/netbot << EOF

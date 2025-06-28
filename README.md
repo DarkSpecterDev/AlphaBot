@@ -1,13 +1,13 @@
-# Welcome to NetBot
+# Welcome to AlphaBot
 
-Easy to sell with NetBot - easy install with few clicks
+Easy to sell with AlphaBot - easy install with few clicks
 
-NetBot is a powerful and professional robot that supports several types of panels and is the best option for sale, supports most protocols and has easy installation. This robot is optimized for VPN sales and is a great alternative for business.
+AlphaBot is a powerful and professional robot that supports several types of panels and is the best option for sale, supports most protocols and has easy installation. This robot is optimized for VPN sales and is a great alternative for business.
 
 [![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotChannel&color=blue)](https://telegram.dog/NetworkBotChannel)
 [![Telegram Group](https://img.shields.io/endpoint?label=Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotSupport)](https://telegram.dog/NetworkBotSupport)
-<img src="https://img.shields.io/github/license/DarkSpecterDev/AlphaBot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/DarkSpecterDev/AlphaBot.svg" />
+<img src="https://img.shields.io/github/license/MrVyxen/AlphaBot?style=flat-square" />
+<img src="https://img.shields.io/github/v/release/MrVyxen/AlphaBot.svg" />
 <img src="https://img.shields.io/badge/PHP-7.4+-blue.svg" />
 <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Ubuntu-lightgrey.svg" />
 
@@ -22,7 +22,7 @@ NetBot is a powerful and professional robot that supports several types of panel
 > Enter the installation command in the console and enter the required items to complete the installation.
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/netbot.sh)
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/netbot.sh)
 ```
 
 * First enter "sub.domain.com" or "domain.com" without https
@@ -34,16 +34,16 @@ bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/ne
 * Enter token
 * Enter Numerical ID of admin from @userinfobot
 * Re-enter "sub.domain.com" or "domain.com" without https
-* Very good, the installation message ( ✅ The NetBot has been successfully installed! ) is sent to the bot
+* Very good, the installation message ( ✅ The AlphaBot has been successfully installed! ) is sent to the bot
 
 ---
 
-## Update bot - Update panel - backup - remove NetBot
+## Update bot - Update panel - backup - remove AlphaBot
 
 * With every update and backup, a notification is sent to the manager robot
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/update.sh)
+bash <(curl -s https://raw.githubusercontent.com/MrVyxen/AlphaBot/main/update.sh)
 ```
 
 ---

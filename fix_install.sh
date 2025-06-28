@@ -1,5 +1,5 @@
 #!/bin/bash
-# NetBot Installation Fix Script
+# AlphaBot Installation Fix Script
 # Fixes MySQL OOM issues and PHP installation problems
 
 set -e

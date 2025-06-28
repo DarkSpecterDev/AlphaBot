@@ -10,17 +10,58 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 WHITE='\033[0;37m'
+BOLD='\033[1m'
+DIM='\033[2m'
+UNDERLINE='\033[4m'
+BLINK='\033[5m'
 NC='\033[0m'
 
-clear
-echo -e "\n${BLUE}╔══════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║${NC}         ${GREEN}NetBot Installation${NC}         ${BLUE}║${NC}"
-echo -e "${BLUE}║${NC}      ${CYAN}Network VPN Bot Manager${NC}       ${BLUE}║${NC}"
-echo -e "${BLUE}╚══════════════════════════════════════════╝${NC}\n"
-echo -e "    ${RED}Telegram Channel: ${BLUE}@NetworkBotChannel${NC} | ${RED}Support: ${BLUE}@NetworkBotSupport${NC}\n"
+# Animation and graphics functions
+progress_bar() {
+    local duration=$1
+    local max=50
+    for ((i=0; i<=max; i++)); do
+        local percent=$((i * 100 / max))
+        local filled=$((i * 4 / 10))
+        local empty=$((40 - filled))
+        printf "\r${CYAN}["
+        printf "%0.s█" $(seq 1 $filled)
+        printf "%0.s░" $(seq 1 $empty)
+        printf "] ${percent}%% ${NC}"
+        sleep $(echo "scale=3; $duration / $max" | bc -l 2>/dev/null || echo "0.1")
+    done
+    echo ""
+}
 
-sleep 2
-echo -e "${GREEN}Installing NetBot script ...${NC}\n"
+clear
+
+# Beautiful animated header
+echo -e "${BOLD}${CYAN}"
+echo "╔══════════════════════════════════════════════════════════════════════════╗"
+echo "║                                                                          ║"
+echo "║    ${BLINK}🚀${NC}${BOLD}${CYAN} ${GREEN}███╗   ██╗███████╗████████╗██████╗  ██████╗ ████████╗${NC}${BOLD}${CYAN} ${BLINK}🚀${NC}${BOLD}${CYAN}    ║"
+echo "║      ${GREEN}████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔═══██╗╚══██╔══╝${NC}${BOLD}${CYAN}      ║"
+echo "║      ${GREEN}██╔██╗ ██║█████╗     ██║   ██████╔╝██║   ██║   ██║${NC}${BOLD}${CYAN}         ║"
+echo "║      ${GREEN}██║╚██╗██║██╔══╝     ██║   ██╔══██╗██║   ██║   ██║${NC}${BOLD}${CYAN}         ║"
+echo "║      ${GREEN}██║ ╚████║███████╗   ██║   ██████╔╝╚██████╔╝   ██║${NC}${BOLD}${CYAN}         ║"
+echo "║      ${GREEN}╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═════╝  ╚═════╝    ╚═╝${NC}${BOLD}${CYAN}         ║"
+echo "║                                                                          ║"
+echo "║                    ${YELLOW}🛠️  INSTALLATION WIZARD  🛠️${NC}${BOLD}${CYAN}                     ║"
+echo "║                                                                          ║"
+echo "╠══════════════════════════════════════════════════════════════════════════╣"
+echo "║ ${BLUE}🌐 Network VPN Bot Manager${NC}${BOLD}${CYAN}  ║ ${BLUE}⚡ Advanced Panel Support${NC}${BOLD}${CYAN}      ║"
+echo "║ ${BLUE}🔒 Secure & Optimized${NC}${BOLD}${CYAN}       ║ ${BLUE}📊 Real-time Monitoring${NC}${BOLD}${CYAN}       ║"
+echo "║ ${BLUE}🚀 One-Click Installation${NC}${BOLD}${CYAN}   ║ ${BLUE}💎 Professional Features${NC}${BOLD}${CYAN}      ║"
+echo "╚══════════════════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
+echo ""
+echo -e "    ${PURPLE}📱 Telegram: ${BLUE}@NetworkBotChannel${NC} | ${PURPLE}💬 Support: ${BLUE}@NetworkBotSupport${NC}"
+echo ""
+
+# Loading animation
+echo -e "${YELLOW}${BOLD}🚀 Initializing NetBot Installation...${NC}"
+progress_bar 2
+echo -e "${GREEN}✅ Ready to proceed!${NC}\n"
 
 if [[ $EUID -eq 0 ]]; then
    echo ""
@@ -30,38 +71,52 @@ else
 fi
 
 # Stop conflicting services
-echo -e "${YELLOW}Stopping conflicting services...${NC}"
+echo -e "${YELLOW}${BOLD}🔄 STEP 1: Stopping conflicting services...${NC}"
+progress_bar 1
 systemctl stop apache2 2>/dev/null
 systemctl disable apache2 2>/dev/null
 systemctl stop mysql 2>/dev/null
+echo -e "${GREEN}✅ Services stopped${NC}\n"
 
 # Update system
-echo -e "${YELLOW}Updating system packages...${NC}"
+echo -e "${YELLOW}${BOLD}📦 STEP 2: Updating system packages...${NC}"
+progress_bar 2
 apt update -y && apt upgrade -y
+echo -e "${GREEN}✅ System updated${NC}\n"
 
 # Remove Apache if installed
-echo -e "${YELLOW}Removing Apache to avoid conflicts...${NC}"
+echo -e "${YELLOW}${BOLD}🧹 STEP 3: Removing Apache conflicts...${NC}"
+progress_bar 1
 apt remove apache2 apache2-utils -y 2>/dev/null
+echo -e "${GREEN}✅ Apache removed${NC}\n"
 
 # Install required packages (without mysql-server for now)
-echo -e "${YELLOW}Installing required packages...${NC}"
+echo -e "${YELLOW}${BOLD}📋 STEP 4: Installing required packages...${NC}"
+progress_bar 2
 apt install -y curl wget unzip git nginx software-properties-common
+echo -e "${GREEN}✅ Base packages installed${NC}\n"
 
 # Add PHP repository
+echo -e "${YELLOW}${BOLD}🔧 STEP 5: Adding PHP repository...${NC}"
+progress_bar 1
 add-apt-repository ppa:ondrej/php -y
 apt update
+echo -e "${GREEN}✅ PHP repository added${NC}\n"
 
 # Install PHP 8.1 (more stable)
-echo -e "${YELLOW}Installing PHP 8.1...${NC}"
+echo -e "${YELLOW}${BOLD}🐘 STEP 6: Installing PHP 8.1...${NC}"
+progress_bar 3
 apt install -y php8.1 php8.1-fpm php8.1-mysql php8.1-curl php8.1-mbstring php8.1-xml php8.1-zip php8.1-gd php8.1-cli php8.1-common
+echo -e "${GREEN}✅ PHP 8.1 installed${NC}\n"
 
 # Install MySQL with low memory configuration
-echo -e "${YELLOW}Installing MySQL...${NC}"
+echo -e "${YELLOW}${BOLD}🗄️ STEP 7: Installing MySQL with optimized settings...${NC}"
 
 # Pre-configure MySQL to avoid interactive prompts
 export DEBIAN_FRONTEND=noninteractive
 debconf-set-selections <<< "mysql-server mysql-server/root_password password rootpass"
 debconf-set-selections <<< "mysql-server mysql-server/root_password_again password rootpass"
+echo -e "${BLUE}📝 MySQL credentials configured${NC}"
 
 # Create MySQL configuration for low memory before installation
 mkdir -p /etc/mysql/mysql.conf.d
@@ -99,14 +154,16 @@ innodb_open_files = 300
 EOF
 
 # Install MySQL
+progress_bar 3
 apt install -y mysql-server
 
 # Configure MySQL
-echo -e "${YELLOW}Configuring MySQL...${NC}"
+echo -e "${YELLOW}${BOLD}⚙️ Configuring MySQL...${NC}"
 systemctl start mysql
 systemctl enable mysql
 
 # Wait for MySQL to start
+echo -e "${BLUE}⏳ Waiting for MySQL to initialize...${NC}"
 sleep 10
 
 # Secure MySQL installation
@@ -116,26 +173,44 @@ DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 FLUSH PRIVILEGES;
-" 2>/dev/null || echo "MySQL security configuration completed"
+" 2>/dev/null || echo -e "${YELLOW}⚠️ MySQL security setup completed with warnings${NC}"
+
+echo -e "${GREEN}✅ MySQL installed and secured${NC}\n"
 
 # Configure Nginx
-echo -e "${YELLOW}Configuring Nginx...${NC}"
+echo -e "${YELLOW}${BOLD}🌐 STEP 8: Configuring Nginx...${NC}"
+progress_bar 1
 systemctl enable nginx
 systemctl start nginx
+echo -e "${GREEN}✅ Nginx configured${NC}\n"
 
 # Configure PHP
-echo -e "${YELLOW}Configuring PHP...${NC}"
+echo -e "${YELLOW}${BOLD}⚙️ STEP 9: Configuring PHP-FPM...${NC}"
+progress_bar 1
 systemctl enable php8.1-fpm
 systemctl start php8.1-fpm
+echo -e "${GREEN}✅ PHP-FPM configured${NC}\n"
 
-# Get user input
-echo -e "${CYAN}Please provide the following information:${NC}"
-read -p "Enter your domain name: " DOMAIN_NAME
-read -p "Enter your bot token: " YOUR_BOT_TOKEN
-read -p "Enter your admin chat ID: " YOUR_CHAT_ID
+# Get user input with beautiful formatting
+echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}${BOLD}║           📝 CONFIGURATION SETUP        ║${NC}"
+echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════╝${NC}"
+echo -e "${PURPLE}Please provide the following information:${NC}\n"
+
+echo -e "${BLUE}🌐 Domain Configuration:${NC}"
+read -p "$(echo -e "${YELLOW}Enter your domain name: ${NC}")" DOMAIN_NAME
+
+echo -e "\n${BLUE}🤖 Bot Configuration:${NC}"
+read -p "$(echo -e "${YELLOW}Enter your bot token: ${NC}")" YOUR_BOT_TOKEN
+
+echo -e "\n${BLUE}👤 Admin Configuration:${NC}"
+read -p "$(echo -e "${YELLOW}Enter your admin chat ID: ${NC}")" YOUR_CHAT_ID
+
+echo -e "\n${GREEN}✅ Configuration collected successfully!${NC}\n"
 
 # Create database
-echo -e "${YELLOW}Creating database...${NC}"
+echo -e "${YELLOW}${BOLD}🗄️ STEP 10: Creating database...${NC}"
+progress_bar 2
 randomdbpasstxt=$(openssl rand -base64 12)
 ASAS='$'
 
@@ -144,19 +219,21 @@ mysql -u root -prootpass -e "CREATE DATABASE IF NOT EXISTS netbot_db;" 2>/dev/nu
 mysql -u root -prootpass -e "CREATE USER IF NOT EXISTS 'netbot_user'@'localhost' IDENTIFIED BY '${randomdbpasstxt}';" 2>/dev/null
 mysql -u root -prootpass -e "GRANT ALL PRIVILEGES ON netbot_db.* TO 'netbot_user'@'localhost';" 2>/dev/null
 mysql -u root -prootpass -e "FLUSH PRIVILEGES;" 2>/dev/null
+echo -e "${GREEN}✅ Database created successfully${NC}\n"
 
 # Clone NetBot repository
-echo -e "${YELLOW}Downloading NetBot files...${NC}"
+echo -e "${YELLOW}${BOLD}📥 STEP 11: Downloading NetBot files...${NC}"
+progress_bar 3
 cd /var/www/html/
 rm -rf netbot 2>/dev/null
 git clone https://github.com/DarkSpecterDev/AlphaBot.git netbot
 sudo chown -R www-data:www-data /var/www/html/netbot/
 sudo chmod -R 755 /var/www/html/netbot/
-
-echo -e "\n${YELLOW}NetBot files have been installed successfully${NC}"
+echo -e "${GREEN}✅ NetBot files downloaded and configured${NC}\n"
 
 # Create baseInfo.php
-echo -e "${YELLOW}Creating configuration file...${NC}"
+echo -e "${YELLOW}${BOLD}⚙️ STEP 12: Creating configuration file...${NC}"
+progress_bar 1
 cat > /var/www/html/netbot/baseInfo.php << EOF
 <?php
 error_reporting(0);
@@ -168,9 +245,11 @@ error_reporting(0);
 \$admin = ${YOUR_CHAT_ID};
 ?>
 EOF
+echo -e "${GREEN}✅ Configuration file created${NC}\n"
 
 # Configure Nginx for NetBot
-echo -e "${YELLOW}Configuring web server...${NC}"
+echo -e "${YELLOW}${BOLD}🌐 STEP 13: Configuring web server...${NC}"
+progress_bar 2
 cat > /etc/nginx/sites-available/netbot << EOF
 server {
     listen 80;
@@ -199,26 +278,35 @@ EOF
 ln -s /etc/nginx/sites-available/netbot /etc/nginx/sites-enabled/ 2>/dev/null
 rm /etc/nginx/sites-enabled/default 2>/dev/null
 systemctl reload nginx
+echo -e "${GREEN}✅ Web server configured${NC}\n"
 
 # Create database tables
-echo -e "${YELLOW}Setting up database tables...${NC}"
+echo -e "${YELLOW}${BOLD}🗄️ STEP 14: Setting up database tables...${NC}"
+progress_bar 1
 curl -s "http://${DOMAIN_NAME}/netbot/createDB.php" >/dev/null 2>&1
+echo -e "${GREEN}✅ Database tables created${NC}\n"
 
 # Set webhook
-echo -e "${YELLOW}Setting up Telegram webhook...${NC}"
+echo -e "${YELLOW}${BOLD}🤖 STEP 15: Setting up Telegram webhook...${NC}"
+progress_bar 1
 curl -s -F "url=https://${DOMAIN_NAME}/netbot/bot.php" "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/setWebhook" >/dev/null 2>&1
+echo -e "${GREEN}✅ Telegram webhook configured${NC}\n"
 
 # Setup cron jobs
-echo -e "${YELLOW}Setting up scheduled tasks...${NC}"
+echo -e "${YELLOW}${BOLD}⏰ STEP 16: Setting up scheduled tasks...${NC}"
+progress_bar 1
 (crontab -l 2>/dev/null; echo "* * * * * curl -s https://${DOMAIN_NAME}/netbot/settings/messagenetbot.php >/dev/null 2>&1") | crontab -
 (crontab -l 2>/dev/null; echo "* * * * * curl -s https://${DOMAIN_NAME}/netbot/settings/rewardReport.php >/dev/null 2>&1") | crontab -
 (crontab -l 2>/dev/null; echo "* * * * * curl -s https://${DOMAIN_NAME}/netbot/settings/warnusers.php >/dev/null 2>&1") | crontab -
+echo -e "${GREEN}✅ Cron jobs configured${NC}\n"
 
 # Clean up installation files
-echo -e "${YELLOW}Cleaning up...${NC}"
+echo -e "${YELLOW}${BOLD}🧹 STEP 17: Cleaning up installation files...${NC}"
+progress_bar 1
 rm -f /var/www/html/netbot/createDB.php
 rm -f /var/www/html/netbot/install.sh
 rm -f /var/www/html/netbot/netbot.sh
+echo -e "${GREEN}✅ Cleanup completed${NC}\n"
 
 # Final status check
 echo -e "${YELLOW}Checking services...${NC}"
@@ -252,26 +340,58 @@ echo -e "Nginx Version: $(nginx -v 2>&1 | cut -d' ' -f3 | cut -d'/' -f2 || echo 
 echo -e "\n${YELLOW}Memory Usage:${NC}"
 free -h 2>/dev/null | head -n2 || echo "Memory info not available"
 
-echo -e "\n${GREEN}╔══════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║${NC}     ${CYAN}NetBot Installation Complete!${NC}     ${GREEN}║${NC}"
-echo -e "${GREEN}╚══════════════════════════════════════════╝${NC}\n"
+# Beautiful success message
+echo -e "${GREEN}${BOLD}"
+echo "╔══════════════════════════════════════════════════════════════════════════╗"
+echo "║                                                                          ║"
+echo "║                    🎉 NETBOT INSTALLATION COMPLETE! 🎉                  ║"
+echo "║                                                                          ║"
+echo "╚══════════════════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
 
-echo -e "${BLUE}Bot URL:${NC} https://${DOMAIN_NAME}/netbot/"
-echo -e "${BLUE}Database:${NC} netbot_db"
-echo -e "${BLUE}DB User:${NC} netbot_user"
-echo -e "${BLUE}DB Pass:${NC} ${randomdbpasstxt}"
-echo -e "${BLUE}MySQL Root Pass:${NC} rootpass"
-echo -e "${BLUE}Admin ID:${NC} ${YOUR_CHAT_ID}"
+# Configuration summary with beautiful formatting
+echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}${BOLD}║           📋 INSTALLATION SUMMARY       ║${NC}"
+echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════╝${NC}"
 
-echo -e "\n${YELLOW}Please test your bot in Telegram!${NC}"
-echo -e "${GREEN}Installation completed successfully!${NC}\n"
+echo -e "${BLUE}🌐 Bot URL:${NC}           ${GREEN}https://${DOMAIN_NAME}/netbot/${NC}"
+echo -e "${BLUE}🗄️  Database:${NC}         ${GREEN}netbot_db${NC}"
+echo -e "${BLUE}👤 DB User:${NC}          ${GREEN}netbot_user${NC}"
+echo -e "${BLUE}🔐 DB Password:${NC}      ${GREEN}${randomdbpasstxt}${NC}"
+echo -e "${BLUE}🔑 MySQL Root Pass:${NC}  ${GREEN}rootpass${NC}"
+echo -e "${BLUE}👑 Admin ID:${NC}         ${GREEN}${YOUR_CHAT_ID}${NC}"
 
-echo -e "${CYAN}Next steps:${NC}"
-echo -e "1. Set up SSL certificate with: ${YELLOW}certbot --nginx -d ${DOMAIN_NAME}${NC}"
+echo ""
 
-echo -e "\n${YELLOW}Troubleshooting:${NC}"
-echo -e "If you encounter MySQL OOM errors or installation issues, run:"
+# Next steps with beautiful formatting
+echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}${BOLD}║              📝 NEXT STEPS               ║${NC}"
+echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════╝${NC}"
+
+echo -e "${YELLOW}1.${NC} ${PURPLE}🔒 Set up SSL certificate:${NC}"
+echo -e "   ${CYAN}certbot --nginx -d ${DOMAIN_NAME}${NC}"
+echo ""
+echo -e "${YELLOW}2.${NC} ${PURPLE}🤖 Test your bot:${NC}"
+echo -e "   ${CYAN}Send /start to your bot in Telegram${NC}"
+echo ""
+echo -e "${YELLOW}3.${NC} ${PURPLE}📊 Monitor logs:${NC}"
+echo -e "   ${CYAN}tail -f /var/log/nginx/error.log${NC}"
+
+echo ""
+
+# Troubleshooting section
+echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}${BOLD}║            🛠️  TROUBLESHOOTING           ║${NC}"
+echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════╝${NC}"
+
+echo -e "${YELLOW}⚠️  If you encounter any issues, run the fix script:${NC}"
 echo -e "${BLUE}wget -O fix_install.sh https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/fix_install.sh${NC}"
 echo -e "${BLUE}chmod +x fix_install.sh && sudo ./fix_install.sh${NC}"
-echo -e "2. Test your bot by sending /start in Telegram"
-echo -e "3. Check logs if needed: ${YELLOW}tail -f /var/log/nginx/error.log${NC}"
+
+echo ""
+
+# Final success message
+echo -e "${GREEN}${BOLD}🚀 NetBot is now ready and running!${NC}"
+echo -e "${PURPLE}💬 Join our community: ${BLUE}@NetworkBotChannel${NC}"
+echo -e "${PURPLE}🆘 Need help? Contact: ${BLUE}@NetworkBotSupport${NC}"
+echo ""

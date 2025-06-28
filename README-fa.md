@@ -126,7 +126,7 @@ bash <(curl -s https://raw.githubusercontent.com/DarkSpecterDev/AlphaBot/main/in
    - به `http://localhost/AlphaBot/createDB.php` بروید
 
 7. **تنظیم Webhook**:
-   - برای تست محلی از ngrok استفاده کنید
+   - برای تست محلی از localhost استفاده کنید
    - به `http://localhost/AlphaBot/setWebhook.php` بروید
 
 ## 📱 قابلیت‌های ربات
@@ -236,18 +236,18 @@ $nowpayment_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
 
 <div align=center>
 
-[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizch&color=blue)](https://telegram.dog/wizwizch)
-[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizdev)](https://telegram.dog/wizwizdev)
-<img src="https://img.shields.io/github/license/wizwizdev/wizwizxui-timebot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/wizwizdev/wizwizxui-timebot.svg" />
-<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=wizwizdev.wizwizdev" />
+[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotChannel&color=blue)](https://telegram.dog/NetworkBotChannel)
+[![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FNetworkBotSupport)](https://telegram.dog/NetworkBotSupport)
+<img src="https://img.shields.io/github/license/DarkSpecterDev/AlphaBot?style=flat-square" />
+<img src="https://img.shields.io/github/v/release/DarkSpecterDev/AlphaBot.svg" />
+<!-- <img src="https://visitor-badge.glitch.me/badge?page_id=DarkSpecterDev.NetBot" />
  -->
 </div>
 
 <br>
 <br>
     <a align="center">
-        <img src="https://github.com/wizwizdev/wizwizxui-timebot/assets/27927279/f6635ea5-ab26-4c64-a7b8-952203f79763" />
+        <img src="https://github.com/DarkSpecterDev/AlphaBot/assets/logo.png" />
     </a>     
 <br>
 <br>
@@ -408,12 +408,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 حتما به گروه و کانال بپیوندید و از ما حمایت کنید
 
 ## Contact Developer
-💎 Group: https://t.me/wizwizdev
-💎 Channel: https://t.me/wizwizch
+💎 Group: https://t.me/NetworkBotSupport
+💎 Channel: https://t.me/NetworkBotChannel
 
 <br>
 <br>
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/wizwizdev/wizwizxui-timebot.svg)](https://starchart.cc/wizwizdev/wizwizxui-timebot)
+[![Stargazers over time](https://starchart.cc/DarkSpecterDev/AlphaBot.svg)](https://starchart.cc/DarkSpecterDev/AlphaBot)

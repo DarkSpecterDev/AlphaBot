@@ -1,0 +1,38 @@
+<?php
+// NetBot Configuration File - Example
+// Copy this file to baseInfo.php and configure your settings
+
+// Telegram Bot Configuration
+$botToken = 'YOUR_BOT_TOKEN_HERE';  // Get from @BotFather
+$admin = YOUR_ADMIN_CHAT_ID_HERE;   // Your Telegram Chat ID (numeric)
+
+// Database Configuration
+$dbUserName = 'netbot_user';        // Database username
+$dbPassword = 'YOUR_DB_PASSWORD';   // Database password
+$dbName = 'netbot_db';             // Database name
+$dbHost = 'localhost';             // Database host (usually localhost)
+
+// Bot URL Configuration
+$botUrl = 'https://yourdomain.com/netbot/';  // Your bot URL (with trailing slash)
+
+// Security Settings
+error_reporting(0);                 // Disable error reporting for production
+
+// Optional: Additional Configuration
+// $timezone = 'Asia/Tehran';       // Set your timezone
+// $currency = 'IRR';               // Default currency
+// $language = 'fa';                // Default language (fa/en)
+
+// Example Configuration:
+/*
+$botToken = '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz';
+$admin = 123456789;
+$dbUserName = 'netbot_user';
+$dbPassword = 'secure_random_password_123';
+$dbName = 'netbot_db';
+$botUrl = 'https://example.com/netbot/';
+*/
+
+// Note: Never commit the actual baseInfo.php file to version control
+// Always keep your credentials secure and private
+?> 

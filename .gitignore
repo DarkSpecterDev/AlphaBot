@@ -1,0 +1,87 @@
+# NetBot Project .gitignore
+
+# Configuration files with sensitive data
+baseInfo.php
+config/database.php
+
+# Log files
+*.log
+logs/
+error.log
+access.log
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+cache/
+
+# Backup files
+*.bak
+*.backup
+backup/
+
+# QR Code cache and temporary files
+phpqrcode/cache/*.png
+phpqrcode/cache/*.dat
+phpqrcode/temp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+
+# Composer
+vendor/
+composer.lock
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Test files
+test.php
+test_*.php
+debug.php
+debug_*.php
+
+# Installation files (should be downloaded fresh)
+install_temp/
+setup_temp/
+
+# User uploads
+uploads/
+files/
+
+# SSL certificates
+*.pem
+*.crt
+*.key
+ssl/
+
+# Database dumps
+*.sql
+*.db
+*.sqlite
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z 

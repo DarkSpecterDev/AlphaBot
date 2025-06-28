@@ -699,8 +699,8 @@ function getServerConfigKeys($serverId,$offset = 0){
     $cty = $cats->fetch_assoc();
     $id = $cty['id'];
     $cname = $cty['title'];
-    $flagwizwiz = $cty['flag'];
-    $remarkwizwiz = $cty['remark'];
+    $flagnetbot = $cty['flag'];
+    $remarknetbot = $cty['remark'];
     $ucount = $cty['ucount'];
     $stmt = $connection->prepare("SELECT * FROM `server_config` WHERE `id`=?");
     $stmt->bind_param("i", $id);
@@ -739,11 +739,11 @@ function getServerConfigKeys($serverId,$offset = 0){
             ['text'=>"❕نام سرور",'callback_data'=>"alphabot"]
             ],
         [
-            ['text'=>$flagwizwiz,'callback_data'=>"editServerFlag$id"],
+            ['text'=>$flagnetbot,'callback_data'=>"editServerFlag$id"],
             ['text'=>"🚩 پرچم سرور",'callback_data'=>"alphabot"]
             ],
         [
-            ['text'=>$remarkwizwiz,'callback_data'=>"editServerRemark$id"],
+            ['text'=>$remarknetbot,'callback_data'=>"editServerRemark$id"],
             ['text'=>"📣 ریمارک سرور",'callback_data'=>"alphabot"]
             ],
         [
@@ -796,7 +796,7 @@ function getServerConfigKeys($serverId,$offset = 0){
             ['text'=>"🔅تغییر اطلاعات ورود",'callback_data'=>"changesServerLoginInfo$id"],
             ],
         [
-            ['text'=>"✂️ حذف سرور",'callback_data'=>"wizwizdeleteserver$id"],
+            ['text'=>"✂️ حذف سرور",'callback_data'=>"netbotdeleteserver$id"],
             ],
         [['text' => $buttonValues['back_button'], 'callback_data' => "nextServerPage" . $offset]]
         ])]);
@@ -821,8 +821,8 @@ function getServerListKeys($offset = 0){
         while($cty = $cats->fetch_assoc()){
             $id = $cty['id'];
             $cname = $cty['title'];
-            $flagwizwiz = $cty['flag'];
-            $remarkwizwiz = $cty['remark'];
+            $flagnetbot = $cty['flag'];
+            $remarknetbot = $cty['remark'];
             $state = $cty['state'] == "1"?$buttonValues['active']:$buttonValues['deactive'];
             $ucount = $cty['ucount'];
             $stmt = $connection->prepare("SELECT * FROM `server_config` WHERE `id`=?");
@@ -887,7 +887,7 @@ function getCategoriesKeys($offset = 0){
         while($cty = $cats->fetch_assoc()){
             $id = $cty['id'];
             $cname = $cty['title'];
-            $keys[] = [['text'=>"❌",'callback_data'=>"wizwizcategorydelete$id" . "_" . $offset],['text'=>$cname,'callback_data'=>"wizwizcategoryedit$id" . "_" . $offset]];
+            $keys[] = [['text'=>"❌",'callback_data'=>"netbotcategorydelete$id" . "_" . $offset],['text'=>$cname,'callback_data'=>"netbotcategoryedit$id" . "_" . $offset]];
         }
     }
     
@@ -1438,7 +1438,7 @@ function getPlanDetailsKeys($planId){
         $stmt = $connection->prepare("SELECT * FROM `orders_list` WHERE `status`=1 AND `fileid`=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        $wizwizplanaccnumber = $stmt->get_result()->num_rows;
+        $netbotplanaccnumber = $stmt->get_result()->num_rows;
         $stmt->close();
 
         $srvid= $pd['server_id'];
@@ -1456,19 +1456,19 @@ function getPlanDetailsKeys($planId){
                 ['text'=>$customSni,'callback_data'=>'changeCustomSni' . $id],
                 ['text'=>"sni دلخواه",'callback_data'=>'alphabot'],
                 ]:[]),
-            [['text'=>$name,'callback_data'=>"wizwizplanname$id"],['text'=>"🔮 نام پلن",'callback_data'=>"alphabot"]],
+            [['text'=>$name,'callback_data'=>"netbotplanname$id"],['text'=>"🔮 نام پلن",'callback_data'=>"alphabot"]],
             ($reality == "true"?[['text'=>$dest,'callback_data'=>"editDestName$id"],['text'=>"dest",'callback_data'=>"alphabot"]]:[]),
             ($reality == "true"?[['text'=>$serverName,'callback_data'=>"editServerNames$id"],['text'=>"serverNames",'callback_data'=>"alphabot"]]:[]),
             ($reality == "true"?[['text'=>$spiderX,'callback_data'=>"editSpiderX$id"],['text'=>"spiderX",'callback_data'=>"alphabot"]]:[]),
             ($reality == "true"?[['text'=>$flow,'callback_data'=>"editFlow$id"],['text'=>"flow",'callback_data'=>"alphabot"]]:[]),
-            [['text'=>$wizwizplanaccnumber,'callback_data'=>"alphabot"],['text'=>"🎗 تعداد اکانت های فروخته شده",'callback_data'=>"alphabot"]],
-            ($pd['inbound_id'] != 0?[['text'=>"$acount",'callback_data'=>"wizwizplanslimit$id"],['text'=>"🚪 تغییر ظرفیت کانفیگ",'callback_data'=>"alphabot"]]:[]),
-            ($pd['inbound_id'] != 0?[['text'=>$pd['inbound_id'],'callback_data'=>"wizwizplansinobundid$id"],['text'=>"🚪 سطر کانفیگ",'callback_data'=>"alphabot"]]:[]),
-            [['text'=>"✏️ ویرایش توضیحات",'callback_data'=>"wizwizplaneditdes$id"]],
-            [['text'=>number_format($price) . " تومان",'callback_data'=>"wizwizplanrial$id"],['text'=>"💰 قیمت پلن",'callback_data'=>"alphabot"]],
-            [['text'=>"♻️ دریافت لیست اکانت ها",'callback_data'=>"wizwizplanacclist$id"]],
+            [['text'=>$netbotplanaccnumber,'callback_data'=>"alphabot"],['text'=>"🎗 تعداد اکانت های فروخته شده",'callback_data'=>"alphabot"]],
+            ($pd['inbound_id'] != 0?[['text'=>"$acount",'callback_data'=>"netbotplanslimit$id"],['text'=>"🚪 تغییر ظرفیت کانفیگ",'callback_data'=>"alphabot"]]:[]),
+            ($pd['inbound_id'] != 0?[['text'=>$pd['inbound_id'],'callback_data'=>"netbotplansinobundid$id"],['text'=>"🚪 سطر کانفیگ",'callback_data'=>"alphabot"]]:[]),
+            [['text'=>"✏️ ویرایش توضیحات",'callback_data'=>"netbotplaneditdes$id"]],
+            [['text'=>number_format($price) . " تومان",'callback_data'=>"netbotplanrial$id"],['text'=>"💰 قیمت پلن",'callback_data'=>"alphabot"]],
+            [['text'=>"♻️ دریافت لیست اکانت ها",'callback_data'=>"netbotplanacclist$id"]],
             ($server_info['type'] == "marzban"?[['text'=>"انتخاب Host",'callback_data'=>"marzbanHostSettings" . $id]]:[]),
-            [['text'=>"✂️ حذف",'callback_data'=>"wizwizplandelete$id"]],
+            [['text'=>"✂️ حذف",'callback_data'=>"netbotplandelete$id"]],
             [['text' => $buttonValues['back_button'], 'callback_data' =>"plansList$srvid"]]
             ];
         return json_encode(['inline_keyboard'=>$keyboard]);

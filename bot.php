@@ -1,6 +1,5 @@
 <?php
 include_once 'config.php';
-// غیرفعال کردن چک IP برای ngrok در ویندوز
 // check();
 
 // تعریف متغیرهای پایه برای جلوگیری از خطاهای undefined
@@ -6917,7 +6916,7 @@ if(preg_match('/planDetails(\d+)/', $data,$match) && ($from_id == $admin || $use
         exit;
     }else editText($message_id, "ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplanacclist(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^netbotplanacclist(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("SELECT * FROM `orders_list` WHERE `status`=1 AND `fileid`=?");
     $stmt->bind_param("i", $match[1]);
     $stmt->execute();
@@ -6953,7 +6952,7 @@ if(preg_match('/^wizwizplanacclist(\d+)/',$data,$match) and ($from_id == $admin 
         sendMessage($txt, null, "HTML");
     }
 }
-if(preg_match('/^wizwizplandelete(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^netbotplandelete(\d+)/',$data,$match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("DELETE FROM `server_plans` WHERE `id`=?");
     $stmt->bind_param("i", $match[1]);
     $stmt->execute();
@@ -6962,12 +6961,12 @@ if(preg_match('/^wizwizplandelete(\d+)/',$data,$match) and ($from_id == $admin |
     
     editText($message_id,"لطفا یکی از کلید های زیر را انتخاب کنید",getMainKeys());
 }
-if(preg_match('/^wizwizplanname(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplanname(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 یه اسم برا پلن جدید انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanname(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^netbotplanname(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `title`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -6982,12 +6981,12 @@ if(preg_match('/^wizwizplanname(\d+)/',($userInfo['step'] ?? 'none'), $match) &&
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys);
 }
-if(preg_match('/^wizwizplanslimit(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplanslimit(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 ظرفیت جدید برای پلن انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanslimit(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^netbotplanslimit(\d+)/',($userInfo['step'] ?? 'none'), $match) && $text != ($buttonValues['cancel'] ?? 'دکمه') && ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `acount`=? WHERE `id`=?");
     $stmt->bind_param("ii", $text, $match[1]);
     $stmt->execute();
@@ -7002,12 +7001,12 @@ if(preg_match('/^wizwizplanslimit(\d+)/',($userInfo['step'] ?? 'none'), $match) 
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplansinobundid(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplansinobundid(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🔅 سطر جدید برای پلن انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplansinobundid(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplansinobundid(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `inbound_id`=? WHERE `id`=?");
     $stmt->bind_param("ii", $text, $match[1]);
     $stmt->execute();
@@ -7022,12 +7021,12 @@ if(preg_match('/^wizwizplansinobundid(\d+)/',($userInfo['step'] ?? 'none'), $mat
         exit;
     }else sendMessage("ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplaneditdes(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplaneditdes(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 توضیحاتت رو برام وارد کن:",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplaneditdes(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplaneditdes(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_plans` SET `descr`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -7147,12 +7146,12 @@ if(preg_match('/^editPFlow(\d+)_(.*)/',$data, $match) && ($from_id == $admin || 
     $keys = getPlanDetailsKeys($match[1]);
     editText($message_id, "ویرایش تنظیمات پلن", $keys, "HTML");
 }
-if(preg_match('/^wizwizplanrial(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplanrial(\d+)/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("🎯 شیطون قیمت و گرون کردی 😂 ، خب قیمت جدید و بزن ببینم :",$cancelKey);exit;
 }
-if(preg_match('/^wizwizplanrial(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true)&& $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotplanrial(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true)&& $text != ($buttonValues['cancel'] ?? 'دکمه')){
     if(is_numeric($text)){
         $stmt = $connection->prepare("UPDATE `server_plans` SET `price`=? WHERE `id`=?");
         $stmt->bind_param("ii", $text, $match[1]);
@@ -9475,7 +9474,7 @@ if(preg_match('/^addNewCategory/',($userInfo['step'] ?? 'none')) and $text!=($bu
         sendMessage(($mainValues['reached_main_menu'] ?? 'پیام پیش‌فرض'),getCategoriesKeys());
     }
 }
-if(preg_match('/^wizwizcategorydelete(\d+)_(\d+)/',$data, $match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
+if(preg_match('/^netbotcategorydelete(\d+)_(\d+)/',$data, $match) and ($from_id == $admin || $userInfo['isAdmin'] == true)){
     $stmt = $connection->prepare("DELETE FROM `server_categories` WHERE `id`=?");
     $stmt->bind_param("i", $match[1]);
     $stmt->execute();
@@ -9491,12 +9490,12 @@ if(preg_match('/^wizwizcategorydelete(\d+)_(\d+)/',$data, $match) and ($from_id 
     $keys = getCategoriesKeys($match[2]);
     editText($message_id,"☑️ مدیریت دسته ها:", $keys);
 }
-if(preg_match('/^wizwizcategoryedit/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/^netbotcategoryedit/',$data) and ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     setUser($data);
     delMessage();
     sendMessage("〽️ یه اسم جدید برا دسته بندی انتخاب کن:",$cancelKey);exit;
 }
-if(preg_match('/wizwizcategoryedit(\d+)_(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
+if(preg_match('/netbotcategoryedit(\d+)_(\d+)/',($userInfo['step'] ?? 'none'), $match) && ($from_id == $admin || $userInfo['isAdmin'] == true) && $text != ($buttonValues['cancel'] ?? 'دکمه')){
     $stmt = $connection->prepare("UPDATE `server_categories` SET `title`=? WHERE `id`=?");
     $stmt->bind_param("si", $text, $match[1]);
     $stmt->execute();
@@ -9987,7 +9986,7 @@ if(preg_match('/^editServerPanePassword(.*)/',($userInfo['step'] ?? 'none'),$mat
     sendMessage('☑️ مدیریت سرور ها:',$keys);
     setUser();
 }
-if(preg_match('/^wizwizdeleteserver(\d+)/',$data,$match) and ($from_id == $admin || ($userInfo['isAdmin'] == true && $permissions['servers']))){
+if(preg_match('/^netbotdeleteserver(\d+)/',$data,$match) and ($from_id == $admin || ($userInfo['isAdmin'] == true && $permissions['servers']))){
     editText($message_id,"از حذف سرور مطمئنی؟",json_encode(['inline_keyboard'=>[
         [['text'=>"بله",'callback_data'=>"yesDeleteServer" . $match[1]],['text'=>"نخير",'callback_data'=>"showServerSettings" . $match[1] . "_0"]]
         ]]));
